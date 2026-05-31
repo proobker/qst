@@ -6,6 +6,8 @@ type QuestContext = {
   location: { latitude: number | null; longitude: number | null };
   level: number;
   previousQuestTitles: string[];
+  completedQuests?: string[];
+  rejectedQuests?: string[];
 };
 
 function clampDifficulty(level: number): QuestDefinition["difficulty"] {
@@ -23,9 +25,13 @@ function fallbackQuest(context: QuestContext): QuestDefinition {
   const difficulty = clampDifficulty(context.level);
   const baseXp = difficulty === "easy" ? 80 : difficulty === "medium" ? 130 : 220;
 
+  const locationHints = context.location.latitude && context.location.longitude
+    ? "near your current location"
+    : "in your neighborhood";
+
   return {
-    title: `${mainHobby} Neighborhood Challenge`,
-    description: `Find one real-world place near you connected to ${mainHobby.toLowerCase()}, capture a photo, and write a two-sentence reflection about what you learned.`,
+    title: `${mainHobby} Discovery Challenge`,
+    description: `Find one real-world place ${locationHints} connected to ${mainHobby.toLowerCase()}, capture a photo, and write a two-sentence reflection about what you discovered.`,
     difficulty,
     xp_reward: baseXp,
     badge_reward: `${mainHobby} Explorer`,
@@ -48,36 +54,115 @@ function sanitizeQuest(input: Partial<QuestDefinition>, context: QuestContext): 
   const safeDifficulty: QuestDefinition["difficulty"] =
     difficulty === "hard" || difficulty === "medium" || difficulty === "easy" ? difficulty : "easy";
 
+  // Scale XP based on difficulty
+  const baseXp = safeDifficulty === "easy" ? 80 : safeDifficulty === "medium" ? 130 : 220;
+  const xpReward = Math.max(Number(input.xp_reward ?? baseXp), 20);
+
   return {
     title: input.title?.trim() || fallbackQuest(context).title,
     description: input.description?.trim() || fallbackQuest(context).description,
     difficulty: safeDifficulty,
-    xp_reward: Math.max(Number(input.xp_reward ?? 100), 20),
+    xp_reward: xpReward,
     badge_reward: input.badge_reward?.trim() || null,
     estimated_time: input.estimated_time?.trim() || "30 min",
     category: input.category?.trim() || context.hobbies[0] || "General",
   };
 }
 
+function getLocationHints(hobbies: string[], hasLocation: boolean): string {
+  if (!hasLocation) {
+    return "in your local area or neighborhood";
+  }
+
+  const hobbyLocationMap: Record<string, string> = {
+    "Photography": "landmarks, viewpoints, architecture, street art, or scenic spots",
+    "Food": "cafes, restaurants, food markets, bakeries, or local eateries",
+    "Fitness": "parks, walking trails, gyms, outdoor exercise areas, or sports facilities",
+    "Technology": "tech stores, maker spaces, coworking spots, or tech events",
+    "Reading": "libraries, bookstores, study cafes, or quiet reading spots",
+    "Art": "galleries, museums, street art, art supply stores, or creative spaces",
+    "Music": "music venues, instrument stores, performance spaces, or music schools",
+    "Hiking": "trails, nature reserves, parks, or scenic viewpoints",
+    "Travel": "tourist attractions, historical sites, cultural landmarks, or hidden gems",
+    "Volunteering": "community centers, charity shops, animal shelters, or local NGOs",
+    "Entrepreneurship": "coworking spaces, business incubators, networking events, or startup hubs",
+    "Programming": "tech meetups, hackathons, coworking spaces, or tech conferences",
+    "DIY": "hardware stores, craft shops, maker spaces, or community workshops",
+    "Gaming": "game stores, esports venues, gaming cafes, or arcades",
+  };
+
+  const hints = hobbies
+    .map(hobby => hobbyLocationMap[hobby])
+    .filter(Boolean)
+    .join(", ");
+
+  return hints || "interesting places in your area";
+}
+
 export async function generateQuest(context: QuestContext): Promise<QuestDefinition> {
+  console.log("[Gemini] Generating quest with context:", {
+    hobbies: context.hobbies,
+    level: context.level,
+    hasLocation: !!(context.location.latitude && context.location.longitude),
+    previousQuestsCount: context.previousQuestTitles.length,
+  });
+
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
+    console.log("[Gemini] No API key, using fallback");
     return fallbackQuest(context);
   }
 
+  const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
+  const locationHints = getLocationHints(context.hobbies, hasLocation);
+
   const prompt = `
-You generate safe real-world side quests for a life-RPG app.
-Create exactly one quest as JSON with keys:
-title, description, difficulty (easy|medium|hard), xp_reward (number), badge_reward, estimated_time, category.
-Inputs:
-- hobbies: ${context.hobbies.join(", ") || "General"}
-- level: ${context.level}
-- location: lat=${context.location.latitude ?? "unknown"}, lon=${context.location.longitude ?? "unknown"}
-- avoid repeating prior quests: ${context.previousQuestTitles.join(" | ") || "none"}
-Safety constraints:
-- legal, safe, realistic, accessible in public.
-- no dangerous, illegal, hateful, or offensive activities.
-Output JSON only.
+You are a quest generator for a life-RPG app that turns real life into an adventure.
+
+Generate ONE personalized, location-aware quest as JSON.
+
+USER CONTEXT:
+- Hobbies: ${context.hobbies.join(", ") || "General exploration"}
+- Level: ${context.level} (affects quest difficulty)
+- Location: ${hasLocation ? `lat=${context.location.latitude}, lon=${context.location.longitude}` : "unknown - use general local area"}
+- Location hints: Look for ${locationHints}
+
+PREVIOUS ACTIVITY (AVOID REPETITION):
+- Previously seen quests: ${context.previousQuestTitles.slice(0, 5).join(" | ") || "none"}
+- Completed quests: ${context.completedQuests?.slice(0, 3).join(" | ") || "none"}
+- Rejected quests: ${context.rejectedQuests?.slice(0, 3).join(" | ") || "none"}
+
+DIFFICULTY GUIDELINES:
+- Level 1-2: Easy quests (simple activities, 30-45 min, 80-100 XP)
+- Level 3-4: Medium quests (moderate challenge, 45-90 min, 120-180 XP)
+- Level 5+: Hard quests (significant challenge, 90-120 min, 200-300 XP)
+
+LOCATION-AWARE EXAMPLES:
+- Photography: "Visit a local landmark and capture it from three unique angles"
+- Food: "Find a highly-rated local cafe and try their signature dish"
+- Fitness: "Complete a 2K walk through the nearest park or trail"
+- Technology: "Visit a tech store and test a new gadget, then share your thoughts"
+- Reading: "Spend 30 minutes reading at a local library or bookstore"
+
+SAFETY CONSTRAINTS (STRICT):
+- Legal, safe, realistic, and accessible in public spaces
+- NO dangerous, illegal, hateful, or offensive activities
+- NO activities requiring special equipment or permissions
+- NO activities that could cause harm to self or others
+- Must be achievable in a single session
+
+OUTPUT FORMAT (JSON only):
+{
+  "title": "engaging quest title",
+  "description": "clear, actionable instructions (2-3 sentences)",
+  "difficulty": "easy|medium|hard",
+  "xp_reward": number (based on difficulty),
+  "badge_reward": "relevant badge name or null",
+  "estimated_time": "time range (e.g., '30-45 min')",
+  "category": "primary hobby category"
+}
+
+Generate a unique, creative quest that feels personal to the user's interests and location.
 `.trim();
 
   try {
@@ -92,12 +177,15 @@ Output JSON only.
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           generationConfig: {
             responseMimeType: "application/json",
+            temperature: 0.8,
+            maxOutputTokens: 1024,
           },
         }),
       },
     );
 
     if (!response.ok) {
+      console.error("[Gemini] API request failed:", response.status, response.statusText);
       return fallbackQuest(context);
     }
 
@@ -107,12 +195,19 @@ Output JSON only.
 
     const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
     if (!text) {
+      console.error("[Gemini] No text in response");
       return fallbackQuest(context);
     }
 
+    console.log("[Gemini] Raw response:", text.substring(0, 200));
+
     const parsed = extractJson(text) as Partial<QuestDefinition>;
-    return sanitizeQuest(parsed, context);
-  } catch {
+    const sanitized = sanitizeQuest(parsed, context);
+
+    console.log("[Gemini] Generated quest:", sanitized.title);
+    return sanitized;
+  } catch (error) {
+    console.error("[Gemini] Error generating quest:", error);
     return fallbackQuest(context);
   }
 }

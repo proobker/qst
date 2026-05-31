@@ -116,18 +116,31 @@ export async function saveOnboarding(
     .eq("id", userId);
 }
 
-async function getUserQuestHistory(userId: string): Promise<string[]> {
+async function getUserQuestHistory(userId: string): Promise<{
+  previousQuestTitles: string[];
+  completedQuests: string[];
+  rejectedQuests: string[];
+}> {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("user_quests")
-    .select("quests(title)")
+    .select("quests(title), status")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(20);
 
-  return ((data as Array<{ quests: { title: string } | null }> | null) ?? [])
-    .map((row) => row.quests?.title)
-    .filter((title): title is string => Boolean(title));
+  const quests = (data as unknown as Array<{ quests: { title: string } | null; status: string } | null> ?? [])
+    .filter((row): row is { quests: { title: string }; status: string } => row !== null && row.quests !== null);
+
+  const previousQuestTitles = quests.map((row) => row.quests.title);
+  const completedQuests = quests.filter((row) => row.status === "completed").map((row) => row.quests.title);
+  const rejectedQuests = quests.filter((row) => row.status === "rejected").map((row) => row.quests.title);
+
+  return {
+    previousQuestTitles,
+    completedQuests,
+    rejectedQuests,
+  };
 }
 
 export async function getDiscoveryQuest(userId: string) {
@@ -143,6 +156,7 @@ export async function getDiscoveryQuest(userId: string) {
     .maybeSingle();
 
   if (generatedAssignment?.quests) {
+    console.log("[QuestSwipe] Found existing generated quest:", generatedAssignment.id);
     return generatedAssignment as unknown as {
       id: string;
       quest_id: string;
@@ -151,6 +165,8 @@ export async function getDiscoveryQuest(userId: string) {
     };
   }
 
+  console.log("[QuestSwipe] No generated quest found, generating new quest for user:", userId);
+
   const [profile, onboarding, history] = await Promise.all([
     getProfile(userId),
     getOnboardingState(userId),
@@ -158,22 +174,37 @@ export async function getDiscoveryQuest(userId: string) {
   ]);
 
   if (!profile) {
+    console.error("[QuestSwipe] User profile not found");
     return null;
   }
+
+  console.log("[QuestSwipe] Generating quest with context:", {
+    hobbies: onboarding.selectedHobbies,
+    level: profile.level,
+    historyCount: history.previousQuestTitles.length,
+    completedCount: history.completedQuests.length,
+    rejectedCount: history.rejectedQuests.length,
+  });
 
   const generated = await generateQuest({
     hobbies: onboarding.selectedHobbies,
     location: { latitude: onboarding.latitude, longitude: onboarding.longitude },
     level: profile.level,
-    previousQuestTitles: history,
+    previousQuestTitles: history.previousQuestTitles,
+    completedQuests: history.completedQuests,
+    rejectedQuests: history.rejectedQuests,
   });
 
   const safeQuest = moderateQuest(generated) ? generated : await generateQuest({
     hobbies: ["Exploration"],
     location: { latitude: onboarding.latitude, longitude: onboarding.longitude },
     level: 1,
-    previousQuestTitles: history,
+    previousQuestTitles: history.previousQuestTitles,
+    completedQuests: history.completedQuests,
+    rejectedQuests: history.rejectedQuests,
   });
+
+  console.log("[QuestSwipe] Generated safe quest:", safeQuest.title);
 
   const { data: insertedQuest } = await supabase
     .from("quests")
@@ -191,10 +222,13 @@ export async function getDiscoveryQuest(userId: string) {
     .single();
 
   if (!insertedQuest) {
+    console.error("[QuestSwipe] Failed to insert quest into database");
     return null;
   }
 
-  const { data: assignment } = await supabase
+  console.log("[QuestSwipe] Inserted quest with ID:", (insertedQuest as { id: string }).id);
+
+  const { data: assignment, error: assignmentError } = await supabase
     .from("user_quests")
     .insert({
       user_id: userId,
@@ -204,6 +238,25 @@ export async function getDiscoveryQuest(userId: string) {
     .select("id, quest_id, status, quests(*)")
     .single();
 
+  if (assignmentError) {
+    console.error("[QuestSwipe] Failed to create user quest assignment:", assignmentError);
+    // If there's a unique constraint violation, it means this user already has this quest
+    // Delete the quest we just created and try again
+    if (assignmentError.code === '23505') {
+      console.log("[QuestSwipe] Unique constraint violation, deleting quest and retrying");
+      await supabase.from("quests").delete().eq("id", (insertedQuest as { id: string }).id);
+      // Retry with updated history to avoid generating the same quest
+      return getDiscoveryQuest(userId);
+    }
+    return null;
+  }
+
+  if (!assignment) {
+    console.error("[QuestSwipe] Failed to create user quest assignment");
+    return null;
+  }
+
+  console.log("[QuestSwipe] Created user quest assignment:", assignment.id);
   return assignment as unknown as {
     id: string;
     quest_id: string;
