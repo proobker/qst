@@ -1,7 +1,7 @@
 import { getGeminiApiKey } from "@/lib/env";
 import { QuestDefinition } from "@/lib/types";
 
-type QuestContext = {
+export type QuestContext = {
   hobbies: string[];
   location: { latitude: number | null; longitude: number | null };
   level: number;
@@ -9,6 +9,22 @@ type QuestContext = {
   completedQuests?: string[];
   rejectedQuests?: string[];
 };
+
+export type GenerateQuestErrorReason = "missing_api_key" | "rate_limited" | "api_error" | "invalid_response";
+
+export type GenerateQuestResult =
+  | { ok: true; quest: QuestDefinition; model: string }
+  | { ok: false; reason: GenerateQuestErrorReason; message?: string };
+
+/** Models tried in order (first with quota wins). */
+const GEMINI_MODELS = [
+  "gemini-2.0-flash-lite",
+  "gemini-1.5-flash-8b",
+  "gemini-1.5-flash",
+  "gemini-2.0-flash",
+] as const;
+
+const MAX_HOBBIES_IN_PROMPT = 5;
 
 function clampDifficulty(level: number): QuestDefinition["difficulty"] {
   if (level <= 2) {
@@ -18,6 +34,16 @@ function clampDifficulty(level: number): QuestDefinition["difficulty"] {
     return "medium";
   }
   return "hard";
+}
+
+function pickHobbiesForPrompt(hobbies: string[], rotateIndex: number): string[] {
+  const unique = [...new Set(hobbies.filter(Boolean))];
+  if (unique.length <= MAX_HOBBIES_IN_PROMPT) {
+    return unique;
+  }
+  const offset = rotateIndex % unique.length;
+  const rotated = [...unique.slice(offset), ...unique.slice(0, offset)];
+  return rotated.slice(0, MAX_HOBBIES_IN_PROMPT);
 }
 
 function tryParseJson(raw: string): unknown | null {
@@ -79,10 +105,10 @@ function sanitizeQuest(input: Record<string, unknown>, context: QuestContext): Q
   const safeDifficulty: QuestDefinition["difficulty"] =
     difficulty === "hard" || difficulty === "medium" || difficulty === "easy" ? difficulty : "easy";
 
-  // Scale XP based on difficulty
   const baseXp = safeDifficulty === "easy" ? 80 : safeDifficulty === "medium" ? 130 : 220;
   const rawXp = Number(input.xp_reward);
   const xpReward = Number.isFinite(rawXp) ? Math.max(rawXp, 20) : baseXp;
+  const hobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
 
   return {
     title,
@@ -91,7 +117,7 @@ function sanitizeQuest(input: Record<string, unknown>, context: QuestContext): Q
     xp_reward: xpReward,
     badge_reward: asTrimmedString(input.badge_reward),
     estimated_time: asTrimmedString(input.estimated_time) || "30 min",
-    category: asTrimmedString(input.category) || context.hobbies[0] || "General",
+    category: asTrimmedString(input.category) || hobbies[0] || "General",
   };
 }
 
@@ -101,257 +127,188 @@ function getLocationHints(hobbies: string[], hasLocation: boolean): string {
   }
 
   const hobbyLocationMap: Record<string, string> = {
-    "Photography": "landmarks, viewpoints, architecture, street art, or scenic spots",
-    "Food": "cafes, restaurants, food markets, bakeries, or local eateries",
-    "Fitness": "parks, walking trails, gyms, outdoor exercise areas, or sports facilities",
-    "Technology": "tech stores, maker spaces, coworking spots, or tech events",
-    "Reading": "libraries, bookstores, study cafes, or quiet reading spots",
-    "Art": "galleries, museums, street art, art supply stores, or creative spaces",
-    "Music": "music venues, instrument stores, performance spaces, or music schools",
-    "Hiking": "trails, nature reserves, parks, or scenic viewpoints",
-    "Travel": "tourist attractions, historical sites, cultural landmarks, or hidden gems",
-    "Volunteering": "community centers, charity shops, animal shelters, or local NGOs",
-    "Entrepreneurship": "coworking spaces, business incubators, networking events, or startup hubs",
-    "Programming": "tech meetups, hackathons, coworking spaces, or tech conferences",
-    "DIY": "hardware stores, craft shops, maker spaces, or community workshops",
-    "Gaming": "game stores, esports venues, gaming cafes, or arcades",
+    Photography: "landmarks, viewpoints, architecture, street art, or scenic spots",
+    "Film Photography": "landmarks, viewpoints, architecture, street art, or scenic spots",
+    "Drone Photography": "landmarks, viewpoints, architecture, street art, or scenic spots",
+    Food: "cafes, restaurants, food markets, bakeries, or local eateries",
+    Fitness: "parks, walking trails, gyms, outdoor exercise areas, or sports facilities",
+    Technology: "tech stores, maker spaces, coworking spots, or tech events",
+    Reading: "libraries, bookstores, study cafes, or quiet reading spots",
+    Art: "galleries, museums, street art, art supply stores, or creative spaces",
+    Painting: "galleries, museums, street art, art supply stores, or creative spaces",
+    Music: "music venues, instrument stores, performance spaces, or music schools",
+    Hiking: "trails, nature reserves, parks, or scenic viewpoints",
+    Backpacking: "trails, nature reserves, parks, or scenic viewpoints",
+    Camping: "trails, nature reserves, parks, or scenic viewpoints",
+    Travel: "tourist attractions, historical sites, cultural landmarks, or hidden gems",
+    "Adventure Travel": "tourist attractions, historical sites, cultural landmarks, or hidden gems",
+    "Local Exploration": "interesting local spots, neighborhoods, or hidden gems",
+    Volunteering: "community centers, charity shops, animal shelters, or local NGOs",
+    Entrepreneurship: "coworking spaces, business incubators, networking events, or startup hubs",
+    Programming: "tech meetups, hackathons, coworking spaces, or tech conferences",
+    Arduino: "maker spaces, hardware stores, or community workshops",
+    Gaming: "game stores, esports venues, gaming cafes, or arcades",
+    "PC Gaming": "game stores, esports venues, gaming cafes, or arcades",
+    YouTube: "interesting local spots worth filming or documenting",
   };
 
   const hints = hobbies
-    .map(hobby => hobbyLocationMap[hobby])
+    .map((hobby) => {
+      if (hobbyLocationMap[hobby]) {
+        return hobbyLocationMap[hobby];
+      }
+      const key = Object.keys(hobbyLocationMap).find((k) =>
+        hobby.toLowerCase().includes(k.toLowerCase()),
+      );
+      return key ? hobbyLocationMap[key] : null;
+    })
     .filter(Boolean)
     .join(", ");
 
   return hints || "interesting places in your area";
 }
 
-function pickPrimaryHobby(context: QuestContext): string {
-  const hobbies = context.hobbies.filter(Boolean);
-  if (hobbies.length === 0) {
-    return "Exploration";
-  }
-  const index = context.previousQuestTitles.length % hobbies.length;
-  return hobbies[index];
-}
-
-/** Safe local quest when Gemini is unavailable or returns invalid data. */
-export function buildFallbackQuest(context: QuestContext): QuestDefinition {
-  const mainHobby = pickPrimaryHobby(context);
-  const difficulty = clampDifficulty(context.level);
-  const baseXp = difficulty === "easy" ? 80 : difficulty === "medium" ? 130 : 220;
+function buildPrompt(context: QuestContext): string {
+  const hobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
   const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
-  const locationPhrase = hasLocation
-    ? "within walking distance of your current location"
-    : "in your neighborhood";
-  const locationHints = getLocationHints(context.hobbies, hasLocation);
-  const avoid = new Set([
-    ...context.previousQuestTitles,
-    ...(context.rejectedQuests ?? []),
-    ...(context.completedQuests ?? []),
-  ]);
+  const locationHints = getLocationHints(hobbies, hasLocation);
 
-  const templates: Array<{ title: string; description: string; estimated_time: string }> = [
-    {
-      title: `${mainHobby} Neighborhood Discovery`,
-      description: `Explore ${locationHints} ${locationPhrase}. Take a photo and write two sentences about what you learned.`,
-      estimated_time: "30-45 min",
-    },
-    {
-      title: `${mainHobby} Mini Adventure`,
-      description: `Complete one small real-world task related to ${mainHobby} ${locationPhrase}. Share a photo and a one-paragraph reflection.`,
-      estimated_time: "45-60 min",
-    },
-    {
-      title: `Local ${mainHobby} Challenge`,
-      description: `Visit a nearby place connected to ${mainHobby}. Observe something new, document it, and note one takeaway for your journal.`,
-      estimated_time: "30 min",
-    },
-    {
-      title: `${mainHobby} Explorer Quest`,
-      description: `Find an interesting spot related to ${mainHobby} ${locationPhrase}. Spend at least 20 minutes there and capture what makes it unique.`,
-      estimated_time: "20-40 min",
-    },
-  ];
-
-  const chosen =
-    templates.find((t) => !avoid.has(t.title)) ??
-    templates[context.previousQuestTitles.length % templates.length];
-
-  return {
-    title: chosen.title,
-    description: chosen.description,
-    difficulty,
-    xp_reward: baseXp,
-    badge_reward: `${mainHobby} Explorer`,
-    estimated_time: chosen.estimated_time,
-    category: mainHobby,
-  };
-}
-
-async function generateQuestFromGemini(context: QuestContext): Promise<QuestDefinition | null> {
-  const apiKey = getGeminiApiKey();
-  if (!apiKey) {
-    console.warn("[Gemini] No API key configured — will use fallback quest");
-    return null;
-  }
-
-  const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
-  const locationHints = getLocationHints(context.hobbies, hasLocation);
-
-  const prompt = `
+  return `
 You are a quest generator for a life-RPG app that turns real life into an adventure.
 
 Generate ONE personalized, location-aware quest as JSON.
 
 USER CONTEXT:
-- Hobbies: ${context.hobbies.join(", ") || "General exploration"}
-- Level: ${context.level} (affects quest difficulty)
-- Location: ${hasLocation ? `lat=${context.location.latitude}, lon=${context.location.longitude}` : "unknown - use general local area"}
-- Location hints: Look for ${locationHints}
+- Hobbies (focus on these): ${hobbies.join(", ") || "General exploration"}
+- Level: ${context.level}
+- Location: ${hasLocation ? `lat=${context.location.latitude}, lon=${context.location.longitude}` : "general local area"}
+- Nearby places: ${locationHints}
 
-PREVIOUS ACTIVITY (AVOID REPETITION):
-- Previously seen quests: ${context.previousQuestTitles.slice(0, 5).join(" | ") || "none"}
-- Completed quests: ${context.completedQuests?.slice(0, 3).join(" | ") || "none"}
-- Rejected quests: ${context.rejectedQuests?.slice(0, 3).join(" | ") || "none"}
+AVOID REPEATING:
+- Seen: ${context.previousQuestTitles.slice(0, 6).join(" | ") || "none"}
+- Rejected: ${context.rejectedQuests?.slice(0, 5).join(" | ") || "none"}
 
-DIFFICULTY GUIDELINES:
-- Level 1-2: Easy quests (simple activities, 30-45 min, 80-100 XP)
-- Level 3-4: Medium quests (moderate challenge, 45-90 min, 120-180 XP)
-- Level 5+: Hard quests (significant challenge, 90-120 min, 200-300 XP)
+DIFFICULTY: Level 1-2 easy (80-100 XP), 3-4 medium (120-180 XP), 5+ hard (200-300 XP).
 
-LOCATION-AWARE EXAMPLES:
-- Photography: "Visit a local landmark and capture it from three unique angles"
-- Food: "Find a highly-rated local cafe and try their signature dish"
-- Fitness: "Complete a 2K walk through the nearest park or trail"
-- Technology: "Visit a tech store and test a new gadget, then share your thoughts"
-- Reading: "Spend 30 minutes reading at a local library or bookstore"
+SAFETY: Legal, safe, public, single session. No weapons, drugs, trespass, illegal acts.
 
-SAFETY CONSTRAINTS (STRICT):
-- Legal, safe, realistic, and accessible in public spaces
-- NO dangerous, illegal, hateful, or offensive activities
-- NO activities requiring special equipment or permissions
-- NO activities that could cause harm to self or others
-- Must be achievable in a single session
-
-OUTPUT FORMAT (JSON only):
-{
-  "title": "engaging quest title",
-  "description": "clear, actionable instructions (2-3 sentences)",
-  "difficulty": "easy|medium|hard",
-  "xp_reward": number (based on difficulty),
-  "badge_reward": "relevant badge name or null",
-  "estimated_time": "time range (e.g., '30-45 min')",
-  "category": "primary hobby category"
+OUTPUT JSON only:
+{"title":"","description":"","difficulty":"easy|medium|hard","xp_reward":0,"badge_reward":null,"estimated_time":"","category":""}
+`.trim();
 }
 
-Generate a unique, creative quest that feels personal to the user's interests and location.
-`.trim();
+async function callGeminiModel(
+  apiKey: string,
+  model: string,
+  prompt: string,
+): Promise<{ ok: true; text: string } | { ok: false; status: number; body: string }> {
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.7,
+          maxOutputTokens: 768,
+        },
+      }),
+    },
+  );
+
+  const body = await response.text();
+  if (!response.ok) {
+    return { ok: false, status: response.status, body };
+  }
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
-            { 
-              role: "user", 
-              parts: [{ text: prompt }] 
-            }
-          ],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: "OBJECT",
-              required: ["title", "description", "difficulty", "xp_reward", "badge_reward", "estimated_time", "category"],
-              properties: {
-                title: { type: "STRING" },
-                description: { type: "STRING" },
-                difficulty: { type: "STRING", enum: ["easy", "medium", "hard"] },
-                xp_reward: { type: "INTEGER" },
-                badge_reward: { type: "STRING", nullable: true },
-                estimated_time: { type: "STRING" },
-                category: { type: "STRING" },
-              },
-            },
-            // Lower temperature ensures compliance with the JSON Schema
-            temperature: 0.2, 
-            maxOutputTokens: 1024,
-          },
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      console.error("[Gemini] API request failed:", response.status, response.statusText);
-      return null;
-    }
-
-    const payload = (await response.json()) as {
-      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> }; finishReason?: string }>;
-      promptFeedback?: { blockReason?: string };
+    const payload = JSON.parse(body) as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+      error?: { message?: string };
     };
-
-    const candidate = payload.candidates?.[0];
-    const text = candidate?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
+    if (payload.error) {
+      return { ok: false, status: 500, body: payload.error.message ?? body };
+    }
+    const text = payload.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
     if (!text) {
-      console.error("[Gemini] No text in response", {
-        finishReason: candidate?.finishReason ?? null,
-        blockReason: payload.promptFeedback?.blockReason ?? null,
-      });
-      return null;
+      return { ok: false, status: 500, body: "Empty candidate" };
     }
-
-    console.log("[Gemini] Raw response:", text.substring(0, 200));
-    const parsed = extractJson(text);
-    if (!isRecord(parsed)) {
-      console.warn("[Gemini] Response was not a valid JSON object");
-      return null;
-    }
-
-    const sanitized = sanitizeQuest(parsed, context);
-    if (!sanitized) {
-      console.warn("[Gemini] Response JSON missing required quest fields");
-      return null;
-    }
-
-    console.log("[Gemini] Generated quest:", sanitized.title);
-    return sanitized;
-  } catch (error) {
-    console.error("[Gemini] Error generating quest:", error);
-    return null;
+    return { ok: true, text };
+  } catch {
+    return { ok: false, status: 500, body };
   }
 }
 
 /**
- * Generates a quest via Gemini when possible; always returns a safe quest (fallback if needed).
+ * Generates a quest using Gemini only.
  */
-export async function generateQuest(context: QuestContext): Promise<QuestDefinition> {
-  console.log("[QuestGen] Starting with context:", {
-    hobbies: context.hobbies,
+export async function generateQuest(context: QuestContext): Promise<GenerateQuestResult> {
+  const apiKey = getGeminiApiKey();
+  const promptHobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
+
+  console.log("[Gemini] generateQuest start", {
+    apiKeyConfigured: Boolean(apiKey),
+    hobbiesInPrompt: promptHobbies,
+    totalHobbies: context.hobbies.length,
     level: context.level,
     hasLocation: context.location.latitude !== null && context.location.longitude !== null,
-    historyCount: context.previousQuestTitles.length,
   });
 
-  const fromGemini = await generateQuestFromGemini(context);
-  if (fromGemini && moderateQuest(fromGemini)) {
-    console.log("[QuestGen] Using Gemini quest:", fromGemini.title);
-    return fromGemini;
+  if (!apiKey) {
+    console.error("[Gemini] Missing GOOGLE_GEMINI_API_KEY in .env.local");
+    return { ok: false, reason: "missing_api_key" };
   }
 
-  if (fromGemini && !moderateQuest(fromGemini)) {
-    console.warn("[QuestGen] Gemini quest failed moderation, using fallback");
-  } else if (!fromGemini) {
-    console.warn("[QuestGen] Gemini unavailable or failed, using fallback");
+  const prompt = buildPrompt(context);
+  let lastRateLimit = false;
+
+  for (const model of GEMINI_MODELS) {
+    console.log(`[Gemini] Trying model: ${model}`);
+    const result = await callGeminiModel(apiKey, model, prompt);
+
+    if (!result.ok) {
+      if (result.status === 429) {
+        lastRateLimit = true;
+        console.warn(`[Gemini] ${model} rate limited (429), trying next model...`);
+        continue;
+      }
+      console.error(`[Gemini] ${model} failed:`, result.status, result.body.slice(0, 300));
+      continue;
+    }
+
+    const parsed = extractJson(result.text);
+    if (!isRecord(parsed)) {
+      console.warn(`[Gemini] ${model} returned unparseable JSON`);
+      continue;
+    }
+
+    const sanitized = sanitizeQuest(parsed, context);
+    if (!sanitized) {
+      console.warn(`[Gemini] ${model} JSON missing required fields`);
+      continue;
+    }
+
+    if (!moderateQuest(sanitized)) {
+      console.warn(`[Gemini] ${model} quest failed moderation`);
+      continue;
+    }
+
+    console.log(`[Gemini] Success via ${model}:`, sanitized.title);
+    return { ok: true, quest: sanitized, model };
   }
 
-  const fallback = buildFallbackQuest(context);
-  console.log("[QuestGen] Using fallback quest:", fallback.title);
-  return fallback;
+  if (lastRateLimit) {
+    console.error("[Gemini] All models rate limited — wait or enable billing on Google AI Studio");
+    return {
+      ok: false,
+      reason: "rate_limited",
+      message: "Gemini free-tier quota exceeded. Wait a few minutes or check https://ai.google.dev/gemini-api/docs/rate-limits",
+    };
+  }
+
+  return { ok: false, reason: "api_error", message: "All Gemini models failed to generate a quest." };
 }
 
 export function moderateQuest(quest: QuestDefinition): boolean {

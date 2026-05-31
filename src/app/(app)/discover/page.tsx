@@ -2,8 +2,11 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { QuestSwipeDeck } from "@/components/quest-swipe-deck";
 import { DiscoverSkeleton } from "@/components/ui/skeleton";
+import { getGeminiApiKey } from "@/lib/env";
 import { getDiscoveryQuest, getOnboardingState } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
 
 async function DiscoverContent() {
   const supabase = await createSupabaseServerClient();
@@ -33,17 +36,40 @@ async function DiscoverContent() {
     );
   }
 
-  const assignment = await getDiscoveryQuest(user.id);
+  const hasGeminiKey = Boolean(getGeminiApiKey());
+  const { assignment, error } = await getDiscoveryQuest(user.id);
+
   if (!assignment) {
-    console.error("[DiscoverPage] No quest assignment returned from getDiscoveryQuest");
+    console.error("[DiscoverPage] No quest assignment:", error ?? "unknown");
     return (
       <div className="rounded-xl border border-border bg-surface p-6">
         <h1 className="text-xl font-semibold text-foreground">Could not load a quest</h1>
-        <p className="mt-2 text-sm text-muted">
-          Quest generation or database save failed. Check the server logs, confirm Supabase migrations are applied,
-          and ensure <code className="text-primary">GOOGLE_GEMINI_API_KEY</code> is set for AI quests (fallback
-          quests work without it).
-        </p>
+        {!hasGeminiKey ? (
+          <p className="mt-2 text-sm text-muted">
+            Add <code className="text-primary">GOOGLE_GEMINI_API_KEY=your_key</code> to{" "}
+            <code className="text-primary">.env.local</code>, then restart{" "}
+            <code className="text-primary">npm run dev</code>.
+          </p>
+        ) : error === "rate_limited" ? (
+          <p className="mt-2 text-sm text-muted">
+            Gemini free-tier quota is exhausted (HTTP 429). Wait a few minutes, reduce rapid swipes/refreshes,
+            or enable billing in{" "}
+            <a
+              href="https://aistudio.google.com/apikey"
+              className="font-semibold text-primary hover:text-primary-hover"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Google AI Studio
+            </a>
+            . Only one quest is generated per swipe now to save quota.
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-muted">
+            Gemini or the database failed. Check your terminal for{" "}
+            <code className="text-primary">[Gemini]</code> logs.
+          </p>
+        )}
         <Link
           href="/discover"
           className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
@@ -75,6 +101,7 @@ async function DiscoverContent() {
       </div>
 
       <QuestSwipeDeck
+        key={assignment.id}
         userQuestId={assignment.id}
         quest={{
           id: assignment.quest_id,

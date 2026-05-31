@@ -16,7 +16,9 @@ export function getSupabaseClientEnv() {
 }
 
 export function getGeminiApiKey(): string | undefined {
-  return process.env.GOOGLE_GEMINI_API_KEY;
+  const key = process.env.GOOGLE_GEMINI_API_KEY ?? process.env.GEMINI_API_KEY;
+  const trimmed = key?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed : undefined;
 }
 
 export function getAppUrl() {

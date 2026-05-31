@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { swipeLeftAction, swipeRightAction } from "@/app/actions/quests";
@@ -27,8 +26,16 @@ type QuestSwipeDeckProps = {
 
 const SWIPE_THRESHOLD = 120;
 
+function isNextRedirect(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "digest" in error &&
+    String((error as { digest?: string }).digest).startsWith("NEXT_REDIRECT")
+  );
+}
+
 export function QuestSwipeDeck({ userQuestId, quest }: QuestSwipeDeckProps) {
-  const router = useRouter();
   const { toast } = useToast();
   const [pending, startTransition] = useTransition();
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
@@ -46,24 +53,23 @@ export function QuestSwipeDeck({ userQuestId, quest }: QuestSwipeDeckProps) {
       }
       setExitDirection(direction);
       startTransition(async () => {
-        const formData = new FormData();
-        formData.set("userQuestId", userQuestId);
         try {
           if (direction === "right") {
-            await swipeRightAction(formData);
-            toast("Quest accepted!", "success");
+            await swipeRightAction(userQuestId);
           } else {
-            await swipeLeftAction(formData);
-            toast("Quest rejected.", "info");
+            await swipeLeftAction(userQuestId);
           }
-          router.refresh();
-        } catch {
-          toast("Something went wrong. Try again.", "error");
+        } catch (err) {
+          if (isNextRedirect(err)) {
+            throw err;
+          }
+          const message = err instanceof Error ? err.message : "Something went wrong.";
+          toast(message, "error");
           setExitDirection(null);
         }
       });
     },
-    [pending, userQuestId, router, toast],
+    [pending, userQuestId, toast],
   );
 
   function handleDragEnd(_: unknown, info: PanInfo) {

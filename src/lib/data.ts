@@ -1,7 +1,8 @@
 import type { User } from "@supabase/supabase-js";
+import { unstable_noStore as noStore } from "next/cache";
 import { DEFAULT_HOBBIES } from "@/lib/constants";
 import { levelFromXp, titleForLevel } from "@/lib/leveling";
-import { generateQuest, recommendBadges } from "@/lib/ai";
+import { generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
 import {
   FeedPost,
   FriendRequest,
@@ -167,30 +168,49 @@ function normalizeEmbeddedQuest(quests: unknown): (QuestDefinition & { id: strin
   return null;
 }
 
-export async function getDiscoveryQuest(userId: string): Promise<DiscoveryAssignment | null> {
+export type DiscoveryQuestResult = {
+  assignment: DiscoveryAssignment | null;
+  error?: GenerateQuestErrorReason;
+};
+
+const discoveryInflight = new Map<string, Promise<DiscoveryQuestResult>>();
+
+async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuestResult> {
+  noStore();
   const supabase = await createSupabaseServerClient();
 
-  const { data: generatedAssignment, error: fetchError } = await supabase
+  const { data: generatedRows, error: fetchError } = await supabase
     .from("user_quests")
-    .select("id, quest_id, status, quests(*)")
+    .select("id, quest_id, status, created_at, quests(*)")
     .eq("user_id", userId)
     .eq("status", "generated")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .order("created_at", { ascending: false });
 
   if (fetchError) {
-    console.error("[QuestSwipe] Failed to fetch generated assignment:", fetchError);
+    console.error("[QuestSwipe] Failed to fetch generated assignments:", fetchError);
   }
 
+  const rows = generatedRows ?? [];
+  if (rows.length > 1) {
+    const staleIds = rows.slice(1).map((r) => r.id);
+    console.warn("[QuestSwipe] Cleaning up duplicate generated quests:", staleIds);
+    await supabase
+      .from("user_quests")
+      .update({ status: "rejected", rejected_at: new Date().toISOString() })
+      .in("id", staleIds);
+  }
+
+  const generatedAssignment = rows[0];
   const existingQuest = normalizeEmbeddedQuest(generatedAssignment?.quests);
   if (generatedAssignment && existingQuest) {
-    console.log("[QuestSwipe] Found existing generated quest:", generatedAssignment.id);
+    console.log("[QuestSwipe] Serving existing generated quest:", generatedAssignment.id);
     return {
-      id: generatedAssignment.id,
-      quest_id: generatedAssignment.quest_id,
-      status: generatedAssignment.status,
-      quests: existingQuest,
+      assignment: {
+        id: generatedAssignment.id,
+        quest_id: generatedAssignment.quest_id,
+        status: generatedAssignment.status,
+        quests: existingQuest,
+      },
     };
   }
 
@@ -199,7 +219,7 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryAssign
     await supabase.from("user_quests").delete().eq("id", generatedAssignment.id);
   }
 
-  console.log("[QuestSwipe] No generated quest found, generating new quest for user:", userId);
+  console.log("[QuestSwipe] No generated quest — calling Gemini for user:", userId);
 
   const [profile, onboarding, history] = await Promise.all([
     getProfile(userId),
@@ -209,18 +229,17 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryAssign
 
   if (!profile) {
     console.error("[QuestSwipe] User profile not found");
-    return null;
+    return { assignment: null };
   }
 
   console.log("[QuestSwipe] Generating quest with context:", {
-    hobbies: onboarding.selectedHobbies,
+    hobbyCount: onboarding.selectedHobbies.length,
     level: profile.level,
     historyCount: history.previousQuestTitles.length,
-    completedCount: history.completedQuests.length,
     rejectedCount: history.rejectedQuests.length,
   });
 
-  const generated = await generateQuest({
+  const generation = await generateQuest({
     hobbies: onboarding.selectedHobbies,
     location: { latitude: onboarding.latitude, longitude: onboarding.longitude },
     level: profile.level,
@@ -229,7 +248,13 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryAssign
     rejectedQuests: history.rejectedQuests,
   });
 
-  console.log("[QuestSwipe] Generated safe quest:", generated.title);
+  if (!generation.ok) {
+    console.error("[QuestSwipe] Gemini failed:", generation.reason, generation.message ?? "");
+    return { assignment: null, error: generation.reason };
+  }
+
+  const generated = generation.quest;
+  console.log("[QuestSwipe] Persisting Gemini quest:", generated.title, `(${generation.model})`);
 
   const { data: insertedQuest, error: insertQuestError } = await supabase
     .from("quests")
@@ -248,7 +273,7 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryAssign
 
   if (insertQuestError || !insertedQuest) {
     console.error("[QuestSwipe] Failed to insert quest into database:", insertQuestError);
-    return null;
+    return { assignment: null, error: "api_error" };
   }
 
   console.log("[QuestSwipe] Inserted quest with ID:", (insertedQuest as { id: string }).id);
@@ -265,20 +290,35 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryAssign
 
   if (assignmentError) {
     console.error("[QuestSwipe] Failed to create user quest assignment:", assignmentError);
-    // If there's a unique constraint violation, it means this user already has this quest
-    // Delete the quest we just created and try again
-    if (assignmentError.code === '23505') {
-      console.log("[QuestSwipe] Unique constraint violation, deleting quest and retrying");
+    if (assignmentError.code === "23505") {
       await supabase.from("quests").delete().eq("id", (insertedQuest as { id: string }).id);
-      // Retry with updated history to avoid generating the same quest
-      return getDiscoveryQuest(userId);
+      const { data: parallelRow } = await supabase
+        .from("user_quests")
+        .select("id, quest_id, status, quests(*)")
+        .eq("user_id", userId)
+        .eq("status", "generated")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const parallelQuest = normalizeEmbeddedQuest(parallelRow?.quests);
+      if (parallelRow && parallelQuest) {
+        console.log("[QuestSwipe] Using parallel-created assignment:", parallelRow.id);
+        return {
+          assignment: {
+            id: parallelRow.id,
+            quest_id: parallelRow.quest_id,
+            status: parallelRow.status,
+            quests: parallelQuest,
+          },
+        };
+      }
     }
-    return null;
+    return { assignment: null, error: "api_error" };
   }
 
   if (!assignment) {
     console.error("[QuestSwipe] Failed to create user quest assignment");
-    return null;
+    return { assignment: null, error: "api_error" };
   }
 
   const assignmentQuest = normalizeEmbeddedQuest(assignment.quests);
@@ -290,35 +330,76 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryAssign
       .eq("id", (insertedQuest as { id: string }).id)
       .maybeSingle();
     if (!questRow) {
-      return null;
+      return { assignment: null, error: "api_error" };
     }
     return {
-      id: assignment.id,
-      quest_id: assignment.quest_id,
-      status: assignment.status,
-      quests: questRow as QuestDefinition & { id: string },
+      assignment: {
+        id: assignment.id,
+        quest_id: assignment.quest_id,
+        status: assignment.status,
+        quests: questRow as QuestDefinition & { id: string },
+      },
     };
   }
 
   console.log("[QuestSwipe] Created user quest assignment:", assignment.id);
   return {
-    id: assignment.id,
-    quest_id: assignment.quest_id,
-    status: assignment.status,
-    quests: assignmentQuest,
+    assignment: {
+      id: assignment.id,
+      quest_id: assignment.quest_id,
+      status: assignment.status,
+      quests: assignmentQuest,
+    },
   };
 }
 
+/** Deduplicates concurrent discovery requests (prevents double Gemini calls on swipe + refresh). */
+export async function getDiscoveryQuest(userId: string): Promise<DiscoveryQuestResult> {
+  const inflight = discoveryInflight.get(userId);
+  if (inflight) {
+    console.log("[QuestSwipe] Joining in-flight discovery request for user:", userId);
+    return inflight;
+  }
+
+  const promise = getDiscoveryQuestInternal(userId).finally(() => {
+    discoveryInflight.delete(userId);
+  });
+  discoveryInflight.set(userId, promise);
+  return promise;
+}
+
 export async function swipeQuest(userId: string, userQuestId: string, direction: "left" | "right") {
+  noStore();
   const supabase = await createSupabaseServerClient();
   const status = direction === "right" ? "accepted" : "rejected";
+
+  console.log("[QuestSwipe] swipeQuest", { userQuestId, direction, userId });
 
   const payload =
     direction === "right"
       ? { status, swiped_at: new Date().toISOString(), started_at: new Date().toISOString() }
       : { status, swiped_at: new Date().toISOString(), rejected_at: new Date().toISOString() };
 
-  await supabase.from("user_quests").update(payload).eq("id", userQuestId).eq("user_id", userId);
+  const { data, error } = await supabase
+    .from("user_quests")
+    .update(payload)
+    .eq("id", userQuestId)
+    .eq("user_id", userId)
+    .eq("status", "generated")
+    .select("id, status")
+    .maybeSingle();
+
+  if (error) {
+    console.error("[QuestSwipe] swipeQuest update error:", error);
+    throw new Error(`Failed to ${direction === "right" ? "accept" : "reject"} quest: ${error.message}`);
+  }
+
+  if (!data) {
+    console.error("[QuestSwipe] swipeQuest updated 0 rows for:", userQuestId);
+    throw new Error("Quest was already swiped or not found.");
+  }
+
+  console.log("[QuestSwipe] swipeQuest OK:", data.id, "->", data.status);
 }
 
 export async function listUserQuests(userId: string) {

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { abandonQuest, submitQuestCompletion, swipeQuest } from "@/lib/data";
 
@@ -15,25 +16,27 @@ async function currentUserId() {
   return user.id;
 }
 
-export async function swipeLeftAction(formData: FormData) {
+export async function swipeLeftAction(userQuestId: string) {
   const userId = await currentUserId();
-  const userQuestId = String(formData.get("userQuestId") ?? "");
   if (!userQuestId) {
-    return;
+    throw new Error("Missing quest id");
   }
+  console.log("[QuestSwipe] swipeLeftAction", userQuestId);
   await swipeQuest(userId, userQuestId, "left");
-  revalidatePath("/discover");
+  revalidatePath("/discover", "page");
+  redirect("/discover");
 }
 
-export async function swipeRightAction(formData: FormData) {
+export async function swipeRightAction(userQuestId: string) {
   const userId = await currentUserId();
-  const userQuestId = String(formData.get("userQuestId") ?? "");
   if (!userQuestId) {
-    return;
+    throw new Error("Missing quest id");
   }
+  console.log("[QuestSwipe] swipeRightAction", userQuestId);
   await swipeQuest(userId, userQuestId, "right");
-  revalidatePath("/discover");
-  revalidatePath("/quests");
+  revalidatePath("/discover", "page");
+  revalidatePath("/quests", "page");
+  redirect("/quests");
 }
 
 export async function uploadQuestCompletionAction(formData: FormData) {
