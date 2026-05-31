@@ -125,17 +125,73 @@ function getLocationHints(hobbies: string[], hasLocation: boolean): string {
   return hints || "interesting places in your area";
 }
 
-export async function generateQuest(context: QuestContext): Promise<QuestDefinition | null> {
-  console.log("[Gemini] Generating quest with context:", {
-    hobbies: context.hobbies,
-    level: context.level,
-    hasLocation: !!(context.location.latitude && context.location.longitude),
-    previousQuestsCount: context.previousQuestTitles.length,
-  });
+function pickPrimaryHobby(context: QuestContext): string {
+  const hobbies = context.hobbies.filter(Boolean);
+  if (hobbies.length === 0) {
+    return "Exploration";
+  }
+  const index = context.previousQuestTitles.length % hobbies.length;
+  return hobbies[index];
+}
 
+/** Safe local quest when Gemini is unavailable or returns invalid data. */
+export function buildFallbackQuest(context: QuestContext): QuestDefinition {
+  const mainHobby = pickPrimaryHobby(context);
+  const difficulty = clampDifficulty(context.level);
+  const baseXp = difficulty === "easy" ? 80 : difficulty === "medium" ? 130 : 220;
+  const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
+  const locationPhrase = hasLocation
+    ? "within walking distance of your current location"
+    : "in your neighborhood";
+  const locationHints = getLocationHints(context.hobbies, hasLocation);
+  const avoid = new Set([
+    ...context.previousQuestTitles,
+    ...(context.rejectedQuests ?? []),
+    ...(context.completedQuests ?? []),
+  ]);
+
+  const templates: Array<{ title: string; description: string; estimated_time: string }> = [
+    {
+      title: `${mainHobby} Neighborhood Discovery`,
+      description: `Explore ${locationHints} ${locationPhrase}. Take a photo and write two sentences about what you learned.`,
+      estimated_time: "30-45 min",
+    },
+    {
+      title: `${mainHobby} Mini Adventure`,
+      description: `Complete one small real-world task related to ${mainHobby} ${locationPhrase}. Share a photo and a one-paragraph reflection.`,
+      estimated_time: "45-60 min",
+    },
+    {
+      title: `Local ${mainHobby} Challenge`,
+      description: `Visit a nearby place connected to ${mainHobby}. Observe something new, document it, and note one takeaway for your journal.`,
+      estimated_time: "30 min",
+    },
+    {
+      title: `${mainHobby} Explorer Quest`,
+      description: `Find an interesting spot related to ${mainHobby} ${locationPhrase}. Spend at least 20 minutes there and capture what makes it unique.`,
+      estimated_time: "20-40 min",
+    },
+  ];
+
+  const chosen =
+    templates.find((t) => !avoid.has(t.title)) ??
+    templates[context.previousQuestTitles.length % templates.length];
+
+  return {
+    title: chosen.title,
+    description: chosen.description,
+    difficulty,
+    xp_reward: baseXp,
+    badge_reward: `${mainHobby} Explorer`,
+    estimated_time: chosen.estimated_time,
+    category: mainHobby,
+  };
+}
+
+async function generateQuestFromGemini(context: QuestContext): Promise<QuestDefinition | null> {
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
-    console.warn("[Gemini] No API key, quest generation skipped");
+    console.warn("[Gemini] No API key configured — will use fallback quest");
     return null;
   }
 
@@ -268,6 +324,34 @@ Generate a unique, creative quest that feels personal to the user's interests an
     console.error("[Gemini] Error generating quest:", error);
     return null;
   }
+}
+
+/**
+ * Generates a quest via Gemini when possible; always returns a safe quest (fallback if needed).
+ */
+export async function generateQuest(context: QuestContext): Promise<QuestDefinition> {
+  console.log("[QuestGen] Starting with context:", {
+    hobbies: context.hobbies,
+    level: context.level,
+    hasLocation: context.location.latitude !== null && context.location.longitude !== null,
+    historyCount: context.previousQuestTitles.length,
+  });
+
+  const fromGemini = await generateQuestFromGemini(context);
+  if (fromGemini && moderateQuest(fromGemini)) {
+    console.log("[QuestGen] Using Gemini quest:", fromGemini.title);
+    return fromGemini;
+  }
+
+  if (fromGemini && !moderateQuest(fromGemini)) {
+    console.warn("[QuestGen] Gemini quest failed moderation, using fallback");
+  } else if (!fromGemini) {
+    console.warn("[QuestGen] Gemini unavailable or failed, using fallback");
+  }
+
+  const fallback = buildFallbackQuest(context);
+  console.log("[QuestGen] Using fallback quest:", fallback.title);
+  return fallback;
 }
 
 export function moderateQuest(quest: QuestDefinition): boolean {

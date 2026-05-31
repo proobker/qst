@@ -1,7 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 import { DEFAULT_HOBBIES } from "@/lib/constants";
 import { levelFromXp, titleForLevel } from "@/lib/leveling";
-import { generateQuest, moderateQuest, recommendBadges } from "@/lib/ai";
+import { generateQuest, recommendBadges } from "@/lib/ai";
 import {
   FeedPost,
   FriendRequest,
@@ -143,10 +143,34 @@ async function getUserQuestHistory(userId: string): Promise<{
   };
 }
 
-export async function getDiscoveryQuest(userId: string) {
+type DiscoveryAssignment = {
+  id: string;
+  quest_id: string;
+  status: string;
+  quests: QuestDefinition & { id: string };
+};
+
+function normalizeEmbeddedQuest(quests: unknown): (QuestDefinition & { id: string }) | null {
+  if (!quests) {
+    return null;
+  }
+  if (Array.isArray(quests)) {
+    const first = quests[0];
+    if (!first || typeof first !== "object") {
+      return null;
+    }
+    return first as QuestDefinition & { id: string };
+  }
+  if (typeof quests === "object") {
+    return quests as QuestDefinition & { id: string };
+  }
+  return null;
+}
+
+export async function getDiscoveryQuest(userId: string): Promise<DiscoveryAssignment | null> {
   const supabase = await createSupabaseServerClient();
 
-  const { data: generatedAssignment } = await supabase
+  const { data: generatedAssignment, error: fetchError } = await supabase
     .from("user_quests")
     .select("id, quest_id, status, quests(*)")
     .eq("user_id", userId)
@@ -155,14 +179,24 @@ export async function getDiscoveryQuest(userId: string) {
     .limit(1)
     .maybeSingle();
 
-  if (generatedAssignment?.quests) {
+  if (fetchError) {
+    console.error("[QuestSwipe] Failed to fetch generated assignment:", fetchError);
+  }
+
+  const existingQuest = normalizeEmbeddedQuest(generatedAssignment?.quests);
+  if (generatedAssignment && existingQuest) {
     console.log("[QuestSwipe] Found existing generated quest:", generatedAssignment.id);
-    return generatedAssignment as unknown as {
-      id: string;
-      quest_id: string;
-      status: string;
-      quests: QuestDefinition & { id: string };
+    return {
+      id: generatedAssignment.id,
+      quest_id: generatedAssignment.quest_id,
+      status: generatedAssignment.status,
+      quests: existingQuest,
     };
+  }
+
+  if (generatedAssignment && !existingQuest) {
+    console.warn("[QuestSwipe] Removing orphan generated assignment:", generatedAssignment.id);
+    await supabase.from("user_quests").delete().eq("id", generatedAssignment.id);
   }
 
   console.log("[QuestSwipe] No generated quest found, generating new quest for user:", userId);
@@ -194,19 +228,10 @@ export async function getDiscoveryQuest(userId: string) {
     completedQuests: history.completedQuests,
     rejectedQuests: history.rejectedQuests,
   });
-  if (!generated) {
-    console.warn("[QuestSwipe] AI quest generation returned no quest");
-    return null;
-  }
-
-  if (!moderateQuest(generated)) {
-    console.warn("[QuestSwipe] Generated quest failed moderation");
-    return null;
-  }
 
   console.log("[QuestSwipe] Generated safe quest:", generated.title);
 
-  const { data: insertedQuest } = await supabase
+  const { data: insertedQuest, error: insertQuestError } = await supabase
     .from("quests")
     .insert({
       creator_ai: true,
@@ -221,8 +246,8 @@ export async function getDiscoveryQuest(userId: string) {
     .select("*")
     .single();
 
-  if (!insertedQuest) {
-    console.error("[QuestSwipe] Failed to insert quest into database");
+  if (insertQuestError || !insertedQuest) {
+    console.error("[QuestSwipe] Failed to insert quest into database:", insertQuestError);
     return null;
   }
 
@@ -256,12 +281,31 @@ export async function getDiscoveryQuest(userId: string) {
     return null;
   }
 
+  const assignmentQuest = normalizeEmbeddedQuest(assignment.quests);
+  if (!assignmentQuest) {
+    console.error("[QuestSwipe] Assignment created but quest embed missing, fetching quest row");
+    const { data: questRow } = await supabase
+      .from("quests")
+      .select("*")
+      .eq("id", (insertedQuest as { id: string }).id)
+      .maybeSingle();
+    if (!questRow) {
+      return null;
+    }
+    return {
+      id: assignment.id,
+      quest_id: assignment.quest_id,
+      status: assignment.status,
+      quests: questRow as QuestDefinition & { id: string },
+    };
+  }
+
   console.log("[QuestSwipe] Created user quest assignment:", assignment.id);
-  return assignment as unknown as {
-    id: string;
-    quest_id: string;
-    status: string;
-    quests: QuestDefinition & { id: string };
+  return {
+    id: assignment.id,
+    quest_id: assignment.quest_id,
+    status: assignment.status,
+    quests: assignmentQuest,
   };
 }
 

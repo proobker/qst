@@ -38,8 +38,18 @@ async function DiscoverContent() {
     console.error("[DiscoverPage] No quest assignment returned from getDiscoveryQuest");
     return (
       <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-xl font-semibold text-foreground">No quest available yet</h1>
-        <p className="mt-2 text-sm text-muted">Try refreshing the page to request another AI quest.</p>
+        <h1 className="text-xl font-semibold text-foreground">Could not load a quest</h1>
+        <p className="mt-2 text-sm text-muted">
+          Quest generation or database save failed. Check the server logs, confirm Supabase migrations are applied,
+          and ensure <code className="text-primary">GOOGLE_GEMINI_API_KEY</code> is set for AI quests (fallback
+          quests work without it).
+        </p>
+        <Link
+          href="/discover"
+          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+        >
+          Try again
+        </Link>
       </div>
     );
   }
