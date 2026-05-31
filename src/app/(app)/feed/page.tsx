@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { getFeed } from "@/lib/data";
 import { PostCard } from "@/components/post-card";
+import { FeedSkeleton } from "@/components/ui/skeleton";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export default async function FeedPage() {
+async function FeedContent() {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -20,7 +22,7 @@ export default async function FeedPage() {
       <div className="rounded-xl border border-border bg-surface p-6">
         <h1 className="text-2xl font-bold text-foreground">Feed</h1>
         <p className="mt-2 text-sm text-muted">
-          Quest completions from you and your friends. Like and approve to help verify adventures.
+          Quest completions from you and your friends. Like, approve, or edit your own posts.
         </p>
       </div>
 
@@ -39,9 +41,17 @@ export default async function FeedPage() {
         ) : null}
 
         {feed.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard key={post.id} post={post} currentUserId={user.id} />
         ))}
       </div>
     </div>
+  );
+}
+
+export default function FeedPage() {
+  return (
+    <Suspense fallback={<FeedSkeleton />}>
+      <FeedContent />
+    </Suspense>
   );
 }

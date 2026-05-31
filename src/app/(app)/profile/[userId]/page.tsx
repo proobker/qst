@@ -111,6 +111,11 @@ export default async function PublicProfilePage({
                   unoptimized
                   className="object-cover"
                 />
+                {post.edited_at ? (
+                  <span className="absolute bottom-1 right-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                    Edited
+                  </span>
+                ) : null}
               </div>
             ))}
           </div>

@@ -1,4 +1,7 @@
-import { abandonQuestAction, uploadQuestCompletionAction } from "@/app/actions/quests";
+import { Suspense } from "react";
+import { QuestUploadForm } from "@/components/quest-upload-form";
+import { QuestListSkeleton } from "@/components/ui/skeleton";
+import { abandonQuestAction } from "@/app/actions/quests";
 import { listUserQuests } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -13,7 +16,7 @@ type QuestRow = {
   };
 };
 
-export default async function QuestsPage() {
+async function QuestsContent() {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -29,7 +32,9 @@ export default async function QuestsPage() {
     <div className="space-y-6">
       <div className="rounded-xl border border-border bg-surface p-6">
         <h1 className="text-2xl font-bold text-foreground">Active and completed quests</h1>
-        <p className="mt-2 text-sm text-muted">Upload proof when done so friends can verify your completion.</p>
+        <p className="mt-2 text-sm text-muted">
+          Upload proof with the built-in photo editor so friends can verify your completion.
+        </p>
       </div>
 
       <div className="space-y-4">
@@ -40,7 +45,10 @@ export default async function QuestsPage() {
         ) : null}
 
         {quests.map((entry) => (
-          <article key={entry.id} className="rounded-xl border border-border bg-surface p-6">
+          <article
+            key={entry.id}
+            className="rounded-xl border border-border bg-surface p-6 transition-shadow hover:shadow-md hover:shadow-primary/5"
+          >
             <div className="mb-3 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
               <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
                 {entry.status}
@@ -55,26 +63,7 @@ export default async function QuestsPage() {
 
             {entry.status === "accepted" ? (
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <form action={uploadQuestCompletionAction} className="space-y-2 rounded-lg border border-border p-3">
-                  <input type="hidden" name="userQuestId" value={entry.id} />
-                  <label className="block text-xs font-semibold uppercase tracking-wide text-muted">Caption</label>
-                  <textarea
-                    required
-                    name="caption"
-                    placeholder="Explain what you did to complete this quest."
-                    className="min-h-24 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
-                  />
-                  <label className="block text-xs font-semibold uppercase tracking-wide text-muted">
-                    Upload photo
-                  </label>
-                  <input name="image" type="file" accept="image/*" className="block w-full text-sm text-muted" />
-                  <button
-                    type="submit"
-                    className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
-                  >
-                    Upload completion
-                  </button>
-                </form>
+                <QuestUploadForm userQuestId={entry.id} />
 
                 <form action={abandonQuestAction} className="rounded-lg border border-border p-3">
                   <input type="hidden" name="userQuestId" value={entry.id} />
@@ -102,5 +91,13 @@ export default async function QuestsPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function QuestsPage() {
+  return (
+    <Suspense fallback={<QuestListSkeleton />}>
+      <QuestsContent />
+    </Suspense>
   );
 }

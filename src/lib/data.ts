@@ -309,7 +309,7 @@ export async function getFeed(userId: string): Promise<FeedPost[]> {
   const { data } = await supabase
     .from("posts")
     .select(
-      "id,caption,image_url,created_at,user_id,quest_id,users(id,name,avatar),quests(id,title,difficulty,xp_reward,category),likes(id,user_id),approvals(id,user_id,vote)",
+      "id,caption,image_url,created_at,edited_at,edit_count,user_id,quest_id,users(id,name,avatar),quests(id,title,difficulty,xp_reward,category),likes(id,user_id),approvals(id,user_id,vote)",
     )
     .in("user_id", visibleUserIds)
     .order("created_at", { ascending: false });
@@ -327,6 +327,8 @@ export async function getFeed(userId: string): Promise<FeedPost[]> {
 
     return {
       ...post,
+      edited_at: (post.edited_at as string | null) ?? null,
+      edit_count: Number(post.edit_count ?? 0),
       likesCount: likes,
       approvalsCount: approvals.length,
       approvalPercent,
@@ -858,7 +860,7 @@ export async function getProfileSummary(userId: string): Promise<ProfileSummary>
       .eq("status", "completed"),
     supabase
       .from("posts")
-      .select("id,caption,image_url,created_at,quests(title)")
+      .select("id,caption,image_url,created_at,edited_at,edit_count,quests(title)")
       .eq("user_id", userId)
       .order("created_at", { ascending: false }),
     supabase
@@ -880,4 +882,101 @@ export async function getProfileSummary(userId: string): Promise<ProfileSummary>
     posts: (postsResult.data as Array<Record<string, unknown>> | null) ?? [],
     friendsCount: friendsResult.count ?? 0,
   };
+}
+
+function extractStoragePath(imageUrl: string): string | null {
+  const marker = "/quest-completions/";
+  const index = imageUrl.indexOf(marker);
+  if (index === -1) {
+    return null;
+  }
+  return imageUrl.slice(index + marker.length);
+}
+
+export async function updatePostImage(
+  userId: string,
+  postId: string,
+  file: File,
+  editMetadata: Record<string, unknown>,
+) {
+  const supabase = await createSupabaseServerClient();
+  const { data: post } = await supabase
+    .from("posts")
+    .select("id,user_id,image_url,caption,edit_count")
+    .eq("id", postId)
+    .maybeSingle();
+
+  if (!post || post.user_id !== userId) {
+    throw new Error("Post not found or not owned by user.");
+  }
+
+  await supabase.from("post_edit_history").insert({
+    post_id: postId,
+    editor_id: userId,
+    previous_image_url: post.image_url,
+    previous_caption: post.caption,
+    edit_metadata: editMetadata,
+  });
+
+  const existingPath = extractStoragePath(post.image_url);
+  const extension = file.name.split(".").pop() || "jpg";
+  const storagePath = existingPath ?? `${userId}/${postId}/edited-${Date.now()}.${extension}`;
+
+  const upload = await supabase.storage
+    .from("quest-completions")
+    .upload(storagePath, file, { upsert: true, contentType: file.type || "image/jpeg" });
+
+  if (upload.error) {
+    throw new Error(upload.error.message);
+  }
+
+  const { data: publicData } = supabase.storage.from("quest-completions").getPublicUrl(storagePath);
+  const cacheBustedUrl = `${publicData.publicUrl}?v=${Date.now()}`;
+
+  await supabase
+    .from("posts")
+    .update({
+      image_url: cacheBustedUrl,
+      edited_at: new Date().toISOString(),
+      edit_count: Number(post.edit_count ?? 0) + 1,
+    })
+    .eq("id", postId)
+    .eq("user_id", userId);
+}
+
+export async function rollbackPostEdit(userId: string, postId: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data: post } = await supabase
+    .from("posts")
+    .select("id,user_id")
+    .eq("id", postId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (!post) {
+    throw new Error("Post not found.");
+  }
+
+  const { data: history } = await supabase
+    .from("post_edit_history")
+    .select("id,previous_image_url,previous_caption")
+    .eq("post_id", postId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!history) {
+    throw new Error("No edit history to rollback.");
+  }
+
+  await supabase
+    .from("posts")
+    .update({
+      image_url: history.previous_image_url,
+      caption: history.previous_caption ?? "",
+      edited_at: new Date().toISOString(),
+    })
+    .eq("id", postId);
+
+  await supabase.from("post_edit_history").delete().eq("id", history.id);
 }

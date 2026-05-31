@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { swipeLeftAction, swipeRightAction } from "@/app/actions/quests";
+import { Suspense } from "react";
+import { QuestSwipeDeck } from "@/components/quest-swipe-deck";
+import { DiscoverSkeleton } from "@/components/ui/skeleton";
 import { getDiscoveryQuest, getOnboardingState } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export default async function DiscoverPage() {
+async function DiscoverContent() {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -47,45 +49,32 @@ export default async function DiscoverPage() {
     <div className="space-y-6">
       <div className="rounded-xl border border-border bg-surface p-6">
         <h1 className="text-2xl font-bold text-foreground">Discover a quest</h1>
-        <p className="mt-2 text-sm text-muted">Swipe right to accept. Swipe left to reject.</p>
+        <p className="mt-2 text-sm text-muted">
+          Swipe right to accept, left to reject. Drag the card or use arrow keys.
+        </p>
       </div>
 
-      <article className="rounded-2xl border border-border bg-surface p-6 shadow-lg shadow-primary/5">
-        <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
-          <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">{quest.category}</span>
-          <span className="rounded-full border border-border px-2 py-1">{quest.difficulty}</span>
-          <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-1 text-accent">{quest.xp_reward} XP</span>
-          <span className="rounded-full border border-border px-2 py-1">{quest.estimated_time}</span>
-        </div>
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">{quest.title}</h2>
-        <p className="mt-3 whitespace-pre-wrap text-muted">{quest.description}</p>
-        {quest.badge_reward ? (
-          <p className="mt-3 text-sm text-muted">
-            Badge reward: <span className="font-semibold text-accent">{quest.badge_reward}</span>
-          </p>
-        ) : null}
-
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <form action={swipeLeftAction}>
-            <input type="hidden" name="userQuestId" value={assignment.id} />
-            <button
-              type="submit"
-              className="w-full rounded-lg border border-border px-4 py-3 text-sm font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
-            >
-              Swipe left (reject)
-            </button>
-          </form>
-          <form action={swipeRightAction}>
-            <input type="hidden" name="userQuestId" value={assignment.id} />
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover"
-            >
-              Swipe right (accept)
-            </button>
-          </form>
-        </div>
-      </article>
+      <QuestSwipeDeck
+        userQuestId={assignment.id}
+        quest={{
+          id: assignment.quest_id,
+          title: quest.title,
+          description: quest.description,
+          difficulty: quest.difficulty,
+          xp_reward: quest.xp_reward,
+          estimated_time: quest.estimated_time,
+          category: quest.category,
+          badge_reward: quest.badge_reward,
+        }}
+      />
     </div>
+  );
+}
+
+export default function DiscoverPage() {
+  return (
+    <Suspense fallback={<DiscoverSkeleton />}>
+      <DiscoverContent />
+    </Suspense>
   );
 }

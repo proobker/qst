@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { AppNav } from "@/components/nav";
+import { ToastProvider } from "@/components/ui/toast";
 import { ensureUserProfile, getNotifications, getUnreadNotificationCount } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -25,9 +26,11 @@ export default async function AppLayout({
   ]);
 
   return (
-    <div className="min-h-screen bg-background pb-20 sm:pb-0">
-      <AppNav notifications={notifications} unreadCount={unreadCount} />
-      <main className="mx-auto w-full max-w-6xl px-4 py-6">{children}</main>
-    </div>
+    <ToastProvider>
+      <div className="min-h-screen bg-background pb-20 sm:pb-0">
+        <AppNav notifications={notifications} unreadCount={unreadCount} />
+        <main className="mx-auto w-full max-w-6xl px-4 py-6 page-enter">{children}</main>
+      </div>
+    </ToastProvider>
   );
 }

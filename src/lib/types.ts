@@ -59,6 +59,8 @@ export type FeedPost = {
   caption: string;
   image_url: string;
   created_at: string;
+  edited_at: string | null;
+  edit_count: number;
   user_id: string;
   quest_id: string;
   users: { id: string; name: string; avatar: string | null } | null;
@@ -68,6 +70,16 @@ export type FeedPost = {
   approvalPercent: number;
   likedByUser: boolean;
   votedByUser: boolean | null;
+};
+
+export type ImageEditMetadata = {
+  rotation: number;
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  sharpness: number;
+  filter: string;
+  crop: { x: number; y: number; width: number; height: number } | null;
 };
 
 export type ProfileSummary = {

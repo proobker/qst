@@ -1,432 +1,93 @@
-# qst - Real Life Adventure Game
+Analyze the entire codebase, architecture, database schema, components, routes, API endpoints, state management, and existing implementation before making any changes. Understand current functionality and reuse existing patterns wherever possible.
 
-## Vision
+Enhance the application while preserving all existing features, including authentication, profiles, friendships, quest generation, quest completion, approvals, badges, XP, levels, notifications, and social feeds.
 
-Turn real life into an RPG.
+## 1. Tinder-Style Quest Discovery
 
-Users receive AI-generated side quests based on:
-- Location
-- Hobbies
-- Interests
-- Previous activity
-
-Complete quests, upload proof, earn XP, gain badges, and level up.
-
-Inspired by:
-- Pokemon GO
-- Tinder
-- Facebook
-- RPG Games
-
----
-
-# MVP Features
-
-## Authentication
-
-### Google Login
-
-- Sign in with Google
-- Create account automatically
-- Store profile information
-
-Fields:
-
-- id
-- name
-- email
-- profile_picture
-- level
-- xp
-- badges
-- hobbies
-- location_enabled
-
----
-
-## Onboarding
-
-After first login:
-
-### Step 1
-
-Choose hobbies
-
-Examples:
-
-- Programming
-- Photography
-- Hiking
-- Fitness
-- Reading
-- Food
-- Art
-- Music
-- Volunteering
-- Entrepreneurship
-
-Store selected hobbies.
-
-### Step 2
-
-Request location permission.
-
-Store:
-
-- latitude
-- longitude
-
----
-
-## AI Quest Generation
-
-Generate quests using:
-
-- User hobbies
-- Current location
-- User level
-- Previous quests
-
-Example:
-
-Programming + Photography
-
-Quest:
-"Take 3 photos of technology improving daily life within 2km and explain each in one sentence."
-
-Quest Object:
-
-- title
-- description
-- difficulty
-- xp_reward
-- badge_reward
-- estimated_time
-- category
-
----
-
-## Tinder Style Quest Discovery
-
-Display one quest card at a time.
-
-### Right Swipe
-
-Accept quest.
-
-### Left Swipe
-
-Reject quest.
-
-Rejected quests are not shown again.
-
-Accepted quests move to active quests.
-
----
-
-## Active Quest Screen
-
-Shows:
-
-- Title
-- Description
-- XP
-- Difficulty
-- Status
-
-Buttons:
-
-- Upload Completion
-- Abandon Quest
-
----
-
-## Quest Completion
-
-User uploads:
-
-- Photo
-- Caption
-
-Create post.
-
-Status:
-
-Pending Approval
-
----
-
-## Social Feed
-
-Facebook-style feed.
-
-Post includes:
-
-- User
-- Quest
-- Photo
-- Caption
-- Likes
-- Approvals
-
-Friends can:
-
-- Like
-- Approve
-
----
-
-## Approval System
-
-Quest considered verified when:
-
-Approval Percentage >= 50%
-
-Formula:
-
-approved_users / total_voters * 100
-
-When approved:
-
-- XP awarded
-- Badge awarded
-- Quest marked completed
-
----
-
-## Level System
-
-Level 1 → Beginner
-Level 2 → Explorer
-Level 3 → Adventurer
-Level 4 → Hero
-Level 5 → Legend
-
-XP required per level.
-
-Example:
-
-Level 1 = 0 XP
-Level 2 = 100 XP
-Level 3 = 300 XP
-Level 4 = 700 XP
-Level 5 = 1500 XP
-
----
-
-## Friends System
-
-Users can:
-
-- Search users
-- Add friends
-- Remove friends
-- View profile
-
----
-
-## Profile Page
-
-Displays:
-
-- Profile Picture
-- Level
-- XP
-- Badges
-- Completed Quests
-- Quest Posts
-
----
-
-## Badge System
-
-Examples:
-
-Food Explorer
-Tech Explorer
-Photographer
-Nature Hunter
-Fitness Warrior
-
-Badges awarded by AI and rules.
-
----
-
-# AI Requirements
-
-## AI Quest Generator
-
-Input:
-
-- User hobbies
-- Location
-- User level
-- Quest history
-
-Output:
-
-{
- title,
- description,
- difficulty,
- xp_reward,
- badge,
- estimated_time
-}
+Replace the current Accept/Reject quest buttons with a true swipe-based experience.
 
 Requirements:
 
-- Never repeat recent quests
-- Scale difficulty with level
-- Use nearby locations
-- Be achievable in real life
-- Be safe
-- Avoid illegal activities
-- Avoid dangerous challenges
+* Swipe right to accept a quest.
+* Swipe left to reject a quest.
+* Smooth drag and release animations.
+* Mobile and desktop support.
+* Visual indicators while dragging:
 
----
+  * ✓ Accept when swiping right.
+  * ✕ Reject when swiping left.
+* Card stack UI with the next quest partially visible underneath.
+* Gesture-based interactions similar to Tinder.
+* Keyboard and accessibility support where appropriate.
+* Preserve all existing quest generation and quest assignment logic.
 
-## AI Moderation
+## 2. Advanced Post Image Editing
 
-Check generated quests.
+Add a complete image editing system both before publishing and after publishing.
 
-Reject:
+### Before Publishing
 
-- Dangerous
-- Illegal
-- Offensive
-- Unrealistic
+Users should be able to:
 
----
+* Crop images.
+* Rotate images.
+* Adjust brightness.
+* Adjust contrast.
+* Adjust saturation.
+* Adjust sharpness.
+* Apply a curated collection of modern filters.
+* Preview edits in real time.
+* Save the edited image as the final uploaded image.
 
-## AI Badge Engine
+### After Publishing
 
-Analyze completed quests.
+Add an "Edit Post" option available only to the post owner.
 
-Recommend:
+Users should be able to:
 
-- New badges
-- Achievement titles
-- Streak rewards
+* Reopen the image editor.
+* Modify previously uploaded images.
+* Crop images.
+* Rotate images.
+* Adjust brightness.
+* Adjust contrast.
+* Adjust saturation.
+* Adjust sharpness.
+* Apply filters.
+* Preview changes before saving.
 
----
+Requirements:
 
-# Database Tables
+* Update the existing post rather than creating a new one.
+* Preserve likes, approvals, comments, XP rewards, quest completion records, badges, timestamps, and social interactions.
+* Display an "Edited" indicator on modified posts.
+* Maintain edit history for rollback, moderation, and audit purposes.
+* Optimize storage by avoiding unnecessary image duplication.
+* Ensure only the post owner can edit their content.
 
-users
+## 3. User Experience Improvements
 
-- id
-- email
-- name
-- avatar
-- level
-- xp
-- created_at
+Improve overall polish and responsiveness.
 
-hobbies
+Requirements:
 
-- id
-- name
+* Loading states for image processing and uploads.
+* Skeleton loaders where appropriate.
+* Smooth page transitions and micro-animations.
+* Responsive mobile-first layouts.
+* Consistent styling across all pages.
+* Improved touch interactions.
+* Better feedback for uploads, approvals, edits, and quest actions.
+* Maintain existing performance standards.
 
-user_hobbies
+## Before Implementation
 
-- user_id
-- hobby_id
-
-quests
-
-- id
-- creator_ai
-- title
-- description
-- xp_reward
-- difficulty
-
-user_quests
-
-- id
-- user_id
-- quest_id
-- status
-
-posts
-
-- id
-- user_id
-- quest_id
-- image_url
-- caption
-- created_at
-
-likes
-
-- id
-- post_id
-- user_id
-
-approvals
-
-- id
-- post_id
-- user_id
-
-friendships
-
-- id
-- user_1
-- user_2
-
-badges
-
-- id
-- name
-- icon
-
-user_badges
-
-- user_id
-- badge_id
-
----
-
-# Tech Stack
-
-Frontend:
-- Next.js
-- TypeScript
-- TailwindCSS
-- shadcn/ui
-
-Backend:
-- Supabase
-
-Auth:
-- Google OAuth
-
-Storage:
-- Supabase Storage
-
-Database:
-- PostgreSQL
-
-Maps:
-- openstreetmaps
-
-AI:
-- Gemini API free tier
-
-Hosting:
-- Vercel
-
----
-
-# Future Features
-
-- Guilds
-- Team Quests
-- Local Leaderboards
-- Seasonal Events
-- AI NPC Guide
-- AR Challenges
-- Business Sponsored Quests
-- City-wide Treasure Hunts
+1. Review all existing files and architecture.
+2. Identify affected components, services, APIs, and database tables.
+3. Provide a concise implementation plan.
+4. Recommend any new libraries required.
+5. Explain potential migration requirements.
+6. Avoid breaking changes.
+7. Maintain backward compatibility with existing data and user accounts.
+8. Follow existing coding standards and project structure.
+9. Implement changes incrementally and safely.
