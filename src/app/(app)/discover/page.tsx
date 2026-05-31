@@ -35,6 +35,7 @@ async function DiscoverContent() {
 
   const assignment = await getDiscoveryQuest(user.id);
   if (!assignment) {
+    console.error("[DiscoverPage] No quest assignment returned from getDiscoveryQuest");
     return (
       <div className="rounded-xl border border-border bg-surface p-6">
         <h1 className="text-xl font-semibold text-foreground">No quest available yet</h1>
@@ -44,6 +45,15 @@ async function DiscoverContent() {
   }
 
   const quest = assignment.quests;
+  if (!quest) {
+    console.error("[DiscoverPage] Assignment exists but quest data is missing:", assignment);
+    return (
+      <div className="rounded-xl border border-border bg-surface p-6">
+        <h1 className="text-xl font-semibold text-foreground">Quest data error</h1>
+        <p className="mt-2 text-sm text-muted">Please refresh the page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
