@@ -20,26 +20,6 @@ function clampDifficulty(level: number): QuestDefinition["difficulty"] {
   return "hard";
 }
 
-function fallbackQuest(context: QuestContext): QuestDefinition {
-  const mainHobby = context.hobbies[0] ?? "Exploration";
-  const difficulty = clampDifficulty(context.level);
-  const baseXp = difficulty === "easy" ? 80 : difficulty === "medium" ? 130 : 220;
-
-  const locationHints = context.location.latitude && context.location.longitude
-    ? "near your current location"
-    : "in your neighborhood";
-
-  return {
-    title: `${mainHobby} Discovery Challenge`,
-    description: `Find one real-world place ${locationHints} connected to ${mainHobby.toLowerCase()}, capture a photo, and write a two-sentence reflection about what you discovered.`,
-    difficulty,
-    xp_reward: baseXp,
-    badge_reward: `${mainHobby} Explorer`,
-    estimated_time: "30-45 min",
-    category: mainHobby,
-  };
-}
-
 function tryParseJson(raw: string): unknown | null {
   try {
     return JSON.parse(raw);
@@ -88,8 +68,12 @@ function asTrimmedString(value: unknown): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
-function sanitizeQuest(input: Record<string, unknown>, context: QuestContext): QuestDefinition {
-  const fallback = fallbackQuest(context);
+function sanitizeQuest(input: Record<string, unknown>, context: QuestContext): QuestDefinition | null {
+  const title = asTrimmedString(input.title);
+  const description = asTrimmedString(input.description);
+  if (!title || !description) {
+    return null;
+  }
   const difficultyInput = asTrimmedString(input.difficulty);
   const difficulty = difficultyInput ?? clampDifficulty(context.level);
   const safeDifficulty: QuestDefinition["difficulty"] =
@@ -101,8 +85,8 @@ function sanitizeQuest(input: Record<string, unknown>, context: QuestContext): Q
   const xpReward = Number.isFinite(rawXp) ? Math.max(rawXp, 20) : baseXp;
 
   return {
-    title: asTrimmedString(input.title) || fallback.title,
-    description: asTrimmedString(input.description) || fallback.description,
+    title,
+    description,
     difficulty: safeDifficulty,
     xp_reward: xpReward,
     badge_reward: asTrimmedString(input.badge_reward),
@@ -141,7 +125,7 @@ function getLocationHints(hobbies: string[], hasLocation: boolean): string {
   return hints || "interesting places in your area";
 }
 
-export async function generateQuest(context: QuestContext): Promise<QuestDefinition> {
+export async function generateQuest(context: QuestContext): Promise<QuestDefinition | null> {
   console.log("[Gemini] Generating quest with context:", {
     hobbies: context.hobbies,
     level: context.level,
@@ -151,8 +135,8 @@ export async function generateQuest(context: QuestContext): Promise<QuestDefinit
 
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
-    console.log("[Gemini] No API key, using fallback");
-    return fallbackQuest(context);
+    console.warn("[Gemini] No API key, quest generation skipped");
+    return null;
   }
 
   const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
@@ -216,7 +200,12 @@ Generate a unique, creative quest that feels personal to the user's interests an
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          contents: [
+            { 
+              role: "user", 
+              parts: [{ text: prompt }] 
+            }
+          ],
           generationConfig: {
             responseMimeType: "application/json",
             responseSchema: {
@@ -232,7 +221,8 @@ Generate a unique, creative quest that feels personal to the user's interests an
                 category: { type: "STRING" },
               },
             },
-            temperature: 0.8,
+            // Lower temperature ensures compliance with the JSON Schema
+            temperature: 0.2, 
             maxOutputTokens: 1024,
           },
         }),
@@ -241,7 +231,7 @@ Generate a unique, creative quest that feels personal to the user's interests an
 
     if (!response.ok) {
       console.error("[Gemini] API request failed:", response.status, response.statusText);
-      return fallbackQuest(context);
+      return null;
     }
 
     const payload = (await response.json()) as {
@@ -256,23 +246,27 @@ Generate a unique, creative quest that feels personal to the user's interests an
         finishReason: candidate?.finishReason ?? null,
         blockReason: payload.promptFeedback?.blockReason ?? null,
       });
-      return fallbackQuest(context);
+      return null;
     }
 
     console.log("[Gemini] Raw response:", text.substring(0, 200));
     const parsed = extractJson(text);
     if (!isRecord(parsed)) {
-      console.warn("[Gemini] Response was not a valid JSON object, using fallback");
-      return fallbackQuest(context);
+      console.warn("[Gemini] Response was not a valid JSON object");
+      return null;
     }
 
     const sanitized = sanitizeQuest(parsed, context);
+    if (!sanitized) {
+      console.warn("[Gemini] Response JSON missing required quest fields");
+      return null;
+    }
 
     console.log("[Gemini] Generated quest:", sanitized.title);
     return sanitized;
   } catch (error) {
     console.error("[Gemini] Error generating quest:", error);
-    return fallbackQuest(context);
+    return null;
   }
 }
 

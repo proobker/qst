@@ -194,29 +194,29 @@ export async function getDiscoveryQuest(userId: string) {
     completedQuests: history.completedQuests,
     rejectedQuests: history.rejectedQuests,
   });
+  if (!generated) {
+    console.warn("[QuestSwipe] AI quest generation returned no quest");
+    return null;
+  }
 
-  const safeQuest = moderateQuest(generated) ? generated : await generateQuest({
-    hobbies: ["Exploration"],
-    location: { latitude: onboarding.latitude, longitude: onboarding.longitude },
-    level: 1,
-    previousQuestTitles: history.previousQuestTitles,
-    completedQuests: history.completedQuests,
-    rejectedQuests: history.rejectedQuests,
-  });
+  if (!moderateQuest(generated)) {
+    console.warn("[QuestSwipe] Generated quest failed moderation");
+    return null;
+  }
 
-  console.log("[QuestSwipe] Generated safe quest:", safeQuest.title);
+  console.log("[QuestSwipe] Generated safe quest:", generated.title);
 
   const { data: insertedQuest } = await supabase
     .from("quests")
     .insert({
       creator_ai: true,
-      title: safeQuest.title,
-      description: safeQuest.description,
-      difficulty: safeQuest.difficulty,
-      xp_reward: safeQuest.xp_reward,
-      badge_reward: safeQuest.badge_reward,
-      estimated_time: safeQuest.estimated_time,
-      category: safeQuest.category,
+      title: generated.title,
+      description: generated.description,
+      difficulty: generated.difficulty,
+      xp_reward: generated.xp_reward,
+      badge_reward: generated.badge_reward,
+      estimated_time: generated.estimated_time,
+      category: generated.category,
     })
     .select("*")
     .single();
