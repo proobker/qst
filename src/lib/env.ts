@@ -21,6 +21,12 @@ export function getGeminiApiKey(): string | undefined {
   return trimmed && trimmed.length > 0 ? trimmed : undefined;
 }
 
+/** Optional override, e.g. gemini-2.5-flash-lite */
+export function getGeminiModelOverride(): string | undefined {
+  const model = process.env.GEMINI_MODEL?.trim();
+  return model && model.length > 0 ? model : undefined;
+}
+
 export function getAppUrl() {
   return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 }

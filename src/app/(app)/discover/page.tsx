@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { QuestSwipeDeck } from "@/components/quest-swipe-deck";
 import { DiscoverSkeleton } from "@/components/ui/skeleton";
+import { isGeminiInCooldown, getGeminiCooldownRemainingMs } from "@/lib/ai";
 import { getGeminiApiKey } from "@/lib/env";
 import { getDiscoveryQuest, getOnboardingState } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -52,17 +53,7 @@ async function DiscoverContent() {
           </p>
         ) : error === "rate_limited" ? (
           <p className="mt-2 text-sm text-muted">
-            Gemini free-tier quota is exhausted (HTTP 429). Wait a few minutes, reduce rapid swipes/refreshes,
-            or enable billing in{" "}
-            <a
-              href="https://aistudio.google.com/apikey"
-              className="font-semibold text-primary hover:text-primary-hover"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Google AI Studio
-            </a>
-            . Only one quest is generated per swipe now to save quota.
+            Gemini free-tier quota is exhausted (HTTP 429). Wait a few minutes and reduce rapid swipes/refreshes
           </p>
         ) : (
           <p className="mt-2 text-sm text-muted">
@@ -91,6 +82,9 @@ async function DiscoverContent() {
     );
   }
 
+  const geminiCooldown = isGeminiInCooldown();
+  const cooldownMinutes = Math.ceil(getGeminiCooldownRemainingMs() / 60_000);
+
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-border bg-surface p-6">
@@ -98,6 +92,11 @@ async function DiscoverContent() {
         <p className="mt-2 text-sm text-muted">
           Swipe right to accept, left to reject. Drag the card or use arrow keys.
         </p>
+        {geminiCooldown ? (
+          <p className="mt-3 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-xs text-accent">
+            Gemini quota is resting (~{cooldownMinutes} min). Quests use the offline builder until API limits reset.
+          </p>
+        ) : null}
       </div>
 
       <QuestSwipeDeck

@@ -1,4 +1,5 @@
-import { getGeminiApiKey } from "@/lib/env";
+import { GoogleGenAI } from "@google/genai";
+import { getGeminiApiKey, getGeminiModelOverride } from "@/lib/env";
 import { QuestDefinition } from "@/lib/types";
 
 export type QuestContext = {
@@ -13,18 +14,33 @@ export type QuestContext = {
 export type GenerateQuestErrorReason = "missing_api_key" | "rate_limited" | "api_error" | "invalid_response";
 
 export type GenerateQuestResult =
-  | { ok: true; quest: QuestDefinition; model: string }
+  | { ok: true; quest: QuestDefinition; model: string; offline?: boolean }
   | { ok: false; reason: GenerateQuestErrorReason; message?: string };
 
-/** Models tried in order (first with quota wins). */
+/** Valid v1beta generateContent models (no deprecated 1.5 names). */
 const GEMINI_MODELS = [
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-flash",
   "gemini-2.0-flash-lite",
-  "gemini-1.5-flash-8b",
-  "gemini-1.5-flash",
   "gemini-2.0-flash",
 ] as const;
 
 const MAX_HOBBIES_IN_PROMPT = 5;
+const RATE_LIMIT_COOLDOWN_MS = 120_000;
+
+let geminiCooldownUntil = 0;
+
+export function isGeminiInCooldown(): boolean {
+  return Date.now() < geminiCooldownUntil;
+}
+
+export function getGeminiCooldownRemainingMs(): number {
+  return Math.max(0, geminiCooldownUntil - Date.now());
+}
+
+function markRateLimited() {
+  geminiCooldownUntil = Date.now() + RATE_LIMIT_COOLDOWN_MS;
+}
 
 function clampDifficulty(level: number): QuestDefinition["difficulty"] {
   if (level <= 2) {
@@ -127,29 +143,16 @@ function getLocationHints(hobbies: string[], hasLocation: boolean): string {
   }
 
   const hobbyLocationMap: Record<string, string> = {
-    Photography: "landmarks, viewpoints, architecture, street art, or scenic spots",
-    "Film Photography": "landmarks, viewpoints, architecture, street art, or scenic spots",
-    "Drone Photography": "landmarks, viewpoints, architecture, street art, or scenic spots",
-    Food: "cafes, restaurants, food markets, bakeries, or local eateries",
-    Fitness: "parks, walking trails, gyms, outdoor exercise areas, or sports facilities",
-    Technology: "tech stores, maker spaces, coworking spots, or tech events",
-    Reading: "libraries, bookstores, study cafes, or quiet reading spots",
-    Art: "galleries, museums, street art, art supply stores, or creative spaces",
-    Painting: "galleries, museums, street art, art supply stores, or creative spaces",
-    Music: "music venues, instrument stores, performance spaces, or music schools",
-    Hiking: "trails, nature reserves, parks, or scenic viewpoints",
-    Backpacking: "trails, nature reserves, parks, or scenic viewpoints",
-    Camping: "trails, nature reserves, parks, or scenic viewpoints",
-    Travel: "tourist attractions, historical sites, cultural landmarks, or hidden gems",
-    "Adventure Travel": "tourist attractions, historical sites, cultural landmarks, or hidden gems",
-    "Local Exploration": "interesting local spots, neighborhoods, or hidden gems",
-    Volunteering: "community centers, charity shops, animal shelters, or local NGOs",
-    Entrepreneurship: "coworking spaces, business incubators, networking events, or startup hubs",
-    Programming: "tech meetups, hackathons, coworking spaces, or tech conferences",
-    Arduino: "maker spaces, hardware stores, or community workshops",
-    Gaming: "game stores, esports venues, gaming cafes, or arcades",
-    "PC Gaming": "game stores, esports venues, gaming cafes, or arcades",
-    YouTube: "interesting local spots worth filming or documenting",
+    Photography: "landmarks, viewpoints, or scenic spots",
+    "Film Photography": "landmarks, viewpoints, or scenic spots",
+    Food: "cafes, restaurants, or local eateries",
+    Fitness: "parks, walking trails, or outdoor areas",
+    Hiking: "trails, parks, or nature spots",
+    Reading: "libraries or bookstores",
+    Art: "galleries, museums, or creative spaces",
+    Music: "music venues or performance spaces",
+    Programming: "coworking spaces or tech meetups",
+    Gaming: "game stores or gaming cafes",
   };
 
   const hints = hobbies
@@ -173,87 +176,141 @@ function buildPrompt(context: QuestContext): string {
   const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
   const locationHints = getLocationHints(hobbies, hasLocation);
 
-  return `
-You are a quest generator for a life-RPG app that turns real life into an adventure.
+  return `Generate one real-world RPG quest as JSON.
+Hobbies: ${hobbies.join(", ") || "exploration"}
+Level: ${context.level}
+Location: ${hasLocation ? `${context.location.latitude},${context.location.longitude}` : "local area"}
+Nearby: ${locationHints}
+Avoid titles: ${context.previousQuestTitles.slice(0, 5).join(" | ") || "none"}
+Rejected: ${context.rejectedQuests?.slice(0, 4).join(" | ") || "none"}
+Safe, legal, public, one session.
+JSON keys: title, description, difficulty (easy|medium|hard), xp_reward, badge_reward, estimated_time, category`;
+}
 
-Generate ONE personalized, location-aware quest as JSON.
+/** Used only when Gemini quota is exhausted so Discover stays usable. */
+export function buildOfflineQuest(context: QuestContext): QuestDefinition {
+  const hobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
+  const mainHobby = hobbies[0] ?? "Exploration";
+  const difficulty = clampDifficulty(context.level);
+  const baseXp = difficulty === "easy" ? 80 : difficulty === "medium" ? 130 : 220;
+  const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
+  const place = hasLocation ? "within walking distance" : "in your neighborhood";
+  const avoid = new Set([
+    ...context.previousQuestTitles,
+    ...(context.rejectedQuests ?? []),
+  ]);
 
-USER CONTEXT:
-- Hobbies (focus on these): ${hobbies.join(", ") || "General exploration"}
-- Level: ${context.level}
-- Location: ${hasLocation ? `lat=${context.location.latitude}, lon=${context.location.longitude}` : "general local area"}
-- Nearby places: ${locationHints}
+  const templates = [
+    {
+      title: `${mainHobby} Local Discovery`,
+      description: `Visit a nearby spot related to ${mainHobby} ${place}. Take a photo and write two sentences about what you learned.`,
+      estimated_time: "30-45 min",
+    },
+    {
+      title: `${mainHobby} Mini Challenge`,
+      description: `Complete a small real-world task connected to ${mainHobby} ${place}. Document it with a photo and a short reflection.`,
+      estimated_time: "45 min",
+    },
+  ];
 
-AVOID REPEATING:
-- Seen: ${context.previousQuestTitles.slice(0, 6).join(" | ") || "none"}
-- Rejected: ${context.rejectedQuests?.slice(0, 5).join(" | ") || "none"}
+  const chosen = templates.find((t) => !avoid.has(t.title)) ?? templates[0];
 
-DIFFICULTY: Level 1-2 easy (80-100 XP), 3-4 medium (120-180 XP), 5+ hard (200-300 XP).
+  return {
+    title: chosen.title,
+    description: chosen.description,
+    difficulty,
+    xp_reward: baseXp,
+    badge_reward: `${mainHobby} Explorer`,
+    estimated_time: chosen.estimated_time,
+    category: mainHobby,
+  };
+}
 
-SAFETY: Legal, safe, public, single session. No weapons, drugs, trespass, illegal acts.
+function isRateLimitError(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+  const err = error as { status?: number; message?: string };
+  if (err.status === 429) {
+    return true;
+  }
+  const msg = String(err.message ?? error).toLowerCase();
+  return msg.includes("429") || msg.includes("quota") || msg.includes("rate limit");
+}
 
-OUTPUT JSON only:
-{"title":"","description":"","difficulty":"easy|medium|hard","xp_reward":0,"badge_reward":null,"estimated_time":"","category":""}
-`.trim();
+function isModelNotFoundError(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+  const err = error as { status?: number; message?: string };
+  if (err.status === 404) {
+    return true;
+  }
+  return String(err.message ?? error).toLowerCase().includes("not found");
 }
 
 async function callGeminiModel(
-  apiKey: string,
+  client: GoogleGenAI,
   model: string,
   prompt: string,
-): Promise<{ ok: true; text: string } | { ok: false; status: number; body: string }> {
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          temperature: 0.7,
-          maxOutputTokens: 768,
-        },
-      }),
-    },
-  );
-
-  const body = await response.text();
-  if (!response.ok) {
-    return { ok: false, status: response.status, body };
-  }
-
+): Promise<{ ok: true; text: string } | { ok: false; rateLimited: boolean; notFound: boolean; message: string }> {
   try {
-    const payload = JSON.parse(body) as {
-      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-      error?: { message?: string };
-    };
-    if (payload.error) {
-      return { ok: false, status: 500, body: payload.error.message ?? body };
-    }
-    const text = payload.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+    const response = await client.models.generateContent({
+      model,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        temperature: 0.7,
+        maxOutputTokens: 768,
+      },
+    });
+
+    const text = response.text ?? "";
     if (!text) {
-      return { ok: false, status: 500, body: "Empty candidate" };
+      return { ok: false, rateLimited: false, notFound: false, message: "Empty response" };
     }
     return { ok: true, text };
-  } catch {
-    return { ok: false, status: 500, body };
+  } catch (error) {
+    return {
+      ok: false,
+      rateLimited: isRateLimitError(error),
+      notFound: isModelNotFoundError(error),
+      message: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
+function resolveModelsToTry(): string[] {
+  const override = getGeminiModelOverride();
+  if (override) {
+    return [override];
+  }
+  return [...GEMINI_MODELS];
+}
+
 /**
- * Generates a quest using Gemini only.
+ * Generates a quest via Gemini. On quota exhaustion, returns an offline quest so the app keeps working.
  */
 export async function generateQuest(context: QuestContext): Promise<GenerateQuestResult> {
   const apiKey = getGeminiApiKey();
   const promptHobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
+
+  if (isGeminiInCooldown()) {
+    const remainingSec = Math.ceil(getGeminiCooldownRemainingMs() / 1000);
+    console.warn(`[Gemini] In cooldown (${remainingSec}s left) — using offline quest builder`);
+    return {
+      ok: true,
+      quest: buildOfflineQuest(context),
+      model: "offline",
+      offline: true,
+    };
+  }
 
   console.log("[Gemini] generateQuest start", {
     apiKeyConfigured: Boolean(apiKey),
     hobbiesInPrompt: promptHobbies,
     totalHobbies: context.hobbies.length,
     level: context.level,
-    hasLocation: context.location.latitude !== null && context.location.longitude !== null,
   });
 
   if (!apiKey) {
@@ -261,37 +318,38 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
     return { ok: false, reason: "missing_api_key" };
   }
 
+  const client = new GoogleGenAI({ apiKey });
   const prompt = buildPrompt(context);
-  let lastRateLimit = false;
+  const models = resolveModelsToTry();
+  let sawRateLimit = false;
 
-  for (const model of GEMINI_MODELS) {
+  for (const model of models) {
     console.log(`[Gemini] Trying model: ${model}`);
-    const result = await callGeminiModel(apiKey, model, prompt);
+    const result = await callGeminiModel(client, model, prompt);
 
     if (!result.ok) {
-      if (result.status === 429) {
-        lastRateLimit = true;
-        console.warn(`[Gemini] ${model} rate limited (429), trying next model...`);
+      if (result.rateLimited) {
+        sawRateLimit = true;
+        console.warn(`[Gemini] ${model} rate limited — trying next model`);
         continue;
       }
-      console.error(`[Gemini] ${model} failed:`, result.status, result.body.slice(0, 300));
+      if (result.notFound) {
+        console.warn(`[Gemini] ${model} not found (404) — skipping`);
+        continue;
+      }
+      console.error(`[Gemini] ${model} failed:`, result.message.slice(0, 200));
       continue;
     }
 
     const parsed = extractJson(result.text);
     if (!isRecord(parsed)) {
-      console.warn(`[Gemini] ${model} returned unparseable JSON`);
+      console.warn(`[Gemini] ${model} unparseable JSON`);
       continue;
     }
 
     const sanitized = sanitizeQuest(parsed, context);
-    if (!sanitized) {
-      console.warn(`[Gemini] ${model} JSON missing required fields`);
-      continue;
-    }
-
-    if (!moderateQuest(sanitized)) {
-      console.warn(`[Gemini] ${model} quest failed moderation`);
+    if (!sanitized || !moderateQuest(sanitized)) {
+      console.warn(`[Gemini] ${model} invalid or failed moderation`);
       continue;
     }
 
@@ -299,16 +357,19 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
     return { ok: true, quest: sanitized, model };
   }
 
-  if (lastRateLimit) {
-    console.error("[Gemini] All models rate limited — wait or enable billing on Google AI Studio");
+  if (sawRateLimit) {
+    markRateLimited();
+    console.warn("[Gemini] All models rate limited — using offline quest builder until cooldown resets");
     return {
-      ok: false,
-      reason: "rate_limited",
-      message: "Gemini free-tier quota exceeded. Wait a few minutes or check https://ai.google.dev/gemini-api/docs/rate-limits",
+      ok: true,
+      quest: buildOfflineQuest(context),
+      model: "offline",
+      offline: true,
     };
   }
 
-  return { ok: false, reason: "api_error", message: "All Gemini models failed to generate a quest." };
+  console.error("[Gemini] All models failed");
+  return { ok: false, reason: "api_error", message: "Could not generate a quest from any Gemini model." };
 }
 
 export function moderateQuest(quest: QuestDefinition): boolean {

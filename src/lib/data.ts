@@ -254,7 +254,11 @@ async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuest
   }
 
   const generated = generation.quest;
-  console.log("[QuestSwipe] Persisting Gemini quest:", generated.title, `(${generation.model})`);
+  if (generation.offline) {
+    console.warn("[QuestSwipe] Persisting offline quest (Gemini quota/cooldown):", generated.title);
+  } else {
+    console.log("[QuestSwipe] Persisting Gemini quest:", generated.title, `(${generation.model})`);
+  }
 
   const { data: insertedQuest, error: insertQuestError } = await supabase
     .from("quests")
