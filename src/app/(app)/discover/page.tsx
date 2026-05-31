@@ -16,14 +16,14 @@ export default async function DiscoverPage() {
   const onboarding = await getOnboardingState(user.id);
   if (!onboarding.complete) {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
-        <h1 className="text-xl font-semibold text-amber-900">Finish onboarding first</h1>
-        <p className="mt-2 text-sm text-amber-800">
+      <div className="rounded-xl border border-accent/40 bg-accent/10 p-6">
+        <h1 className="text-xl font-semibold text-accent">Finish onboarding first</h1>
+        <p className="mt-2 text-sm text-muted">
           We need your hobbies and location to generate relevant real-world quests.
         </p>
         <Link
           href="/onboarding"
-          className="mt-4 inline-flex rounded-lg bg-amber-900 px-4 py-2 text-sm font-semibold text-white"
+          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
         >
           Complete onboarding
         </Link>
@@ -34,9 +34,9 @@ export default async function DiscoverPage() {
   const assignment = await getDiscoveryQuest(user.id);
   if (!assignment) {
     return (
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <h1 className="text-xl font-semibold text-zinc-900">No quest available yet</h1>
-        <p className="mt-2 text-sm text-zinc-600">Try refreshing the page to request another AI quest.</p>
+      <div className="rounded-xl border border-border bg-surface p-6">
+        <h1 className="text-xl font-semibold text-foreground">No quest available yet</h1>
+        <p className="mt-2 text-sm text-muted">Try refreshing the page to request another AI quest.</p>
       </div>
     );
   }
@@ -45,23 +45,23 @@ export default async function DiscoverPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <h1 className="text-2xl font-semibold text-zinc-900">Discover a quest</h1>
-        <p className="mt-2 text-sm text-zinc-600">Swipe right to accept. Swipe left to reject.</p>
+      <div className="rounded-xl border border-border bg-surface p-6">
+        <h1 className="text-2xl font-bold text-foreground">Discover a quest</h1>
+        <p className="mt-2 text-sm text-muted">Swipe right to accept. Swipe left to reject.</p>
       </div>
 
-      <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
-          <span className="rounded-full border border-zinc-200 px-2 py-1">{quest.category}</span>
-          <span className="rounded-full border border-zinc-200 px-2 py-1">{quest.difficulty}</span>
-          <span className="rounded-full border border-zinc-200 px-2 py-1">{quest.xp_reward} XP</span>
-          <span className="rounded-full border border-zinc-200 px-2 py-1">{quest.estimated_time}</span>
+      <article className="rounded-2xl border border-border bg-surface p-6 shadow-lg shadow-primary/5">
+        <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
+          <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">{quest.category}</span>
+          <span className="rounded-full border border-border px-2 py-1">{quest.difficulty}</span>
+          <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-1 text-accent">{quest.xp_reward} XP</span>
+          <span className="rounded-full border border-border px-2 py-1">{quest.estimated_time}</span>
         </div>
-        <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">{quest.title}</h2>
-        <p className="mt-3 whitespace-pre-wrap text-zinc-700">{quest.description}</p>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">{quest.title}</h2>
+        <p className="mt-3 whitespace-pre-wrap text-muted">{quest.description}</p>
         {quest.badge_reward ? (
-          <p className="mt-3 text-sm text-zinc-600">
-            Badge reward: <span className="font-semibold text-zinc-900">{quest.badge_reward}</span>
+          <p className="mt-3 text-sm text-muted">
+            Badge reward: <span className="font-semibold text-accent">{quest.badge_reward}</span>
           </p>
         ) : null}
 
@@ -70,7 +70,7 @@ export default async function DiscoverPage() {
             <input type="hidden" name="userQuestId" value={assignment.id} />
             <button
               type="submit"
-              className="w-full rounded-lg border border-zinc-300 px-4 py-3 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50"
+              className="w-full rounded-lg border border-border px-4 py-3 text-sm font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
             >
               Swipe left (reject)
             </button>
@@ -79,7 +79,7 @@ export default async function DiscoverPage() {
             <input type="hidden" name="userQuestId" value={assignment.id} />
             <button
               type="submit"
-              className="w-full rounded-lg bg-zinc-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800"
+              className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover"
             >
               Swipe right (accept)
             </button>

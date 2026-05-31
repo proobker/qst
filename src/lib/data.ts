@@ -1,8 +1,16 @@
 import type { User } from "@supabase/supabase-js";
 import { DEFAULT_HOBBIES } from "@/lib/constants";
-import { levelFromXp } from "@/lib/leveling";
+import { levelFromXp, titleForLevel } from "@/lib/leveling";
 import { generateQuest, moderateQuest, recommendBadges } from "@/lib/ai";
-import { QuestDefinition, UserProfile } from "@/lib/types";
+import {
+  FeedPost,
+  FriendRequest,
+  FriendStatus,
+  Notification,
+  ProfileSummary,
+  QuestDefinition,
+  UserProfile,
+} from "@/lib/types";
 import { percentFromVotes } from "@/lib/utils";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -35,6 +43,11 @@ export async function getProfile(userId: string): Promise<UserProfile | null> {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.from("users").select("*").eq("id", userId).maybeSingle();
   return (data as UserProfile | null) ?? null;
+}
+
+export async function updateProfileBio(userId: string, bio: string) {
+  const supabase = await createSupabaseServerClient();
+  await supabase.from("users").update({ bio: bio.trim() || null, updated_at: new Date().toISOString() }).eq("id", userId);
 }
 
 export async function listHobbies(): Promise<Array<{ id: number; name: string }>> {
@@ -130,7 +143,7 @@ export async function getDiscoveryQuest(userId: string) {
     .maybeSingle();
 
   if (generatedAssignment?.quests) {
-    return generatedAssignment as {
+    return generatedAssignment as unknown as {
       id: string;
       quest_id: string;
       status: string;
@@ -191,7 +204,7 @@ export async function getDiscoveryQuest(userId: string) {
     .select("id, quest_id, status, quests(*)")
     .single();
 
-  return assignment as {
+  return assignment as unknown as {
     id: string;
     quest_id: string;
     status: string;
@@ -276,13 +289,29 @@ export async function submitQuestCompletion(
     .eq("user_id", userId);
 }
 
-export async function getFeed(userId: string) {
+async function getFriendIds(userId: string): Promise<string[]> {
   const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("friendships")
+    .select("user_1,user_2")
+    .or(`user_1.eq.${userId},user_2.eq.${userId}`);
+
+  return ((data as Array<{ user_1: string; user_2: string }> | null) ?? []).map((row) =>
+    row.user_1 === userId ? row.user_2 : row.user_1,
+  );
+}
+
+export async function getFeed(userId: string): Promise<FeedPost[]> {
+  const supabase = await createSupabaseServerClient();
+  const friendIds = await getFriendIds(userId);
+  const visibleUserIds = [userId, ...friendIds];
+
   const { data } = await supabase
     .from("posts")
     .select(
       "id,caption,image_url,created_at,user_id,quest_id,users(id,name,avatar),quests(id,title,difficulty,xp_reward,category),likes(id,user_id),approvals(id,user_id,vote)",
     )
+    .in("user_id", visibleUserIds)
     .order("created_at", { ascending: false });
 
   const posts = (data as Array<Record<string, unknown>> | null) ?? [];
@@ -291,9 +320,9 @@ export async function getFeed(userId: string) {
     const approvals = (post.approvals as Array<{ user_id: string; vote: boolean }> | undefined) ?? [];
     const approved = approvals.filter((vote) => vote.vote).length;
     const approvalPercent = percentFromVotes(approved, approvals.length);
-    const likedByUser = approvals.some(() => false)
-      ? false
-      : ((post.likes as Array<{ user_id: string }> | undefined) ?? []).some((like) => like.user_id === userId);
+    const likedByUser = ((post.likes as Array<{ user_id: string }> | undefined) ?? []).some(
+      (like) => like.user_id === userId,
+    );
     const votedByUser = approvals.find((vote) => vote.user_id === userId) ?? null;
 
     return {
@@ -303,7 +332,30 @@ export async function getFeed(userId: string) {
       approvalPercent,
       likedByUser,
       votedByUser: votedByUser?.vote ?? null,
-    };
+    } as FeedPost;
+  });
+}
+
+async function createNotification(payload: {
+  userId: string;
+  type: Notification["type"];
+  actorId?: string | null;
+  entityId?: string | null;
+  entityType?: string | null;
+  message: string;
+}) {
+  if (payload.actorId && payload.actorId === payload.userId) {
+    return;
+  }
+
+  const supabase = await createSupabaseServerClient();
+  await supabase.from("notifications").insert({
+    user_id: payload.userId,
+    type: payload.type,
+    actor_id: payload.actorId ?? null,
+    entity_id: payload.entityId ?? null,
+    entity_type: payload.entityType ?? null,
+    message: payload.message,
   });
 }
 
@@ -335,20 +387,33 @@ async function awardQuestRewards(postId: string) {
     .update({ status: "completed", completed_at: new Date().toISOString() })
     .eq("id", assignment.id);
 
-  const { data: profile } = await supabase.from("users").select("xp").eq("id", post.user_id).maybeSingle();
+  const { data: profile } = await supabase.from("users").select("xp,level").eq("id", post.user_id).maybeSingle();
+  const questData = post.quests as unknown as { xp_reward: number; badge_reward: string | null; category: string };
   const currentXp = Number(profile?.xp ?? 0);
-  const rewardXp = Number((post.quests as { xp_reward: number }).xp_reward ?? 0);
+  const oldLevel = Number(profile?.level ?? 1);
+  const rewardXp = Number(questData.xp_reward ?? 0);
   const updatedXp = currentXp + rewardXp;
+  const newLevel = levelFromXp(updatedXp);
 
   await supabase
     .from("users")
     .update({
       xp: updatedXp,
-      level: levelFromXp(updatedXp),
+      level: newLevel,
     })
     .eq("id", post.user_id);
 
-  const badge = (post.quests as { badge_reward: string | null }).badge_reward;
+  if (newLevel > oldLevel) {
+    await createNotification({
+      userId: post.user_id,
+      type: "level_up",
+      message: `You reached Level ${newLevel} — ${titleForLevel(newLevel)}!`,
+      entityId: post.user_id,
+      entityType: "user",
+    });
+  }
+
+  const badge = questData.badge_reward;
   if (badge) {
     const { data: badgeRow } = await supabase
       .from("badges")
@@ -403,6 +468,19 @@ export async function toggleLike(userId: string, postId: string) {
   }
 
   await supabase.from("likes").insert({ post_id: postId, user_id: userId });
+
+  const { data: post } = await supabase.from("posts").select("user_id").eq("id", postId).maybeSingle();
+  const { data: actor } = await supabase.from("users").select("name").eq("id", userId).maybeSingle();
+  if (post?.user_id) {
+    await createNotification({
+      userId: post.user_id,
+      type: "like",
+      actorId: userId,
+      entityId: postId,
+      entityType: "post",
+      message: `${actor?.name ?? "Someone"} liked your quest completion`,
+    });
+  }
 }
 
 export async function voteOnPost(userId: string, postId: string, vote: boolean) {
@@ -410,6 +488,21 @@ export async function voteOnPost(userId: string, postId: string, vote: boolean) 
   await supabase
     .from("approvals")
     .upsert({ post_id: postId, user_id: userId, vote }, { onConflict: "post_id,user_id" });
+
+  if (vote) {
+    const { data: post } = await supabase.from("posts").select("user_id").eq("id", postId).maybeSingle();
+    const { data: actor } = await supabase.from("users").select("name").eq("id", userId).maybeSingle();
+    if (post?.user_id) {
+      await createNotification({
+        userId: post.user_id,
+        type: "approval",
+        actorId: userId,
+        entityId: postId,
+        entityType: "post",
+        message: `${actor?.name ?? "Someone"} approved your quest completion`,
+      });
+    }
+  }
 
   const { data: votes } = await supabase.from("approvals").select("vote").eq("post_id", postId);
   const total = (votes ?? []).length;
@@ -428,13 +521,13 @@ export async function getFriends(userId: string) {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("friendships")
-    .select("id,user_1,user_2,users_user_1:users!friendships_user_1_fkey(id,name,avatar),users_user_2:users!friendships_user_2_fkey(id,name,avatar)")
+    .select("id,user_1,user_2,users_user_1:users!friendships_user_1_fkey(id,name,avatar,level),users_user_2:users!friendships_user_2_fkey(id,name,avatar,level)")
     .or(`user_1.eq.${userId},user_2.eq.${userId}`);
 
   const rows = (data as Array<Record<string, unknown>> | null) ?? [];
   return rows.map((row) => {
-    const left = row.users_user_1 as { id: string; name: string; avatar: string | null } | null;
-    const right = row.users_user_2 as { id: string; name: string; avatar: string | null } | null;
+    const left = row.users_user_1 as { id: string; name: string; avatar: string | null; level: number } | null;
+    const right = row.users_user_2 as { id: string; name: string; avatar: string | null; level: number } | null;
     const friend = left?.id === userId ? right : left;
 
     return {
@@ -442,35 +535,210 @@ export async function getFriends(userId: string) {
       friendId: friend?.id ?? "",
       friendName: friend?.name ?? "Unknown user",
       friendAvatar: friend?.avatar ?? null,
+      friendLevel: friend?.level ?? 1,
     };
   });
 }
 
-export async function searchUsers(userId: string, query: string) {
-  const supabase = await createSupabaseServerClient();
-  const trimmed = query.trim();
-  if (!trimmed) {
-    return [];
-  }
-
-  const { data } = await supabase
-    .from("users")
-    .select("id,name,email,avatar,level,xp")
-    .neq("id", userId)
-    .or(`name.ilike.%${trimmed}%,email.ilike.%${trimmed}%`)
-    .limit(10);
-
-  return (data as Array<Record<string, unknown>> | null) ?? [];
+export async function getFriendStatus(userId: string, otherId: string): Promise<FriendStatus> {
+  const relationship = await getFriendRelationship(userId, otherId);
+  return relationship.status;
 }
 
-export async function addFriend(userId: string, friendId: string) {
-  if (!friendId || friendId === userId) {
+export async function getFriendRelationship(
+  userId: string,
+  otherId: string,
+): Promise<{ status: FriendStatus; requestId?: string }> {
+  if (userId === otherId) {
+    return { status: "none" };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const pair = normalizeFriendPair(userId, otherId);
+
+  const { data: friendship } = await supabase
+    .from("friendships")
+    .select("id")
+    .eq("user_1", pair.user_1)
+    .eq("user_2", pair.user_2)
+    .maybeSingle();
+
+  if (friendship) {
+    return { status: "friends" };
+  }
+
+  const { data: sentRequest } = await supabase
+    .from("friend_requests")
+    .select("id")
+    .eq("sender_id", userId)
+    .eq("receiver_id", otherId)
+    .eq("status", "pending")
+    .maybeSingle();
+
+  if (sentRequest) {
+    return { status: "pending_sent", requestId: sentRequest.id };
+  }
+
+  const { data: receivedRequest } = await supabase
+    .from("friend_requests")
+    .select("id")
+    .eq("sender_id", otherId)
+    .eq("receiver_id", userId)
+    .eq("status", "pending")
+    .maybeSingle();
+
+  if (receivedRequest) {
+    return { status: "pending_received", requestId: receivedRequest.id };
+  }
+
+  return { status: "none" };
+}
+
+export async function getFriendRequests(userId: string): Promise<{
+  incoming: FriendRequest[];
+  outgoing: FriendRequest[];
+}> {
+  const supabase = await createSupabaseServerClient();
+
+  const [incomingResult, outgoingResult] = await Promise.all([
+    supabase
+      .from("friend_requests")
+      .select("id,sender_id,receiver_id,status,created_at,sender:users!friend_requests_sender_id_fkey(id,name,avatar)")
+      .eq("receiver_id", userId)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("friend_requests")
+      .select("id,sender_id,receiver_id,status,created_at,receiver:users!friend_requests_receiver_id_fkey(id,name,avatar)")
+      .eq("sender_id", userId)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false }),
+  ]);
+
+  const mapIncoming = (rows: Array<Record<string, unknown>>): FriendRequest[] =>
+    rows.map((row) => {
+      const sender = row.sender as { id: string; name: string; avatar: string | null } | null;
+      return {
+        id: row.id as string,
+        senderId: row.sender_id as string,
+        receiverId: row.receiver_id as string,
+        status: row.status as FriendRequest["status"],
+        createdAt: row.created_at as string,
+        senderName: sender?.name,
+        senderAvatar: sender?.avatar,
+      };
+    });
+
+  const mapOutgoing = (rows: Array<Record<string, unknown>>): FriendRequest[] =>
+    rows.map((row) => {
+      const receiver = row.receiver as { id: string; name: string; avatar: string | null } | null;
+      return {
+        id: row.id as string,
+        senderId: row.sender_id as string,
+        receiverId: row.receiver_id as string,
+        status: row.status as FriendRequest["status"],
+        createdAt: row.created_at as string,
+        receiverName: receiver?.name,
+        receiverAvatar: receiver?.avatar,
+      };
+    });
+
+  return {
+    incoming: mapIncoming((incomingResult.data as Array<Record<string, unknown>> | null) ?? []),
+    outgoing: mapOutgoing((outgoingResult.data as Array<Record<string, unknown>> | null) ?? []),
+  };
+}
+
+export async function sendFriendRequest(senderId: string, receiverId: string) {
+  if (!receiverId || receiverId === senderId) {
+    return;
+  }
+
+  const status = await getFriendStatus(senderId, receiverId);
+  if (status !== "none") {
     return;
   }
 
   const supabase = await createSupabaseServerClient();
-  const pair = normalizeFriendPair(userId, friendId);
+
+  // Allow re-sending after a previous rejection
+  await supabase
+    .from("friend_requests")
+    .delete()
+    .eq("sender_id", senderId)
+    .eq("receiver_id", receiverId)
+    .eq("status", "rejected");
+
+  await supabase.from("friend_requests").insert({
+    sender_id: senderId,
+    receiver_id: receiverId,
+    status: "pending",
+  });
+
+  const { data: sender } = await supabase.from("users").select("name").eq("id", senderId).maybeSingle();
+  await createNotification({
+    userId: receiverId,
+    type: "friend_request",
+    actorId: senderId,
+    entityType: "friend_request",
+    message: `${sender?.name ?? "Someone"} sent you a friend request`,
+  });
+}
+
+export async function acceptFriendRequest(userId: string, requestId: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data: request } = await supabase
+    .from("friend_requests")
+    .select("id,sender_id,receiver_id,status")
+    .eq("id", requestId)
+    .eq("receiver_id", userId)
+    .eq("status", "pending")
+    .maybeSingle();
+
+  if (!request) {
+    return;
+  }
+
+  const pair = normalizeFriendPair(request.sender_id, request.receiver_id);
   await supabase.from("friendships").upsert(pair, { onConflict: "user_1,user_2" });
+  await supabase
+    .from("friend_requests")
+    .update({ status: "accepted", responded_at: new Date().toISOString() })
+    .eq("id", requestId);
+
+  const { data: receiver } = await supabase.from("users").select("name").eq("id", userId).maybeSingle();
+  await createNotification({
+    userId: request.sender_id,
+    type: "friend_accepted",
+    actorId: userId,
+    entityType: "friendship",
+    message: `${receiver?.name ?? "Someone"} accepted your friend request`,
+  });
+}
+
+export async function rejectFriendRequest(userId: string, requestId: string) {
+  const supabase = await createSupabaseServerClient();
+  await supabase
+    .from("friend_requests")
+    .update({ status: "rejected", responded_at: new Date().toISOString() })
+    .eq("id", requestId)
+    .eq("receiver_id", userId)
+    .eq("status", "pending");
+}
+
+export async function cancelFriendRequest(userId: string, requestId: string) {
+  const supabase = await createSupabaseServerClient();
+  await supabase
+    .from("friend_requests")
+    .delete()
+    .eq("id", requestId)
+    .eq("sender_id", userId)
+    .eq("status", "pending");
+}
+
+/** @deprecated Use sendFriendRequest instead */
+export async function addFriend(userId: string, friendId: string) {
+  await sendFriendRequest(userId, friendId);
 }
 
 export async function removeFriend(userId: string, friendId: string) {
@@ -483,9 +751,101 @@ export async function removeFriend(userId: string, friendId: string) {
     .eq("user_2", pair.user_2);
 }
 
-export async function getProfileSummary(userId: string) {
+export async function searchUsers(userId: string, query: string) {
   const supabase = await createSupabaseServerClient();
-  const [profileResult, badgesResult, completedResult, postsResult] = await Promise.all([
+  const trimmed = query.trim();
+  if (!trimmed) {
+    return [] as Array<{
+      id: string;
+      name: string;
+      email: string;
+      avatar: string | null;
+      level: number;
+      xp: number;
+      friendStatus: FriendStatus;
+      requestId?: string;
+    }>;
+  }
+
+  const { data } = await supabase
+    .from("users")
+    .select("id,name,email,avatar,level,xp")
+    .neq("id", userId)
+    .or(`name.ilike.%${trimmed}%,email.ilike.%${trimmed}%`)
+    .limit(10);
+
+  const users = (data as Array<{
+    id: string;
+    name: string;
+    email: string;
+    avatar: string | null;
+    level: number;
+    xp: number;
+  }> | null) ?? [];
+  const relationships = await Promise.all(users.map((u) => getFriendRelationship(userId, u.id)));
+
+  return users.map((user, index) => ({
+    ...user,
+    friendStatus: relationships[index].status,
+    requestId: relationships[index].requestId,
+  }));
+}
+
+export async function getNotifications(userId: string, limit = 20): Promise<Notification[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("notifications")
+    .select("id,user_id,type,actor_id,entity_id,entity_type,message,read,created_at,actor:users!notifications_actor_id_fkey(id,name,avatar)")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  return ((data as Array<Record<string, unknown>> | null) ?? []).map((row) => ({
+    id: row.id as string,
+    user_id: row.user_id as string,
+    type: row.type as Notification["type"],
+    actor_id: row.actor_id as string | null,
+    entity_id: row.entity_id as string | null,
+    entity_type: row.entity_type as string | null,
+    message: row.message as string,
+    read: row.read as boolean,
+    created_at: row.created_at as string,
+    actor: row.actor as Notification["actor"],
+  }));
+}
+
+export async function getUnreadNotificationCount(userId: string): Promise<number> {
+  const supabase = await createSupabaseServerClient();
+  const { count } = await supabase
+    .from("notifications")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("read", false);
+
+  return count ?? 0;
+}
+
+export async function markNotificationRead(userId: string, notificationId: string) {
+  const supabase = await createSupabaseServerClient();
+  await supabase
+    .from("notifications")
+    .update({ read: true })
+    .eq("id", notificationId)
+    .eq("user_id", userId);
+}
+
+export async function markAllNotificationsRead(userId: string) {
+  const supabase = await createSupabaseServerClient();
+  await supabase
+    .from("notifications")
+    .update({ read: true })
+    .eq("user_id", userId)
+    .eq("read", false);
+}
+
+export async function getProfileSummary(userId: string): Promise<ProfileSummary> {
+  const supabase = await createSupabaseServerClient();
+  const [profileResult, badgesResult, completedResult, postsResult, friendsResult] = await Promise.all([
     supabase.from("users").select("*").eq("id", userId).maybeSingle(),
     supabase
       .from("user_badges")
@@ -493,7 +853,7 @@ export async function getProfileSummary(userId: string) {
       .eq("user_id", userId),
     supabase
       .from("user_quests")
-      .select("id,quests(id,title,category,xp_reward)")
+      .select("id,quests(id,title,category,xp_reward,difficulty)")
       .eq("user_id", userId)
       .eq("status", "completed"),
     supabase
@@ -501,6 +861,10 @@ export async function getProfileSummary(userId: string) {
       .select("id,caption,image_url,created_at,quests(title)")
       .eq("user_id", userId)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("friendships")
+      .select("id", { count: "exact", head: true })
+      .or(`user_1.eq.${userId},user_2.eq.${userId}`),
   ]);
 
   return {
@@ -514,5 +878,6 @@ export async function getProfileSummary(userId: string) {
         (row) => Boolean(row.quests),
       ),
     posts: (postsResult.data as Array<Record<string, unknown>> | null) ?? [],
+    friendsCount: friendsResult.count ?? 0,
   };
 }

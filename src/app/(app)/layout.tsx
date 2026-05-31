@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { AppNav } from "@/components/nav";
-import { ensureUserProfile } from "@/lib/data";
+import { ensureUserProfile, getNotifications, getUnreadNotificationCount } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function AppLayout({
@@ -19,9 +19,14 @@ export default async function AppLayout({
 
   await ensureUserProfile(user);
 
+  const [notifications, unreadCount] = await Promise.all([
+    getNotifications(user.id),
+    getUnreadNotificationCount(user.id),
+  ]);
+
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <AppNav />
+    <div className="min-h-screen bg-background pb-20 sm:pb-0">
+      <AppNav notifications={notifications} unreadCount={unreadCount} />
       <main className="mx-auto w-full max-w-6xl px-4 py-6">{children}</main>
     </div>
   );

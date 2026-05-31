@@ -2,7 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { addFriend, removeFriend } from "@/lib/data";
+import {
+  acceptFriendRequest,
+  cancelFriendRequest,
+  rejectFriendRequest,
+  removeFriend,
+  sendFriendRequest,
+} from "@/lib/data";
 
 async function currentUserId() {
   const supabase = await createSupabaseServerClient();
@@ -15,13 +21,56 @@ async function currentUserId() {
   return user.id;
 }
 
-export async function addFriendAction(formData: FormData) {
+function revalidateFriendPaths() {
+  revalidatePath("/friends");
+  revalidatePath("/feed");
+  revalidatePath("/profile");
+  revalidatePath("/", "layout");
+}
+
+export async function sendFriendRequestAction(formData: FormData) {
   const userId = await currentUserId();
   const friendId = String(formData.get("friendId") ?? "");
   if (!friendId) {
     return;
   }
-  await addFriend(userId, friendId);
+  await sendFriendRequest(userId, friendId);
+  revalidateFriendPaths();
+  revalidatePath(`/profile/${friendId}`);
+}
+
+/** @deprecated alias for sendFriendRequestAction */
+export async function addFriendAction(formData: FormData) {
+  return sendFriendRequestAction(formData);
+}
+
+export async function acceptFriendRequestAction(formData: FormData) {
+  const userId = await currentUserId();
+  const requestId = String(formData.get("requestId") ?? "");
+  if (!requestId) {
+    return;
+  }
+  await acceptFriendRequest(userId, requestId);
+  revalidateFriendPaths();
+}
+
+export async function rejectFriendRequestAction(formData: FormData) {
+  const userId = await currentUserId();
+  const requestId = String(formData.get("requestId") ?? "");
+  if (!requestId) {
+    return;
+  }
+  await rejectFriendRequest(userId, requestId);
+  revalidatePath("/friends");
+}
+
+export async function cancelFriendRequestAction(formData: FormData) {
+  const userId = await currentUserId();
+  const requestId = String(formData.get("requestId") ?? "");
+  if (!requestId) {
+    return;
+  }
+  await cancelFriendRequest(userId, requestId);
   revalidatePath("/friends");
 }
 
@@ -32,5 +81,6 @@ export async function removeFriendAction(formData: FormData) {
     return;
   }
   await removeFriend(userId, friendId);
-  revalidatePath("/friends");
+  revalidateFriendPaths();
+  revalidatePath(`/profile/${friendId}`);
 }

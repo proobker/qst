@@ -35,3 +35,11 @@ export const QUEST_STATUSES = [
   "completed",
   "abandoned",
 ] as const;
+
+export const NOTIFICATION_TYPES = [
+  "friend_request",
+  "friend_accepted",
+  "like",
+  "approval",
+  "level_up",
+] as const;

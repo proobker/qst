@@ -25,6 +25,7 @@ export async function toggleLikeAction(formData: FormData) {
   await toggleLike(userId, postId);
   revalidatePath("/feed");
   revalidatePath("/profile");
+  revalidatePath("/", "layout");
 }
 
 export async function approvePostAction(formData: FormData) {
@@ -38,6 +39,7 @@ export async function approvePostAction(formData: FormData) {
   revalidatePath("/feed");
   revalidatePath("/quests");
   revalidatePath("/profile");
+  revalidatePath("/", "layout");
 }
 
 export async function rejectPostAction(formData: FormData) {

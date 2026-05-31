@@ -43,17 +43,17 @@ export function LocationPicker({ defaultLatitude, defaultLongitude }: Props) {
       <button
         type="button"
         onClick={requestLocation}
-        className="inline-flex items-center gap-2 rounded-md border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+        className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium text-muted transition hover:border-primary hover:text-primary"
       >
         <LocateFixed size={14} />
         {loading ? "Requesting location..." : "Use current location"}
       </button>
-      <p className="text-sm text-zinc-600">
+      <p className="text-sm text-muted">
         {latitude !== null && longitude !== null
           ? `Location enabled: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
           : "No location saved yet."}
       </p>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm text-red-400">{error}</p> : null}
     </div>
   );
 }

@@ -1,11 +1,20 @@
-import { addFriendAction, removeFriendAction } from "@/app/actions/friends";
-import { getFriends, searchUsers } from "@/lib/data";
+import Link from "next/link";
+import {
+  acceptFriendRequestAction,
+  cancelFriendRequestAction,
+  rejectFriendRequestAction,
+  removeFriendAction,
+} from "@/app/actions/friends";
+import { Avatar } from "@/components/avatar";
+import { FriendButton } from "@/components/friend-button";
+import { getFriendRequests, getFriends, searchUsers } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { titleForLevel } from "@/lib/leveling";
 
 export default async function FriendsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; tab?: string }>;
 }) {
   const supabase = await createSupabaseServerClient();
   const {
@@ -18,84 +27,213 @@ export default async function FriendsPage({
 
   const params = await searchParams;
   const query = params.q?.trim() ?? "";
-  const [friends, searchResults] = await Promise.all([getFriends(user.id), searchUsers(user.id, query)]);
-  const friendIds = new Set(friends.map((friend) => friend.friendId));
+  const tab = params.tab ?? "friends";
+
+  const [friends, requests, searchResults] = await Promise.all([
+    getFriends(user.id),
+    getFriendRequests(user.id),
+    searchUsers(user.id, query),
+  ]);
+
+  const tabs = [
+    { id: "friends", label: "Friends", count: friends.length },
+    { id: "requests", label: "Requests", count: requests.incoming.length + requests.outgoing.length },
+    { id: "find", label: "Find People", count: null },
+  ];
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <h1 className="text-2xl font-semibold text-zinc-900">Friends</h1>
-        <p className="mt-2 text-sm text-zinc-600">Find players, add friends, and verify each other&apos;s quests.</p>
+      <div className="rounded-xl border border-border bg-surface p-6">
+        <h1 className="text-2xl font-bold text-foreground">Friends</h1>
+        <p className="mt-2 text-sm text-muted">
+          Send requests, accept invitations, and build your adventuring party.
+        </p>
       </div>
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <form className="flex flex-col gap-3 sm:flex-row">
-          <input
-            name="q"
-            defaultValue={query}
-            placeholder="Search by name or email"
-            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
-          />
-          <button type="submit" className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-semibold text-white">
-            Search
-          </button>
-        </form>
+      <div className="flex flex-wrap gap-2">
+        {tabs.map((item) => (
+          <Link
+            key={item.id}
+            href={item.id === "find" ? "/friends?tab=find" : `/friends?tab=${item.id}`}
+            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+              tab === item.id
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted hover:border-primary hover:text-primary"
+            }`}
+          >
+            {item.label}
+            {item.count !== null && item.count > 0 ? ` (${item.count})` : ""}
+          </Link>
+        ))}
       </div>
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-zinc-900">Your friends</h2>
+      {tab === "friends" ? (
+        <section className="rounded-xl border border-border bg-surface p-6">
+          <h2 className="text-lg font-semibold text-foreground">Your friends</h2>
           <div className="mt-4 space-y-3">
-            {friends.length === 0 ? <p className="text-sm text-zinc-600">No friends yet.</p> : null}
+            {friends.length === 0 ? (
+              <p className="text-sm text-muted">No friends yet. Search for people to connect with.</p>
+            ) : null}
             {friends.map((friend) => (
-              <div key={friend.friendId} className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 px-3 py-2">
-                <div>
-                  <p className="text-sm font-semibold text-zinc-900">{friend.friendName}</p>
-                  <p className="text-xs text-zinc-500">{friend.friendId}</p>
-                </div>
+              <div
+                key={friend.friendId}
+                className="flex items-center justify-between gap-3 rounded-lg border border-border px-4 py-3"
+              >
+                <Link href={`/profile/${friend.friendId}`} className="flex items-center gap-3">
+                  <Avatar name={friend.friendName} src={friend.friendAvatar} size="md" />
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{friend.friendName}</p>
+                    <p className="text-xs text-muted">
+                      Level {friend.friendLevel} · {titleForLevel(friend.friendLevel)}
+                    </p>
+                  </div>
+                </Link>
                 <form action={removeFriendAction}>
                   <input type="hidden" name="friendId" value={friend.friendId} />
-                  <button type="submit" className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-semibold text-zinc-700">
+                  <button
+                    type="submit"
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
+                  >
                     Remove
                   </button>
                 </form>
               </div>
             ))}
           </div>
-        </div>
+        </section>
+      ) : null}
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-zinc-900">Search results</h2>
-          <div className="mt-4 space-y-3">
-            {query && searchResults.length === 0 ? <p className="text-sm text-zinc-600">No users found.</p> : null}
-            {searchResults.map((candidate) => {
-              const userId = String(candidate.id);
-              const connected = friendIds.has(userId);
-              return (
-                <div key={userId} className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 px-3 py-2">
-                  <div>
-                    <p className="text-sm font-semibold text-zinc-900">{String(candidate.name)}</p>
-                    <p className="text-xs text-zinc-500">{String(candidate.email)}</p>
+      {tab === "requests" ? (
+        <section className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-xl border border-border bg-surface p-6">
+            <h2 className="text-lg font-semibold text-foreground">Incoming requests</h2>
+            <div className="mt-4 space-y-3">
+              {requests.incoming.length === 0 ? (
+                <p className="text-sm text-muted">No incoming requests.</p>
+              ) : null}
+              {requests.incoming.map((request) => (
+                <div
+                  key={request.id}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-border px-4 py-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <Avatar name={request.senderName ?? "User"} src={request.senderAvatar} size="md" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{request.senderName}</p>
+                      <p className="text-xs text-muted">{new Date(request.createdAt).toLocaleDateString()}</p>
+                    </div>
                   </div>
-                  <form action={connected ? removeFriendAction : addFriendAction}>
-                    <input type="hidden" name="friendId" value={userId} />
+                  <div className="flex gap-2">
+                    <form action={acceptFriendRequestAction}>
+                      <input type="hidden" name="requestId" value={request.id} />
+                      <button
+                        type="submit"
+                        className="rounded-lg bg-success px-3 py-1.5 text-xs font-semibold text-background"
+                      >
+                        Accept
+                      </button>
+                    </form>
+                    <form action={rejectFriendRequestAction}>
+                      <input type="hidden" name="requestId" value={request.id} />
+                      <button
+                        type="submit"
+                        className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted"
+                      >
+                        Decline
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-border bg-surface p-6">
+            <h2 className="text-lg font-semibold text-foreground">Sent requests</h2>
+            <div className="mt-4 space-y-3">
+              {requests.outgoing.length === 0 ? (
+                <p className="text-sm text-muted">No pending sent requests.</p>
+              ) : null}
+              {requests.outgoing.map((request) => (
+                <div
+                  key={request.id}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-border px-4 py-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <Avatar name={request.receiverName ?? "User"} src={request.receiverAvatar} size="md" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{request.receiverName}</p>
+                      <p className="text-xs text-muted">Pending</p>
+                    </div>
+                  </div>
+                  <form action={cancelFriendRequestAction}>
+                    <input type="hidden" name="requestId" value={request.id} />
                     <button
                       type="submit"
-                      className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
-                        connected
-                          ? "border border-zinc-300 text-zinc-700"
-                          : "bg-zinc-900 text-white"
-                      }`}
+                      className="rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent"
                     >
-                      {connected ? "Remove" : "Add friend"}
+                      Cancel
                     </button>
                   </form>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
+
+      {tab === "find" ? (
+        <section className="space-y-4">
+          <div className="rounded-xl border border-border bg-surface p-6">
+            <form className="flex flex-col gap-3 sm:flex-row">
+              <input type="hidden" name="tab" value="find" />
+              <input
+                name="q"
+                defaultValue={query}
+                placeholder="Search by name or email"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+              >
+                Search
+              </button>
+            </form>
+          </div>
+
+          <div className="rounded-xl border border-border bg-surface p-6">
+            <h2 className="text-lg font-semibold text-foreground">Search results</h2>
+            <div className="mt-4 space-y-3">
+              {query && searchResults.length === 0 ? (
+                <p className="text-sm text-muted">No users found.</p>
+              ) : null}
+              {!query ? <p className="text-sm text-muted">Enter a name or email to find adventurers.</p> : null}
+              {searchResults.map((candidate) => (
+                <div
+                  key={candidate.id}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-border px-4 py-3"
+                >
+                  <Link href={`/profile/${candidate.id}`} className="flex items-center gap-3">
+                    <Avatar name={candidate.name} src={candidate.avatar} size="md" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{candidate.name}</p>
+                      <p className="text-xs text-muted">
+                        Level {candidate.level} · {candidate.email}
+                      </p>
+                    </div>
+                  </Link>
+                  <FriendButton
+                    friendId={candidate.id}
+                    status={candidate.friendStatus}
+                    requestId={candidate.requestId}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
