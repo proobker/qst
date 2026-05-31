@@ -40,32 +40,74 @@ function fallbackQuest(context: QuestContext): QuestDefinition {
   };
 }
 
-function extractJson(raw: string): unknown {
-  const start = raw.indexOf("{");
-  const end = raw.lastIndexOf("}");
-  if (start === -1 || end === -1 || end <= start) {
-    throw new Error("No JSON object found in model output");
+function tryParseJson(raw: string): unknown | null {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
   }
-  return JSON.parse(raw.slice(start, end + 1));
 }
 
-function sanitizeQuest(input: Partial<QuestDefinition>, context: QuestContext): QuestDefinition {
-  const difficulty = input.difficulty ?? clampDifficulty(context.level);
+function extractJson(raw: string): unknown | null {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const direct = tryParseJson(trimmed);
+  if (direct !== null) {
+    return direct;
+  }
+
+  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)?.[1];
+  if (fenced) {
+    const fencedParsed = tryParseJson(fenced.trim());
+    if (fencedParsed !== null) {
+      return fencedParsed;
+    }
+  }
+
+  const start = trimmed.indexOf("{");
+  const end = trimmed.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) {
+    return null;
+  }
+
+  return tryParseJson(trimmed.slice(start, end + 1));
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asTrimmedString(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function sanitizeQuest(input: Record<string, unknown>, context: QuestContext): QuestDefinition {
+  const fallback = fallbackQuest(context);
+  const difficultyInput = asTrimmedString(input.difficulty);
+  const difficulty = difficultyInput ?? clampDifficulty(context.level);
   const safeDifficulty: QuestDefinition["difficulty"] =
     difficulty === "hard" || difficulty === "medium" || difficulty === "easy" ? difficulty : "easy";
 
   // Scale XP based on difficulty
   const baseXp = safeDifficulty === "easy" ? 80 : safeDifficulty === "medium" ? 130 : 220;
-  const xpReward = Math.max(Number(input.xp_reward ?? baseXp), 20);
+  const rawXp = Number(input.xp_reward);
+  const xpReward = Number.isFinite(rawXp) ? Math.max(rawXp, 20) : baseXp;
 
   return {
-    title: input.title?.trim() || fallbackQuest(context).title,
-    description: input.description?.trim() || fallbackQuest(context).description,
+    title: asTrimmedString(input.title) || fallback.title,
+    description: asTrimmedString(input.description) || fallback.description,
     difficulty: safeDifficulty,
     xp_reward: xpReward,
-    badge_reward: input.badge_reward?.trim() || null,
-    estimated_time: input.estimated_time?.trim() || "30 min",
-    category: input.category?.trim() || context.hobbies[0] || "General",
+    badge_reward: asTrimmedString(input.badge_reward),
+    estimated_time: asTrimmedString(input.estimated_time) || "30 min",
+    category: asTrimmedString(input.category) || context.hobbies[0] || "General",
   };
 }
 
@@ -177,6 +219,19 @@ Generate a unique, creative quest that feels personal to the user's interests an
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           generationConfig: {
             responseMimeType: "application/json",
+            responseSchema: {
+              type: "OBJECT",
+              required: ["title", "description", "difficulty", "xp_reward", "badge_reward", "estimated_time", "category"],
+              properties: {
+                title: { type: "STRING" },
+                description: { type: "STRING" },
+                difficulty: { type: "STRING", enum: ["easy", "medium", "hard"] },
+                xp_reward: { type: "INTEGER" },
+                badge_reward: { type: "STRING", nullable: true },
+                estimated_time: { type: "STRING" },
+                category: { type: "STRING" },
+              },
+            },
             temperature: 0.8,
             maxOutputTokens: 1024,
           },
@@ -190,18 +245,27 @@ Generate a unique, creative quest that feels personal to the user's interests an
     }
 
     const payload = (await response.json()) as {
-      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> }; finishReason?: string }>;
+      promptFeedback?: { blockReason?: string };
     };
 
-    const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
+    const candidate = payload.candidates?.[0];
+    const text = candidate?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
     if (!text) {
-      console.error("[Gemini] No text in response");
+      console.error("[Gemini] No text in response", {
+        finishReason: candidate?.finishReason ?? null,
+        blockReason: payload.promptFeedback?.blockReason ?? null,
+      });
       return fallbackQuest(context);
     }
 
     console.log("[Gemini] Raw response:", text.substring(0, 200));
+    const parsed = extractJson(text);
+    if (!isRecord(parsed)) {
+      console.warn("[Gemini] Response was not a valid JSON object, using fallback");
+      return fallbackQuest(context);
+    }
 
-    const parsed = extractJson(text) as Partial<QuestDefinition>;
     const sanitized = sanitizeQuest(parsed, context);
 
     console.log("[Gemini] Generated quest:", sanitized.title);
