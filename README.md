@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# qst
+qst turns real life into an RPG-style social adventure game. Players receive AI-generated quests based on hobbies and location, complete quests with proof uploads, and earn XP/badges when community approval reaches at least 50%.
 
-## Getting Started
+## Implemented MVP features
+- Google OAuth sign-in (Supabase Auth)
+- Onboarding with hobby selection + location permission capture
+- AI quest generation (Gemini with deterministic fallback)
+- Tinder-style quest acceptance/rejection
+- Active quest management + completion uploads
+- Social feed with likes and approval voting
+- Reward pipeline (XP, level progression, badges)
+- Friends search/add/remove
+- Profile pages with stats, badges, completed quests, and posts
+- Supabase SQL schema + seed files for all core entities
 
-First, run the development server:
+## Stack
+- Next.js (App Router) + TypeScript + Tailwind CSS
+- Supabase (Auth, PostgreSQL, Storage)
+- Gemini API (quest generation)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Setup
+1. Install dependencies:
+   `npm install`
+2. Copy `.env.example` to `.env.local` and fill values.
+3. In Supabase SQL editor:
+   - run `supabase/migrations/0001_init.sql`
+   - run `supabase/seed.sql`
+4. In Supabase Auth settings:
+   - enable Google provider
+   - add callback URL: `http://localhost:3000/auth/callback` (and production equivalent)
+5. Run the app:
+   `npm run dev`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
+- `NEXT_PUBLIC_APP_URL`: app base URL
+- `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anon key
+- `GOOGLE_GEMINI_API_KEY`: Gemini API key (optional but recommended)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+If `GOOGLE_GEMINI_API_KEY` is missing, qst still works using safe fallback quest generation.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Commands
+- `npm run dev`: start dev server
+- `npm run lint`: run ESLint
+- `npm run typecheck`: run TypeScript typecheck
+- `npm run build`: production build
