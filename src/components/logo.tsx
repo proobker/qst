@@ -3,28 +3,27 @@ import Link from "next/link";
 import logoSrc from "../../assets/logo.svg";
 import { cn } from "@/lib/utils";
 
-const LOGO_ASPECT = 281.067 / 251.2;
-
 type LogoProps = {
   size?: "sm" | "md" | "lg";
   className?: string;
   href?: string;
 };
 
-const heights = { sm: 28, md: 40, lg: 64 } as const;
+const boxClass = {
+  sm: "max-h-8 max-w-8",
+  md: "max-h-10 max-w-10",
+  lg: "max-h-[50px] max-w-[50px]",
+} as const;
 
 export function Logo({ size = "md", className, href }: LogoProps) {
-  const height = heights[size];
-  const width = Math.round(height * LOGO_ASPECT);
-
   const content = (
     <span className={cn("inline-flex items-center", className)}>
       <Image
         src={logoSrc}
         alt="qst"
-        width={width}
-        height={height}
-        className="h-auto w-auto shrink-0"
+        width={50}
+        height={50}
+        className={cn("size-auto shrink-0 object-contain", boxClass[size])}
         priority={size === "lg"}
         unoptimized
       />
