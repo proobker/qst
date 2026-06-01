@@ -17,7 +17,12 @@ import {
   QuestDefinition,
   UserProfile,
 } from "@/lib/types";
-import { isFullEmailAddress, meetsApprovalThreshold, tallyFriendVotes } from "@/lib/utils";
+import {
+  isFullEmailAddress,
+  meetsApprovalThreshold,
+  percentFromVotes,
+  tallyFriendVotes,
+} from "@/lib/utils";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -512,9 +517,47 @@ async function getFriendIds(userId: string): Promise<string[]> {
   );
 }
 
+async function countFriendsForUser(
+  userId: string,
+  client: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+): Promise<number> {
+  const { count } = await client
+    .from("friendships")
+    .select("*", { count: "exact", head: true })
+    .or(`user_1.eq.${userId},user_2.eq.${userId}`);
+
+  return count ?? 0;
+}
+
 export async function getFriendCount(userId: string): Promise<number> {
-  const friendIds = await getFriendIds(userId);
-  return friendIds.length;
+  const supabase = await createSupabaseServerClient();
+  return countFriendsForUser(userId, supabase);
+}
+
+async function getFriendCountsForUsers(
+  userIds: string[],
+  client: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+): Promise<Map<string, number>> {
+  const counts = new Map(userIds.map((id) => [id, 0]));
+  if (userIds.length === 0) {
+    return counts;
+  }
+
+  const { data } = await client
+    .from("friendships")
+    .select("user_1,user_2")
+    .or(`user_1.in.(${userIds.join(",")}),user_2.in.(${userIds.join(",")})`);
+
+  for (const row of (data as Array<{ user_1: string; user_2: string }> | null) ?? []) {
+    if (counts.has(row.user_1)) {
+      counts.set(row.user_1, (counts.get(row.user_1) ?? 0) + 1);
+    }
+    if (counts.has(row.user_2)) {
+      counts.set(row.user_2, (counts.get(row.user_2) ?? 0) + 1);
+    }
+  }
+
+  return counts;
 }
 
 export async function hasMinimumFriends(userId: string): Promise<boolean> {
@@ -549,10 +592,14 @@ export async function getFeed(userId: string): Promise<FeedPost[]> {
     .order("created_at", { ascending: false });
 
   const posts = (data as Array<Record<string, unknown>> | null) ?? [];
+  const ownerIds = [...new Set(posts.map((post) => post.user_id as string))];
+  const friendCounts = await getFriendCountsForUsers(ownerIds, supabase);
+
   return posts.map((post) => {
     const postOwnerId = post.user_id as string;
     const approvals = (post.approvals as Array<{ user_id: string; vote: boolean }> | undefined) ?? [];
-    const { total, percent: approvalPercent } = tallyFriendVotes(approvals, postOwnerId);
+    const { approved } = tallyFriendVotes(approvals, postOwnerId);
+    const friendsTotal = friendCounts.get(postOwnerId) ?? 0;
     const friendVotes = approvals.filter((vote) => vote.user_id !== postOwnerId);
     const votedByUser = friendVotes.find((vote) => vote.user_id === userId) ?? null;
 
@@ -560,8 +607,9 @@ export async function getFeed(userId: string): Promise<FeedPost[]> {
       ...post,
       edited_at: (post.edited_at as string | null) ?? null,
       edit_count: Number(post.edit_count ?? 0),
-      approvalsCount: total,
-      approvalPercent,
+      approvalsCount: approved,
+      friendsTotal,
+      approvalPercent: percentFromVotes(approved, friendsTotal),
       votedByUser: votedByUser?.vote ?? null,
     } as FeedPost;
   });
@@ -629,9 +677,10 @@ async function checkAndAwardQuestApproval(
   }
 
   const { data: votes } = await admin.from("approvals").select("vote,user_id").eq("post_id", postId);
-  const { approved, total } = tallyFriendVotes(votes ?? [], post.user_id);
+  const { approved } = tallyFriendVotes(votes ?? [], post.user_id);
+  const friendCount = await countFriendsForUser(post.user_id, admin);
 
-  if (!meetsApprovalThreshold(approved, total)) {
+  if (!meetsApprovalThreshold(approved, friendCount)) {
     return false;
   }
 

@@ -103,8 +103,8 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
 
         <div className="space-y-3 p-4">
           <p className="text-xs text-muted">
-            {post.approvalsCount} friend {post.approvalsCount === 1 ? "vote" : "votes"} (
-            {post.approvalPercent.toFixed(0)}% approved)
+            {post.approvalsCount} of {post.friendsTotal} friends approved (
+            {post.approvalPercent.toFixed(0)}%)
           </p>
 
           <p className="text-sm leading-relaxed text-foreground">

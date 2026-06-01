@@ -1,5 +1,5 @@
 # qst
-qst turns real life into an RPG-style social adventure game. Players receive AI-generated quests based on hobbies and location, complete quests with proof uploads, and earn XP/badges when friend approvals reach at least 60%.
+qst turns real life into an RPG-style social adventure game. Players receive AI-generated quests based on hobbies and location, complete quests with proof uploads, and earn XP/badges when more than 50% of their friends approve the completion post.
 
 ## Implemented MVP features
 - Google OAuth sign-in (Supabase Auth)

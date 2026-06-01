@@ -18,8 +18,9 @@ export function percentFromVotes(approved: number, total: number): number {
   return (approved / total) * 100;
 }
 
-export function meetsApprovalThreshold(approved: number, total: number): boolean {
-  return total > 0 && percentFromVotes(approved, total) >= APPROVAL_THRESHOLD_PERCENT;
+/** True when more than {@link APPROVAL_THRESHOLD_PERCENT}% of the user's friends have approved. */
+export function meetsApprovalThreshold(approved: number, friendCount: number): boolean {
+  return friendCount > 0 && percentFromVotes(approved, friendCount) > APPROVAL_THRESHOLD_PERCENT;
 }
 
 export function tallyFriendVotes(

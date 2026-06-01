@@ -308,8 +308,8 @@ export const MIN_FRIENDS_REQUIRED = 1;
 /** Hours after accepting a quest before it is marked incomplete if not finished. */
 export const QUEST_ACCEPT_DEADLINE_HOURS = 24;
 
-/** Minimum share of friend approve votes required to award XP (disapproves count against this). */
-export const APPROVAL_THRESHOLD_PERCENT = 60;
+/** Minimum share of the user's friends who must approve a quest post to award XP (non-voters count as not approved). */
+export const APPROVAL_THRESHOLD_PERCENT = 50;
 
 export const QUEST_STATUSES = [
   "generated",

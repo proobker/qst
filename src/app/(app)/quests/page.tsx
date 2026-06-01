@@ -91,7 +91,8 @@ async function QuestsContent() {
               </div>
             ) : entry.status === "pending_approval" ? (
               <p className="mt-3 rounded-lg bg-accent/10 px-3 py-2 text-sm text-accent">
-                Pending approval — needs at least {APPROVAL_THRESHOLD_PERCENT}% friend approve votes to award XP.
+                Pending approval — needs more than {APPROVAL_THRESHOLD_PERCENT}% of your friends to approve to
+                award XP.
               </p>
             ) : entry.status === "completed" ? (
               <p className="mt-3 rounded-lg bg-success/10 px-3 py-2 text-sm text-success">

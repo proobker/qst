@@ -66,6 +66,7 @@ export type FeedPost = {
   users: { id: string; name: string; avatar: string | null } | null;
   quests: { id: string; title: string; difficulty: string; xp_reward: number; category: string } | null;
   approvalsCount: number;
+  friendsTotal: number;
   approvalPercent: number;
   votedByUser: boolean | null;
 };
