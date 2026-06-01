@@ -3,7 +3,29 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { saveOnboarding } from "@/lib/data";
+import { createHobby, saveOnboarding } from "@/lib/data";
+
+export async function addHobbyAction(name: string): Promise<
+  | { ok: true; hobby: { id: number; name: string } }
+  | { ok: false; message: string }
+> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { ok: false, message: "You must be signed in to add a hobby." };
+  }
+
+  const hobby = await createHobby(name);
+  if (!hobby) {
+    return { ok: false, message: "Enter a valid hobby name." };
+  }
+
+  revalidatePath("/onboarding");
+  return { ok: true, hobby };
+}
 
 export async function completeOnboardingAction(formData: FormData) {
   const supabase = await createSupabaseServerClient();

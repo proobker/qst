@@ -83,17 +83,36 @@ export async function getOnboardingState(userId: string) {
   const profile = profileResult.data as { location_enabled: boolean; latitude: number | null; longitude: number | null } | null;
   const selected = (hobbiesResult.data as Array<{ hobby_id: number; hobbies: { name: string } | null }> | null) ?? [];
 
+  const selectedHobbyIds = selected.map((row) => row.hobby_id);
   const selectedHobbies = selected
     .map((row) => row.hobbies?.name)
     .filter((name): name is string => Boolean(name));
 
   return {
+    selectedHobbyIds,
     selectedHobbies,
     locationEnabled: profile?.location_enabled ?? false,
     latitude: profile?.latitude ?? null,
     longitude: profile?.longitude ?? null,
     complete: selectedHobbies.length > 0 && (profile?.location_enabled ?? false),
   };
+}
+
+export async function createHobby(name: string): Promise<{ id: number; name: string } | null> {
+  const trimmed = name.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.from("hobbies").insert({ name: trimmed }).select("id,name").maybeSingle();
+
+  if (!error && data) {
+    return data as { id: number; name: string };
+  }
+
+  const { data: existing } = await supabase.from("hobbies").select("id,name").eq("name", trimmed).maybeSingle();
+  return (existing as { id: number; name: string } | null) ?? null;
 }
 
 export async function saveOnboarding(
