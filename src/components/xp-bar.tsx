@@ -1,4 +1,4 @@
-import { LEVEL_THRESHOLDS } from "@/lib/constants";
+import { isMaxLevel, xpForLevel, xpToNextLevel } from "@/lib/leveling";
 import { cn } from "@/lib/utils";
 
 type XpBarProps = {
@@ -8,17 +8,18 @@ type XpBarProps = {
 };
 
 export function XpBar({ xp, level, className }: XpBarProps) {
-  const currentThreshold = LEVEL_THRESHOLDS.find((t) => t.level === level)?.xp ?? 0;
-  const nextThreshold = LEVEL_THRESHOLDS.find((t) => t.level === level + 1)?.xp;
+  const currentThreshold = xpForLevel(level);
+  const nextThreshold = isMaxLevel(level) ? undefined : xpForLevel(level + 1);
   const progress = nextThreshold
     ? Math.min(((xp - currentThreshold) / (nextThreshold - currentThreshold)) * 100, 100)
     : 100;
+  const remainingXp = nextThreshold ? xpToNextLevel(xp) : 0;
 
   return (
     <div className={cn("space-y-1", className)}>
       <div className="flex justify-between text-xs text-muted">
         <span>{xp} XP</span>
-        {nextThreshold ? <span>{nextThreshold - xp} XP to next level</span> : <span>Max level</span>}
+        {nextThreshold ? <span>{remainingXp} XP to next level</span> : <span>Max level</span>}
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-surface-hover">
         <div

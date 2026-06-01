@@ -1,27 +1,45 @@
-import { LEVEL_THRESHOLDS } from "@/lib/constants";
+import levelDefs from "../../assets/lvls.json";
+import { XP_PER_LEVEL } from "@/lib/constants";
+
+export type LevelDefinition = {
+  level: number;
+  rarity: string;
+  title: string;
+  rank: string;
+  displayName: string;
+};
+
+const LEVELS = levelDefs as LevelDefinition[];
+
+export const MAX_LEVEL = LEVELS.length;
+
+export function getLevelDefinition(level: number): LevelDefinition | undefined {
+  const clamped = Math.min(Math.max(level, 1), MAX_LEVEL);
+  return LEVELS[clamped - 1];
+}
+
+export function xpForLevel(level: number): number {
+  const clamped = Math.min(Math.max(level, 1), MAX_LEVEL);
+  return (clamped - 1) * XP_PER_LEVEL;
+}
 
 export function levelFromXp(xp: number): number {
-  let resolved = 1;
-  for (const level of LEVEL_THRESHOLDS) {
-    if (xp >= level.xp) {
-      resolved = level.level;
-    }
-  }
-  return resolved;
+  const safeXp = Math.max(0, xp);
+  return Math.min(MAX_LEVEL, Math.floor(safeXp / XP_PER_LEVEL) + 1);
 }
 
 export function titleForLevel(level: number): string {
-  const entry = LEVEL_THRESHOLDS.find((item) => item.level === level);
-  if (entry) {
-    return entry.title;
-  }
-  return LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1].title;
+  return getLevelDefinition(level)?.displayName ?? LEVELS[0].displayName;
 }
 
 export function xpToNextLevel(xp: number): number {
-  const next = LEVEL_THRESHOLDS.find((level) => level.xp > xp);
-  if (!next) {
+  const level = levelFromXp(xp);
+  if (level >= MAX_LEVEL) {
     return 0;
   }
-  return Math.max(next.xp - xp, 0);
+  return Math.max(xpForLevel(level + 1) - xp, 0);
+}
+
+export function isMaxLevel(level: number): boolean {
+  return level >= MAX_LEVEL;
 }

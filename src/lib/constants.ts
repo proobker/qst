@@ -299,13 +299,8 @@ export const DEFAULT_BADGES = [
   "Fitness Warrior",
 ];
 
-export const LEVEL_THRESHOLDS = [
-  { level: 1, title: "Beginner", xp: 0 },
-  { level: 2, title: "Explorer", xp: 100 },
-  { level: 3, title: "Adventurer", xp: 300 },
-  { level: 4, title: "Hero", xp: 700 },
-  { level: 5, title: "Legend", xp: 1500 },
-];
+/** XP required to advance from level N to level N + 1 (same for every level). */
+export const XP_PER_LEVEL = 100;
 
 export const QUEST_STATUSES = [
   "generated",

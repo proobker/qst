@@ -1,0 +1,6995 @@
+[
+  {
+    "level": 1,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "I",
+    "displayName": "Common Wanderer I"
+  },
+  {
+    "level": 2,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "II",
+    "displayName": "Common Wanderer II"
+  },
+  {
+    "level": 3,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "III",
+    "displayName": "Common Wanderer III"
+  },
+  {
+    "level": 4,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "IV",
+    "displayName": "Common Wanderer IV"
+  },
+  {
+    "level": 5,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "V",
+    "displayName": "Common Wanderer V"
+  },
+  {
+    "level": 6,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "VI",
+    "displayName": "Common Wanderer VI"
+  },
+  {
+    "level": 7,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "VII",
+    "displayName": "Common Wanderer VII"
+  },
+  {
+    "level": 8,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "VIII",
+    "displayName": "Common Wanderer VIII"
+  },
+  {
+    "level": 9,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "IX",
+    "displayName": "Common Wanderer IX"
+  },
+  {
+    "level": 10,
+    "rarity": "Common",
+    "title": "Wanderer",
+    "rank": "X",
+    "displayName": "Common Wanderer X"
+  },
+  {
+    "level": 11,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "I",
+    "displayName": "Common Scout I"
+  },
+  {
+    "level": 12,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "II",
+    "displayName": "Common Scout II"
+  },
+  {
+    "level": 13,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "III",
+    "displayName": "Common Scout III"
+  },
+  {
+    "level": 14,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "IV",
+    "displayName": "Common Scout IV"
+  },
+  {
+    "level": 15,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "V",
+    "displayName": "Common Scout V"
+  },
+  {
+    "level": 16,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "VI",
+    "displayName": "Common Scout VI"
+  },
+  {
+    "level": 17,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "VII",
+    "displayName": "Common Scout VII"
+  },
+  {
+    "level": 18,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "VIII",
+    "displayName": "Common Scout VIII"
+  },
+  {
+    "level": 19,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "IX",
+    "displayName": "Common Scout IX"
+  },
+  {
+    "level": 20,
+    "rarity": "Common",
+    "title": "Scout",
+    "rank": "X",
+    "displayName": "Common Scout X"
+  },
+  {
+    "level": 21,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "I",
+    "displayName": "Common Apprentice I"
+  },
+  {
+    "level": 22,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "II",
+    "displayName": "Common Apprentice II"
+  },
+  {
+    "level": 23,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "III",
+    "displayName": "Common Apprentice III"
+  },
+  {
+    "level": 24,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "IV",
+    "displayName": "Common Apprentice IV"
+  },
+  {
+    "level": 25,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "V",
+    "displayName": "Common Apprentice V"
+  },
+  {
+    "level": 26,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "VI",
+    "displayName": "Common Apprentice VI"
+  },
+  {
+    "level": 27,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "VII",
+    "displayName": "Common Apprentice VII"
+  },
+  {
+    "level": 28,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "VIII",
+    "displayName": "Common Apprentice VIII"
+  },
+  {
+    "level": 29,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "IX",
+    "displayName": "Common Apprentice IX"
+  },
+  {
+    "level": 30,
+    "rarity": "Common",
+    "title": "Apprentice",
+    "rank": "X",
+    "displayName": "Common Apprentice X"
+  },
+  {
+    "level": 31,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "I",
+    "displayName": "Common Pathfinder I"
+  },
+  {
+    "level": 32,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "II",
+    "displayName": "Common Pathfinder II"
+  },
+  {
+    "level": 33,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "III",
+    "displayName": "Common Pathfinder III"
+  },
+  {
+    "level": 34,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "IV",
+    "displayName": "Common Pathfinder IV"
+  },
+  {
+    "level": 35,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "V",
+    "displayName": "Common Pathfinder V"
+  },
+  {
+    "level": 36,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "VI",
+    "displayName": "Common Pathfinder VI"
+  },
+  {
+    "level": 37,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "VII",
+    "displayName": "Common Pathfinder VII"
+  },
+  {
+    "level": 38,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "VIII",
+    "displayName": "Common Pathfinder VIII"
+  },
+  {
+    "level": 39,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "IX",
+    "displayName": "Common Pathfinder IX"
+  },
+  {
+    "level": 40,
+    "rarity": "Common",
+    "title": "Pathfinder",
+    "rank": "X",
+    "displayName": "Common Pathfinder X"
+  },
+  {
+    "level": 41,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "I",
+    "displayName": "Common Adventurer I"
+  },
+  {
+    "level": 42,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "II",
+    "displayName": "Common Adventurer II"
+  },
+  {
+    "level": 43,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "III",
+    "displayName": "Common Adventurer III"
+  },
+  {
+    "level": 44,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "IV",
+    "displayName": "Common Adventurer IV"
+  },
+  {
+    "level": 45,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "V",
+    "displayName": "Common Adventurer V"
+  },
+  {
+    "level": 46,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "VI",
+    "displayName": "Common Adventurer VI"
+  },
+  {
+    "level": 47,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "VII",
+    "displayName": "Common Adventurer VII"
+  },
+  {
+    "level": 48,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "VIII",
+    "displayName": "Common Adventurer VIII"
+  },
+  {
+    "level": 49,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "IX",
+    "displayName": "Common Adventurer IX"
+  },
+  {
+    "level": 50,
+    "rarity": "Common",
+    "title": "Adventurer",
+    "rank": "X",
+    "displayName": "Common Adventurer X"
+  },
+  {
+    "level": 51,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "I",
+    "displayName": "Common Explorer I"
+  },
+  {
+    "level": 52,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "II",
+    "displayName": "Common Explorer II"
+  },
+  {
+    "level": 53,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "III",
+    "displayName": "Common Explorer III"
+  },
+  {
+    "level": 54,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "IV",
+    "displayName": "Common Explorer IV"
+  },
+  {
+    "level": 55,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "V",
+    "displayName": "Common Explorer V"
+  },
+  {
+    "level": 56,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "VI",
+    "displayName": "Common Explorer VI"
+  },
+  {
+    "level": 57,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "VII",
+    "displayName": "Common Explorer VII"
+  },
+  {
+    "level": 58,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "VIII",
+    "displayName": "Common Explorer VIII"
+  },
+  {
+    "level": 59,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "IX",
+    "displayName": "Common Explorer IX"
+  },
+  {
+    "level": 60,
+    "rarity": "Common",
+    "title": "Explorer",
+    "rank": "X",
+    "displayName": "Common Explorer X"
+  },
+  {
+    "level": 61,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "I",
+    "displayName": "Common Tracker I"
+  },
+  {
+    "level": 62,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "II",
+    "displayName": "Common Tracker II"
+  },
+  {
+    "level": 63,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "III",
+    "displayName": "Common Tracker III"
+  },
+  {
+    "level": 64,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "IV",
+    "displayName": "Common Tracker IV"
+  },
+  {
+    "level": 65,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "V",
+    "displayName": "Common Tracker V"
+  },
+  {
+    "level": 66,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "VI",
+    "displayName": "Common Tracker VI"
+  },
+  {
+    "level": 67,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "VII",
+    "displayName": "Common Tracker VII"
+  },
+  {
+    "level": 68,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "VIII",
+    "displayName": "Common Tracker VIII"
+  },
+  {
+    "level": 69,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "IX",
+    "displayName": "Common Tracker IX"
+  },
+  {
+    "level": 70,
+    "rarity": "Common",
+    "title": "Tracker",
+    "rank": "X",
+    "displayName": "Common Tracker X"
+  },
+  {
+    "level": 71,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "I",
+    "displayName": "Common Ranger I"
+  },
+  {
+    "level": 72,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "II",
+    "displayName": "Common Ranger II"
+  },
+  {
+    "level": 73,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "III",
+    "displayName": "Common Ranger III"
+  },
+  {
+    "level": 74,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "IV",
+    "displayName": "Common Ranger IV"
+  },
+  {
+    "level": 75,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "V",
+    "displayName": "Common Ranger V"
+  },
+  {
+    "level": 76,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "VI",
+    "displayName": "Common Ranger VI"
+  },
+  {
+    "level": 77,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "VII",
+    "displayName": "Common Ranger VII"
+  },
+  {
+    "level": 78,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "VIII",
+    "displayName": "Common Ranger VIII"
+  },
+  {
+    "level": 79,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "IX",
+    "displayName": "Common Ranger IX"
+  },
+  {
+    "level": 80,
+    "rarity": "Common",
+    "title": "Ranger",
+    "rank": "X",
+    "displayName": "Common Ranger X"
+  },
+  {
+    "level": 81,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "I",
+    "displayName": "Common Challenger I"
+  },
+  {
+    "level": 82,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "II",
+    "displayName": "Common Challenger II"
+  },
+  {
+    "level": 83,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "III",
+    "displayName": "Common Challenger III"
+  },
+  {
+    "level": 84,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "IV",
+    "displayName": "Common Challenger IV"
+  },
+  {
+    "level": 85,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "V",
+    "displayName": "Common Challenger V"
+  },
+  {
+    "level": 86,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "VI",
+    "displayName": "Common Challenger VI"
+  },
+  {
+    "level": 87,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "VII",
+    "displayName": "Common Challenger VII"
+  },
+  {
+    "level": 88,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "VIII",
+    "displayName": "Common Challenger VIII"
+  },
+  {
+    "level": 89,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "IX",
+    "displayName": "Common Challenger IX"
+  },
+  {
+    "level": 90,
+    "rarity": "Common",
+    "title": "Challenger",
+    "rank": "X",
+    "displayName": "Common Challenger X"
+  },
+  {
+    "level": 91,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "I",
+    "displayName": "Common Veteran I"
+  },
+  {
+    "level": 92,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "II",
+    "displayName": "Common Veteran II"
+  },
+  {
+    "level": 93,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "III",
+    "displayName": "Common Veteran III"
+  },
+  {
+    "level": 94,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "IV",
+    "displayName": "Common Veteran IV"
+  },
+  {
+    "level": 95,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "V",
+    "displayName": "Common Veteran V"
+  },
+  {
+    "level": 96,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "VI",
+    "displayName": "Common Veteran VI"
+  },
+  {
+    "level": 97,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "VII",
+    "displayName": "Common Veteran VII"
+  },
+  {
+    "level": 98,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "VIII",
+    "displayName": "Common Veteran VIII"
+  },
+  {
+    "level": 99,
+    "rarity": "Common",
+    "title": "Veteran",
+    "rank": "IX",
+    "displayName": "Common Veteran IX"
+  },
+  {
+    "level": 100,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "I",
+    "displayName": "Uncommon Ironblade I"
+  },
+  {
+    "level": 101,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "II",
+    "displayName": "Uncommon Ironblade II"
+  },
+  {
+    "level": 102,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "III",
+    "displayName": "Uncommon Ironblade III"
+  },
+  {
+    "level": 103,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "IV",
+    "displayName": "Uncommon Ironblade IV"
+  },
+  {
+    "level": 104,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "V",
+    "displayName": "Uncommon Ironblade V"
+  },
+  {
+    "level": 105,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "VI",
+    "displayName": "Uncommon Ironblade VI"
+  },
+  {
+    "level": 106,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "VII",
+    "displayName": "Uncommon Ironblade VII"
+  },
+  {
+    "level": 107,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "VIII",
+    "displayName": "Uncommon Ironblade VIII"
+  },
+  {
+    "level": 108,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "IX",
+    "displayName": "Uncommon Ironblade IX"
+  },
+  {
+    "level": 109,
+    "rarity": "Uncommon",
+    "title": "Ironblade",
+    "rank": "X",
+    "displayName": "Uncommon Ironblade X"
+  },
+  {
+    "level": 110,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "I",
+    "displayName": "Uncommon Stormwalker I"
+  },
+  {
+    "level": 111,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "II",
+    "displayName": "Uncommon Stormwalker II"
+  },
+  {
+    "level": 112,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "III",
+    "displayName": "Uncommon Stormwalker III"
+  },
+  {
+    "level": 113,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "IV",
+    "displayName": "Uncommon Stormwalker IV"
+  },
+  {
+    "level": 114,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "V",
+    "displayName": "Uncommon Stormwalker V"
+  },
+  {
+    "level": 115,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "VI",
+    "displayName": "Uncommon Stormwalker VI"
+  },
+  {
+    "level": 116,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "VII",
+    "displayName": "Uncommon Stormwalker VII"
+  },
+  {
+    "level": 117,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "VIII",
+    "displayName": "Uncommon Stormwalker VIII"
+  },
+  {
+    "level": 118,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "IX",
+    "displayName": "Uncommon Stormwalker IX"
+  },
+  {
+    "level": 119,
+    "rarity": "Uncommon",
+    "title": "Stormwalker",
+    "rank": "X",
+    "displayName": "Uncommon Stormwalker X"
+  },
+  {
+    "level": 120,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "I",
+    "displayName": "Uncommon Runeseeker I"
+  },
+  {
+    "level": 121,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "II",
+    "displayName": "Uncommon Runeseeker II"
+  },
+  {
+    "level": 122,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "III",
+    "displayName": "Uncommon Runeseeker III"
+  },
+  {
+    "level": 123,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "IV",
+    "displayName": "Uncommon Runeseeker IV"
+  },
+  {
+    "level": 124,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "V",
+    "displayName": "Uncommon Runeseeker V"
+  },
+  {
+    "level": 125,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "VI",
+    "displayName": "Uncommon Runeseeker VI"
+  },
+  {
+    "level": 126,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "VII",
+    "displayName": "Uncommon Runeseeker VII"
+  },
+  {
+    "level": 127,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "VIII",
+    "displayName": "Uncommon Runeseeker VIII"
+  },
+  {
+    "level": 128,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "IX",
+    "displayName": "Uncommon Runeseeker IX"
+  },
+  {
+    "level": 129,
+    "rarity": "Uncommon",
+    "title": "Runeseeker",
+    "rank": "X",
+    "displayName": "Uncommon Runeseeker X"
+  },
+  {
+    "level": 130,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "I",
+    "displayName": "Uncommon Beast Hunter I"
+  },
+  {
+    "level": 131,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "II",
+    "displayName": "Uncommon Beast Hunter II"
+  },
+  {
+    "level": 132,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "III",
+    "displayName": "Uncommon Beast Hunter III"
+  },
+  {
+    "level": 133,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "IV",
+    "displayName": "Uncommon Beast Hunter IV"
+  },
+  {
+    "level": 134,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "V",
+    "displayName": "Uncommon Beast Hunter V"
+  },
+  {
+    "level": 135,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "VI",
+    "displayName": "Uncommon Beast Hunter VI"
+  },
+  {
+    "level": 136,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "VII",
+    "displayName": "Uncommon Beast Hunter VII"
+  },
+  {
+    "level": 137,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "VIII",
+    "displayName": "Uncommon Beast Hunter VIII"
+  },
+  {
+    "level": 138,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "IX",
+    "displayName": "Uncommon Beast Hunter IX"
+  },
+  {
+    "level": 139,
+    "rarity": "Uncommon",
+    "title": "Beast Hunter",
+    "rank": "X",
+    "displayName": "Uncommon Beast Hunter X"
+  },
+  {
+    "level": 140,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "I",
+    "displayName": "Uncommon Sentinel I"
+  },
+  {
+    "level": 141,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "II",
+    "displayName": "Uncommon Sentinel II"
+  },
+  {
+    "level": 142,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "III",
+    "displayName": "Uncommon Sentinel III"
+  },
+  {
+    "level": 143,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "IV",
+    "displayName": "Uncommon Sentinel IV"
+  },
+  {
+    "level": 144,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "V",
+    "displayName": "Uncommon Sentinel V"
+  },
+  {
+    "level": 145,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "VI",
+    "displayName": "Uncommon Sentinel VI"
+  },
+  {
+    "level": 146,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "VII",
+    "displayName": "Uncommon Sentinel VII"
+  },
+  {
+    "level": 147,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "VIII",
+    "displayName": "Uncommon Sentinel VIII"
+  },
+  {
+    "level": 148,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "IX",
+    "displayName": "Uncommon Sentinel IX"
+  },
+  {
+    "level": 149,
+    "rarity": "Uncommon",
+    "title": "Sentinel",
+    "rank": "X",
+    "displayName": "Uncommon Sentinel X"
+  },
+  {
+    "level": 150,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "I",
+    "displayName": "Uncommon Warden I"
+  },
+  {
+    "level": 151,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "II",
+    "displayName": "Uncommon Warden II"
+  },
+  {
+    "level": 152,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "III",
+    "displayName": "Uncommon Warden III"
+  },
+  {
+    "level": 153,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "IV",
+    "displayName": "Uncommon Warden IV"
+  },
+  {
+    "level": 154,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "V",
+    "displayName": "Uncommon Warden V"
+  },
+  {
+    "level": 155,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "VI",
+    "displayName": "Uncommon Warden VI"
+  },
+  {
+    "level": 156,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "VII",
+    "displayName": "Uncommon Warden VII"
+  },
+  {
+    "level": 157,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "VIII",
+    "displayName": "Uncommon Warden VIII"
+  },
+  {
+    "level": 158,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "IX",
+    "displayName": "Uncommon Warden IX"
+  },
+  {
+    "level": 159,
+    "rarity": "Uncommon",
+    "title": "Warden",
+    "rank": "X",
+    "displayName": "Uncommon Warden X"
+  },
+  {
+    "level": 160,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "I",
+    "displayName": "Uncommon Vanguard I"
+  },
+  {
+    "level": 161,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "II",
+    "displayName": "Uncommon Vanguard II"
+  },
+  {
+    "level": 162,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "III",
+    "displayName": "Uncommon Vanguard III"
+  },
+  {
+    "level": 163,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "IV",
+    "displayName": "Uncommon Vanguard IV"
+  },
+  {
+    "level": 164,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "V",
+    "displayName": "Uncommon Vanguard V"
+  },
+  {
+    "level": 165,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "VI",
+    "displayName": "Uncommon Vanguard VI"
+  },
+  {
+    "level": 166,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "VII",
+    "displayName": "Uncommon Vanguard VII"
+  },
+  {
+    "level": 167,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "VIII",
+    "displayName": "Uncommon Vanguard VIII"
+  },
+  {
+    "level": 168,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "IX",
+    "displayName": "Uncommon Vanguard IX"
+  },
+  {
+    "level": 169,
+    "rarity": "Uncommon",
+    "title": "Vanguard",
+    "rank": "X",
+    "displayName": "Uncommon Vanguard X"
+  },
+  {
+    "level": 170,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "I",
+    "displayName": "Uncommon Battlemaster I"
+  },
+  {
+    "level": 171,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "II",
+    "displayName": "Uncommon Battlemaster II"
+  },
+  {
+    "level": 172,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "III",
+    "displayName": "Uncommon Battlemaster III"
+  },
+  {
+    "level": 173,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "IV",
+    "displayName": "Uncommon Battlemaster IV"
+  },
+  {
+    "level": 174,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "V",
+    "displayName": "Uncommon Battlemaster V"
+  },
+  {
+    "level": 175,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "VI",
+    "displayName": "Uncommon Battlemaster VI"
+  },
+  {
+    "level": 176,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "VII",
+    "displayName": "Uncommon Battlemaster VII"
+  },
+  {
+    "level": 177,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "VIII",
+    "displayName": "Uncommon Battlemaster VIII"
+  },
+  {
+    "level": 178,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "IX",
+    "displayName": "Uncommon Battlemaster IX"
+  },
+  {
+    "level": 179,
+    "rarity": "Uncommon",
+    "title": "Battlemaster",
+    "rank": "X",
+    "displayName": "Uncommon Battlemaster X"
+  },
+  {
+    "level": 180,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "I",
+    "displayName": "Uncommon War Scout I"
+  },
+  {
+    "level": 181,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "II",
+    "displayName": "Uncommon War Scout II"
+  },
+  {
+    "level": 182,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "III",
+    "displayName": "Uncommon War Scout III"
+  },
+  {
+    "level": 183,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "IV",
+    "displayName": "Uncommon War Scout IV"
+  },
+  {
+    "level": 184,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "V",
+    "displayName": "Uncommon War Scout V"
+  },
+  {
+    "level": 185,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "VI",
+    "displayName": "Uncommon War Scout VI"
+  },
+  {
+    "level": 186,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "VII",
+    "displayName": "Uncommon War Scout VII"
+  },
+  {
+    "level": 187,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "VIII",
+    "displayName": "Uncommon War Scout VIII"
+  },
+  {
+    "level": 188,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "IX",
+    "displayName": "Uncommon War Scout IX"
+  },
+  {
+    "level": 189,
+    "rarity": "Uncommon",
+    "title": "War Scout",
+    "rank": "X",
+    "displayName": "Uncommon War Scout X"
+  },
+  {
+    "level": 190,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "I",
+    "displayName": "Uncommon Guardian I"
+  },
+  {
+    "level": 191,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "II",
+    "displayName": "Uncommon Guardian II"
+  },
+  {
+    "level": 192,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "III",
+    "displayName": "Uncommon Guardian III"
+  },
+  {
+    "level": 193,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "IV",
+    "displayName": "Uncommon Guardian IV"
+  },
+  {
+    "level": 194,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "V",
+    "displayName": "Uncommon Guardian V"
+  },
+  {
+    "level": 195,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "VI",
+    "displayName": "Uncommon Guardian VI"
+  },
+  {
+    "level": 196,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "VII",
+    "displayName": "Uncommon Guardian VII"
+  },
+  {
+    "level": 197,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "VIII",
+    "displayName": "Uncommon Guardian VIII"
+  },
+  {
+    "level": 198,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "IX",
+    "displayName": "Uncommon Guardian IX"
+  },
+  {
+    "level": 199,
+    "rarity": "Uncommon",
+    "title": "Guardian",
+    "rank": "X",
+    "displayName": "Uncommon Guardian X"
+  },
+  {
+    "level": 200,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "I",
+    "displayName": "Rare Shadow Knight I"
+  },
+  {
+    "level": 201,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "II",
+    "displayName": "Rare Shadow Knight II"
+  },
+  {
+    "level": 202,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "III",
+    "displayName": "Rare Shadow Knight III"
+  },
+  {
+    "level": 203,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "IV",
+    "displayName": "Rare Shadow Knight IV"
+  },
+  {
+    "level": 204,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "V",
+    "displayName": "Rare Shadow Knight V"
+  },
+  {
+    "level": 205,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "VI",
+    "displayName": "Rare Shadow Knight VI"
+  },
+  {
+    "level": 206,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "VII",
+    "displayName": "Rare Shadow Knight VII"
+  },
+  {
+    "level": 207,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "VIII",
+    "displayName": "Rare Shadow Knight VIII"
+  },
+  {
+    "level": 208,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "IX",
+    "displayName": "Rare Shadow Knight IX"
+  },
+  {
+    "level": 209,
+    "rarity": "Rare",
+    "title": "Shadow Knight",
+    "rank": "X",
+    "displayName": "Rare Shadow Knight X"
+  },
+  {
+    "level": 210,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "I",
+    "displayName": "Rare Dragon Hunter I"
+  },
+  {
+    "level": 211,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "II",
+    "displayName": "Rare Dragon Hunter II"
+  },
+  {
+    "level": 212,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "III",
+    "displayName": "Rare Dragon Hunter III"
+  },
+  {
+    "level": 213,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "IV",
+    "displayName": "Rare Dragon Hunter IV"
+  },
+  {
+    "level": 214,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "V",
+    "displayName": "Rare Dragon Hunter V"
+  },
+  {
+    "level": 215,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "VI",
+    "displayName": "Rare Dragon Hunter VI"
+  },
+  {
+    "level": 216,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "VII",
+    "displayName": "Rare Dragon Hunter VII"
+  },
+  {
+    "level": 217,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "VIII",
+    "displayName": "Rare Dragon Hunter VIII"
+  },
+  {
+    "level": 218,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "IX",
+    "displayName": "Rare Dragon Hunter IX"
+  },
+  {
+    "level": 219,
+    "rarity": "Rare",
+    "title": "Dragon Hunter",
+    "rank": "X",
+    "displayName": "Rare Dragon Hunter X"
+  },
+  {
+    "level": 220,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "I",
+    "displayName": "Rare Arcane Ranger I"
+  },
+  {
+    "level": 221,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "II",
+    "displayName": "Rare Arcane Ranger II"
+  },
+  {
+    "level": 222,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "III",
+    "displayName": "Rare Arcane Ranger III"
+  },
+  {
+    "level": 223,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "IV",
+    "displayName": "Rare Arcane Ranger IV"
+  },
+  {
+    "level": 224,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "V",
+    "displayName": "Rare Arcane Ranger V"
+  },
+  {
+    "level": 225,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "VI",
+    "displayName": "Rare Arcane Ranger VI"
+  },
+  {
+    "level": 226,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "VII",
+    "displayName": "Rare Arcane Ranger VII"
+  },
+  {
+    "level": 227,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "VIII",
+    "displayName": "Rare Arcane Ranger VIII"
+  },
+  {
+    "level": 228,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "IX",
+    "displayName": "Rare Arcane Ranger IX"
+  },
+  {
+    "level": 229,
+    "rarity": "Rare",
+    "title": "Arcane Ranger",
+    "rank": "X",
+    "displayName": "Rare Arcane Ranger X"
+  },
+  {
+    "level": 230,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "I",
+    "displayName": "Rare Frost Warden I"
+  },
+  {
+    "level": 231,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "II",
+    "displayName": "Rare Frost Warden II"
+  },
+  {
+    "level": 232,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "III",
+    "displayName": "Rare Frost Warden III"
+  },
+  {
+    "level": 233,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "IV",
+    "displayName": "Rare Frost Warden IV"
+  },
+  {
+    "level": 234,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "V",
+    "displayName": "Rare Frost Warden V"
+  },
+  {
+    "level": 235,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "VI",
+    "displayName": "Rare Frost Warden VI"
+  },
+  {
+    "level": 236,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "VII",
+    "displayName": "Rare Frost Warden VII"
+  },
+  {
+    "level": 237,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "VIII",
+    "displayName": "Rare Frost Warden VIII"
+  },
+  {
+    "level": 238,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "IX",
+    "displayName": "Rare Frost Warden IX"
+  },
+  {
+    "level": 239,
+    "rarity": "Rare",
+    "title": "Frost Warden",
+    "rank": "X",
+    "displayName": "Rare Frost Warden X"
+  },
+  {
+    "level": 240,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "I",
+    "displayName": "Rare Void Scout I"
+  },
+  {
+    "level": 241,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "II",
+    "displayName": "Rare Void Scout II"
+  },
+  {
+    "level": 242,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "III",
+    "displayName": "Rare Void Scout III"
+  },
+  {
+    "level": 243,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "IV",
+    "displayName": "Rare Void Scout IV"
+  },
+  {
+    "level": 244,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "V",
+    "displayName": "Rare Void Scout V"
+  },
+  {
+    "level": 245,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "VI",
+    "displayName": "Rare Void Scout VI"
+  },
+  {
+    "level": 246,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "VII",
+    "displayName": "Rare Void Scout VII"
+  },
+  {
+    "level": 247,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "VIII",
+    "displayName": "Rare Void Scout VIII"
+  },
+  {
+    "level": 248,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "IX",
+    "displayName": "Rare Void Scout IX"
+  },
+  {
+    "level": 249,
+    "rarity": "Rare",
+    "title": "Void Scout",
+    "rank": "X",
+    "displayName": "Rare Void Scout X"
+  },
+  {
+    "level": 250,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "I",
+    "displayName": "Rare Flame Keeper I"
+  },
+  {
+    "level": 251,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "II",
+    "displayName": "Rare Flame Keeper II"
+  },
+  {
+    "level": 252,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "III",
+    "displayName": "Rare Flame Keeper III"
+  },
+  {
+    "level": 253,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "IV",
+    "displayName": "Rare Flame Keeper IV"
+  },
+  {
+    "level": 254,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "V",
+    "displayName": "Rare Flame Keeper V"
+  },
+  {
+    "level": 255,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "VI",
+    "displayName": "Rare Flame Keeper VI"
+  },
+  {
+    "level": 256,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "VII",
+    "displayName": "Rare Flame Keeper VII"
+  },
+  {
+    "level": 257,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "VIII",
+    "displayName": "Rare Flame Keeper VIII"
+  },
+  {
+    "level": 258,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "IX",
+    "displayName": "Rare Flame Keeper IX"
+  },
+  {
+    "level": 259,
+    "rarity": "Rare",
+    "title": "Flame Keeper",
+    "rank": "X",
+    "displayName": "Rare Flame Keeper X"
+  },
+  {
+    "level": 260,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "I",
+    "displayName": "Rare Moonblade I"
+  },
+  {
+    "level": 261,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "II",
+    "displayName": "Rare Moonblade II"
+  },
+  {
+    "level": 262,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "III",
+    "displayName": "Rare Moonblade III"
+  },
+  {
+    "level": 263,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "IV",
+    "displayName": "Rare Moonblade IV"
+  },
+  {
+    "level": 264,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "V",
+    "displayName": "Rare Moonblade V"
+  },
+  {
+    "level": 265,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "VI",
+    "displayName": "Rare Moonblade VI"
+  },
+  {
+    "level": 266,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "VII",
+    "displayName": "Rare Moonblade VII"
+  },
+  {
+    "level": 267,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "VIII",
+    "displayName": "Rare Moonblade VIII"
+  },
+  {
+    "level": 268,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "IX",
+    "displayName": "Rare Moonblade IX"
+  },
+  {
+    "level": 269,
+    "rarity": "Rare",
+    "title": "Moonblade",
+    "rank": "X",
+    "displayName": "Rare Moonblade X"
+  },
+  {
+    "level": 270,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "I",
+    "displayName": "Rare Spellbreaker I"
+  },
+  {
+    "level": 271,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "II",
+    "displayName": "Rare Spellbreaker II"
+  },
+  {
+    "level": 272,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "III",
+    "displayName": "Rare Spellbreaker III"
+  },
+  {
+    "level": 273,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "IV",
+    "displayName": "Rare Spellbreaker IV"
+  },
+  {
+    "level": 274,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "V",
+    "displayName": "Rare Spellbreaker V"
+  },
+  {
+    "level": 275,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "VI",
+    "displayName": "Rare Spellbreaker VI"
+  },
+  {
+    "level": 276,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "VII",
+    "displayName": "Rare Spellbreaker VII"
+  },
+  {
+    "level": 277,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "VIII",
+    "displayName": "Rare Spellbreaker VIII"
+  },
+  {
+    "level": 278,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "IX",
+    "displayName": "Rare Spellbreaker IX"
+  },
+  {
+    "level": 279,
+    "rarity": "Rare",
+    "title": "Spellbreaker",
+    "rank": "X",
+    "displayName": "Rare Spellbreaker X"
+  },
+  {
+    "level": 280,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "I",
+    "displayName": "Rare Rift Walker I"
+  },
+  {
+    "level": 281,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "II",
+    "displayName": "Rare Rift Walker II"
+  },
+  {
+    "level": 282,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "III",
+    "displayName": "Rare Rift Walker III"
+  },
+  {
+    "level": 283,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "IV",
+    "displayName": "Rare Rift Walker IV"
+  },
+  {
+    "level": 284,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "V",
+    "displayName": "Rare Rift Walker V"
+  },
+  {
+    "level": 285,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "VI",
+    "displayName": "Rare Rift Walker VI"
+  },
+  {
+    "level": 286,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "VII",
+    "displayName": "Rare Rift Walker VII"
+  },
+  {
+    "level": 287,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "VIII",
+    "displayName": "Rare Rift Walker VIII"
+  },
+  {
+    "level": 288,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "IX",
+    "displayName": "Rare Rift Walker IX"
+  },
+  {
+    "level": 289,
+    "rarity": "Rare",
+    "title": "Rift Walker",
+    "rank": "X",
+    "displayName": "Rare Rift Walker X"
+  },
+  {
+    "level": 290,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "I",
+    "displayName": "Rare Starbound I"
+  },
+  {
+    "level": 291,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "II",
+    "displayName": "Rare Starbound II"
+  },
+  {
+    "level": 292,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "III",
+    "displayName": "Rare Starbound III"
+  },
+  {
+    "level": 293,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IV",
+    "displayName": "Rare Starbound IV"
+  },
+  {
+    "level": 294,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "V",
+    "displayName": "Rare Starbound V"
+  },
+  {
+    "level": 295,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VI",
+    "displayName": "Rare Starbound VI"
+  },
+  {
+    "level": 296,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VII",
+    "displayName": "Rare Starbound VII"
+  },
+  {
+    "level": 297,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VIII",
+    "displayName": "Rare Starbound VIII"
+  },
+  {
+    "level": 298,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IX",
+    "displayName": "Rare Starbound IX"
+  },
+  {
+    "level": 299,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "X",
+    "displayName": "Rare Starbound X"
+  },
+  {
+    "level": 300,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "I",
+    "displayName": "Rare Starbound I"
+  },
+  {
+    "level": 301,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "II",
+    "displayName": "Rare Starbound II"
+  },
+  {
+    "level": 302,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "III",
+    "displayName": "Rare Starbound III"
+  },
+  {
+    "level": 303,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IV",
+    "displayName": "Rare Starbound IV"
+  },
+  {
+    "level": 304,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "V",
+    "displayName": "Rare Starbound V"
+  },
+  {
+    "level": 305,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VI",
+    "displayName": "Rare Starbound VI"
+  },
+  {
+    "level": 306,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VII",
+    "displayName": "Rare Starbound VII"
+  },
+  {
+    "level": 307,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VIII",
+    "displayName": "Rare Starbound VIII"
+  },
+  {
+    "level": 308,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IX",
+    "displayName": "Rare Starbound IX"
+  },
+  {
+    "level": 309,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "X",
+    "displayName": "Rare Starbound X"
+  },
+  {
+    "level": 310,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "I",
+    "displayName": "Rare Starbound I"
+  },
+  {
+    "level": 311,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "II",
+    "displayName": "Rare Starbound II"
+  },
+  {
+    "level": 312,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "III",
+    "displayName": "Rare Starbound III"
+  },
+  {
+    "level": 313,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IV",
+    "displayName": "Rare Starbound IV"
+  },
+  {
+    "level": 314,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "V",
+    "displayName": "Rare Starbound V"
+  },
+  {
+    "level": 315,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VI",
+    "displayName": "Rare Starbound VI"
+  },
+  {
+    "level": 316,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VII",
+    "displayName": "Rare Starbound VII"
+  },
+  {
+    "level": 317,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VIII",
+    "displayName": "Rare Starbound VIII"
+  },
+  {
+    "level": 318,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IX",
+    "displayName": "Rare Starbound IX"
+  },
+  {
+    "level": 319,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "X",
+    "displayName": "Rare Starbound X"
+  },
+  {
+    "level": 320,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "I",
+    "displayName": "Rare Starbound I"
+  },
+  {
+    "level": 321,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "II",
+    "displayName": "Rare Starbound II"
+  },
+  {
+    "level": 322,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "III",
+    "displayName": "Rare Starbound III"
+  },
+  {
+    "level": 323,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IV",
+    "displayName": "Rare Starbound IV"
+  },
+  {
+    "level": 324,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "V",
+    "displayName": "Rare Starbound V"
+  },
+  {
+    "level": 325,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VI",
+    "displayName": "Rare Starbound VI"
+  },
+  {
+    "level": 326,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VII",
+    "displayName": "Rare Starbound VII"
+  },
+  {
+    "level": 327,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VIII",
+    "displayName": "Rare Starbound VIII"
+  },
+  {
+    "level": 328,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IX",
+    "displayName": "Rare Starbound IX"
+  },
+  {
+    "level": 329,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "X",
+    "displayName": "Rare Starbound X"
+  },
+  {
+    "level": 330,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "I",
+    "displayName": "Rare Starbound I"
+  },
+  {
+    "level": 331,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "II",
+    "displayName": "Rare Starbound II"
+  },
+  {
+    "level": 332,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "III",
+    "displayName": "Rare Starbound III"
+  },
+  {
+    "level": 333,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IV",
+    "displayName": "Rare Starbound IV"
+  },
+  {
+    "level": 334,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "V",
+    "displayName": "Rare Starbound V"
+  },
+  {
+    "level": 335,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VI",
+    "displayName": "Rare Starbound VI"
+  },
+  {
+    "level": 336,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VII",
+    "displayName": "Rare Starbound VII"
+  },
+  {
+    "level": 337,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VIII",
+    "displayName": "Rare Starbound VIII"
+  },
+  {
+    "level": 338,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IX",
+    "displayName": "Rare Starbound IX"
+  },
+  {
+    "level": 339,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "X",
+    "displayName": "Rare Starbound X"
+  },
+  {
+    "level": 340,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "I",
+    "displayName": "Rare Starbound I"
+  },
+  {
+    "level": 341,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "II",
+    "displayName": "Rare Starbound II"
+  },
+  {
+    "level": 342,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "III",
+    "displayName": "Rare Starbound III"
+  },
+  {
+    "level": 343,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IV",
+    "displayName": "Rare Starbound IV"
+  },
+  {
+    "level": 344,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "V",
+    "displayName": "Rare Starbound V"
+  },
+  {
+    "level": 345,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VI",
+    "displayName": "Rare Starbound VI"
+  },
+  {
+    "level": 346,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VII",
+    "displayName": "Rare Starbound VII"
+  },
+  {
+    "level": 347,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "VIII",
+    "displayName": "Rare Starbound VIII"
+  },
+  {
+    "level": 348,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "IX",
+    "displayName": "Rare Starbound IX"
+  },
+  {
+    "level": 349,
+    "rarity": "Rare",
+    "title": "Starbound",
+    "rank": "X",
+    "displayName": "Rare Starbound X"
+  },
+  {
+    "level": 350,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "I",
+    "displayName": "Epic Void Reaper I"
+  },
+  {
+    "level": 351,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "II",
+    "displayName": "Epic Void Reaper II"
+  },
+  {
+    "level": 352,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "III",
+    "displayName": "Epic Void Reaper III"
+  },
+  {
+    "level": 353,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "IV",
+    "displayName": "Epic Void Reaper IV"
+  },
+  {
+    "level": 354,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "V",
+    "displayName": "Epic Void Reaper V"
+  },
+  {
+    "level": 355,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "VI",
+    "displayName": "Epic Void Reaper VI"
+  },
+  {
+    "level": 356,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "VII",
+    "displayName": "Epic Void Reaper VII"
+  },
+  {
+    "level": 357,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "VIII",
+    "displayName": "Epic Void Reaper VIII"
+  },
+  {
+    "level": 358,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "IX",
+    "displayName": "Epic Void Reaper IX"
+  },
+  {
+    "level": 359,
+    "rarity": "Epic",
+    "title": "Void Reaper",
+    "rank": "X",
+    "displayName": "Epic Void Reaper X"
+  },
+  {
+    "level": 360,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "I",
+    "displayName": "Epic Titan Slayer I"
+  },
+  {
+    "level": 361,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "II",
+    "displayName": "Epic Titan Slayer II"
+  },
+  {
+    "level": 362,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "III",
+    "displayName": "Epic Titan Slayer III"
+  },
+  {
+    "level": 363,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "IV",
+    "displayName": "Epic Titan Slayer IV"
+  },
+  {
+    "level": 364,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "V",
+    "displayName": "Epic Titan Slayer V"
+  },
+  {
+    "level": 365,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "VI",
+    "displayName": "Epic Titan Slayer VI"
+  },
+  {
+    "level": 366,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "VII",
+    "displayName": "Epic Titan Slayer VII"
+  },
+  {
+    "level": 367,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "VIII",
+    "displayName": "Epic Titan Slayer VIII"
+  },
+  {
+    "level": 368,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "IX",
+    "displayName": "Epic Titan Slayer IX"
+  },
+  {
+    "level": 369,
+    "rarity": "Epic",
+    "title": "Titan Slayer",
+    "rank": "X",
+    "displayName": "Epic Titan Slayer X"
+  },
+  {
+    "level": 370,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "I",
+    "displayName": "Epic Astral Champion I"
+  },
+  {
+    "level": 371,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "II",
+    "displayName": "Epic Astral Champion II"
+  },
+  {
+    "level": 372,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "III",
+    "displayName": "Epic Astral Champion III"
+  },
+  {
+    "level": 373,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "IV",
+    "displayName": "Epic Astral Champion IV"
+  },
+  {
+    "level": 374,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "V",
+    "displayName": "Epic Astral Champion V"
+  },
+  {
+    "level": 375,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "VI",
+    "displayName": "Epic Astral Champion VI"
+  },
+  {
+    "level": 376,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "VII",
+    "displayName": "Epic Astral Champion VII"
+  },
+  {
+    "level": 377,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "VIII",
+    "displayName": "Epic Astral Champion VIII"
+  },
+  {
+    "level": 378,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "IX",
+    "displayName": "Epic Astral Champion IX"
+  },
+  {
+    "level": 379,
+    "rarity": "Epic",
+    "title": "Astral Champion",
+    "rank": "X",
+    "displayName": "Epic Astral Champion X"
+  },
+  {
+    "level": 380,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "I",
+    "displayName": "Epic Phoenix Lord I"
+  },
+  {
+    "level": 381,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "II",
+    "displayName": "Epic Phoenix Lord II"
+  },
+  {
+    "level": 382,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "III",
+    "displayName": "Epic Phoenix Lord III"
+  },
+  {
+    "level": 383,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "IV",
+    "displayName": "Epic Phoenix Lord IV"
+  },
+  {
+    "level": 384,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "V",
+    "displayName": "Epic Phoenix Lord V"
+  },
+  {
+    "level": 385,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "VI",
+    "displayName": "Epic Phoenix Lord VI"
+  },
+  {
+    "level": 386,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "VII",
+    "displayName": "Epic Phoenix Lord VII"
+  },
+  {
+    "level": 387,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "VIII",
+    "displayName": "Epic Phoenix Lord VIII"
+  },
+  {
+    "level": 388,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "IX",
+    "displayName": "Epic Phoenix Lord IX"
+  },
+  {
+    "level": 389,
+    "rarity": "Epic",
+    "title": "Phoenix Lord",
+    "rank": "X",
+    "displayName": "Epic Phoenix Lord X"
+  },
+  {
+    "level": 390,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "I",
+    "displayName": "Epic Storm Sovereign I"
+  },
+  {
+    "level": 391,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "II",
+    "displayName": "Epic Storm Sovereign II"
+  },
+  {
+    "level": 392,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "III",
+    "displayName": "Epic Storm Sovereign III"
+  },
+  {
+    "level": 393,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "IV",
+    "displayName": "Epic Storm Sovereign IV"
+  },
+  {
+    "level": 394,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "V",
+    "displayName": "Epic Storm Sovereign V"
+  },
+  {
+    "level": 395,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "VI",
+    "displayName": "Epic Storm Sovereign VI"
+  },
+  {
+    "level": 396,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "VII",
+    "displayName": "Epic Storm Sovereign VII"
+  },
+  {
+    "level": 397,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "VIII",
+    "displayName": "Epic Storm Sovereign VIII"
+  },
+  {
+    "level": 398,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "IX",
+    "displayName": "Epic Storm Sovereign IX"
+  },
+  {
+    "level": 399,
+    "rarity": "Epic",
+    "title": "Storm Sovereign",
+    "rank": "X",
+    "displayName": "Epic Storm Sovereign X"
+  },
+  {
+    "level": 400,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "I",
+    "displayName": "Epic Rune Monarch I"
+  },
+  {
+    "level": 401,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "II",
+    "displayName": "Epic Rune Monarch II"
+  },
+  {
+    "level": 402,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "III",
+    "displayName": "Epic Rune Monarch III"
+  },
+  {
+    "level": 403,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "IV",
+    "displayName": "Epic Rune Monarch IV"
+  },
+  {
+    "level": 404,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "V",
+    "displayName": "Epic Rune Monarch V"
+  },
+  {
+    "level": 405,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "VI",
+    "displayName": "Epic Rune Monarch VI"
+  },
+  {
+    "level": 406,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "VII",
+    "displayName": "Epic Rune Monarch VII"
+  },
+  {
+    "level": 407,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "VIII",
+    "displayName": "Epic Rune Monarch VIII"
+  },
+  {
+    "level": 408,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "IX",
+    "displayName": "Epic Rune Monarch IX"
+  },
+  {
+    "level": 409,
+    "rarity": "Epic",
+    "title": "Rune Monarch",
+    "rank": "X",
+    "displayName": "Epic Rune Monarch X"
+  },
+  {
+    "level": 410,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "I",
+    "displayName": "Epic Abyss Walker I"
+  },
+  {
+    "level": 411,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "II",
+    "displayName": "Epic Abyss Walker II"
+  },
+  {
+    "level": 412,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "III",
+    "displayName": "Epic Abyss Walker III"
+  },
+  {
+    "level": 413,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "IV",
+    "displayName": "Epic Abyss Walker IV"
+  },
+  {
+    "level": 414,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "V",
+    "displayName": "Epic Abyss Walker V"
+  },
+  {
+    "level": 415,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "VI",
+    "displayName": "Epic Abyss Walker VI"
+  },
+  {
+    "level": 416,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "VII",
+    "displayName": "Epic Abyss Walker VII"
+  },
+  {
+    "level": 417,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "VIII",
+    "displayName": "Epic Abyss Walker VIII"
+  },
+  {
+    "level": 418,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "IX",
+    "displayName": "Epic Abyss Walker IX"
+  },
+  {
+    "level": 419,
+    "rarity": "Epic",
+    "title": "Abyss Walker",
+    "rank": "X",
+    "displayName": "Epic Abyss Walker X"
+  },
+  {
+    "level": 420,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "I",
+    "displayName": "Epic Celestial Knight I"
+  },
+  {
+    "level": 421,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "II",
+    "displayName": "Epic Celestial Knight II"
+  },
+  {
+    "level": 422,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "III",
+    "displayName": "Epic Celestial Knight III"
+  },
+  {
+    "level": 423,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "IV",
+    "displayName": "Epic Celestial Knight IV"
+  },
+  {
+    "level": 424,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "V",
+    "displayName": "Epic Celestial Knight V"
+  },
+  {
+    "level": 425,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "VI",
+    "displayName": "Epic Celestial Knight VI"
+  },
+  {
+    "level": 426,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "VII",
+    "displayName": "Epic Celestial Knight VII"
+  },
+  {
+    "level": 427,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "VIII",
+    "displayName": "Epic Celestial Knight VIII"
+  },
+  {
+    "level": 428,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "IX",
+    "displayName": "Epic Celestial Knight IX"
+  },
+  {
+    "level": 429,
+    "rarity": "Epic",
+    "title": "Celestial Knight",
+    "rank": "X",
+    "displayName": "Epic Celestial Knight X"
+  },
+  {
+    "level": 430,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "I",
+    "displayName": "Epic Eclipse Guardian I"
+  },
+  {
+    "level": 431,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "II",
+    "displayName": "Epic Eclipse Guardian II"
+  },
+  {
+    "level": 432,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "III",
+    "displayName": "Epic Eclipse Guardian III"
+  },
+  {
+    "level": 433,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "IV",
+    "displayName": "Epic Eclipse Guardian IV"
+  },
+  {
+    "level": 434,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "V",
+    "displayName": "Epic Eclipse Guardian V"
+  },
+  {
+    "level": 435,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "VI",
+    "displayName": "Epic Eclipse Guardian VI"
+  },
+  {
+    "level": 436,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "VII",
+    "displayName": "Epic Eclipse Guardian VII"
+  },
+  {
+    "level": 437,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "VIII",
+    "displayName": "Epic Eclipse Guardian VIII"
+  },
+  {
+    "level": 438,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "IX",
+    "displayName": "Epic Eclipse Guardian IX"
+  },
+  {
+    "level": 439,
+    "rarity": "Epic",
+    "title": "Eclipse Guardian",
+    "rank": "X",
+    "displayName": "Epic Eclipse Guardian X"
+  },
+  {
+    "level": 440,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 441,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 442,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 443,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 444,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 445,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 446,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 447,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 448,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 449,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 450,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 451,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 452,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 453,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 454,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 455,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 456,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 457,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 458,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 459,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 460,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 461,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 462,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 463,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 464,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 465,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 466,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 467,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 468,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 469,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 470,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 471,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 472,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 473,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 474,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 475,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 476,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 477,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 478,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 479,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 480,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 481,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 482,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 483,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 484,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 485,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 486,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 487,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 488,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 489,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 490,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 491,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 492,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 493,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 494,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 495,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 496,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 497,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 498,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 499,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 500,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 501,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 502,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 503,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 504,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 505,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 506,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 507,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 508,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 509,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 510,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 511,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 512,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 513,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 514,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 515,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 516,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 517,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 518,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 519,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 520,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 521,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 522,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 523,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 524,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 525,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 526,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 527,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 528,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 529,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 530,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 531,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 532,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 533,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 534,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 535,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 536,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 537,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 538,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 539,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 540,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "I",
+    "displayName": "Epic Rift Conqueror I"
+  },
+  {
+    "level": 541,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "II",
+    "displayName": "Epic Rift Conqueror II"
+  },
+  {
+    "level": 542,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "III",
+    "displayName": "Epic Rift Conqueror III"
+  },
+  {
+    "level": 543,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IV",
+    "displayName": "Epic Rift Conqueror IV"
+  },
+  {
+    "level": 544,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "V",
+    "displayName": "Epic Rift Conqueror V"
+  },
+  {
+    "level": 545,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VI",
+    "displayName": "Epic Rift Conqueror VI"
+  },
+  {
+    "level": 546,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VII",
+    "displayName": "Epic Rift Conqueror VII"
+  },
+  {
+    "level": 547,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "VIII",
+    "displayName": "Epic Rift Conqueror VIII"
+  },
+  {
+    "level": 548,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "IX",
+    "displayName": "Epic Rift Conqueror IX"
+  },
+  {
+    "level": 549,
+    "rarity": "Epic",
+    "title": "Rift Conqueror",
+    "rank": "X",
+    "displayName": "Epic Rift Conqueror X"
+  },
+  {
+    "level": 550,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "I",
+    "displayName": "Legendary Worldbreaker I"
+  },
+  {
+    "level": 551,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "II",
+    "displayName": "Legendary Worldbreaker II"
+  },
+  {
+    "level": 552,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "III",
+    "displayName": "Legendary Worldbreaker III"
+  },
+  {
+    "level": 553,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "IV",
+    "displayName": "Legendary Worldbreaker IV"
+  },
+  {
+    "level": 554,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "V",
+    "displayName": "Legendary Worldbreaker V"
+  },
+  {
+    "level": 555,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "VI",
+    "displayName": "Legendary Worldbreaker VI"
+  },
+  {
+    "level": 556,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "VII",
+    "displayName": "Legendary Worldbreaker VII"
+  },
+  {
+    "level": 557,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "VIII",
+    "displayName": "Legendary Worldbreaker VIII"
+  },
+  {
+    "level": 558,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "IX",
+    "displayName": "Legendary Worldbreaker IX"
+  },
+  {
+    "level": 559,
+    "rarity": "Legendary",
+    "title": "Worldbreaker",
+    "rank": "X",
+    "displayName": "Legendary Worldbreaker X"
+  },
+  {
+    "level": 560,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "I",
+    "displayName": "Legendary Dragon Emperor I"
+  },
+  {
+    "level": 561,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "II",
+    "displayName": "Legendary Dragon Emperor II"
+  },
+  {
+    "level": 562,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "III",
+    "displayName": "Legendary Dragon Emperor III"
+  },
+  {
+    "level": 563,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "IV",
+    "displayName": "Legendary Dragon Emperor IV"
+  },
+  {
+    "level": 564,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "V",
+    "displayName": "Legendary Dragon Emperor V"
+  },
+  {
+    "level": 565,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "VI",
+    "displayName": "Legendary Dragon Emperor VI"
+  },
+  {
+    "level": 566,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "VII",
+    "displayName": "Legendary Dragon Emperor VII"
+  },
+  {
+    "level": 567,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "VIII",
+    "displayName": "Legendary Dragon Emperor VIII"
+  },
+  {
+    "level": 568,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "IX",
+    "displayName": "Legendary Dragon Emperor IX"
+  },
+  {
+    "level": 569,
+    "rarity": "Legendary",
+    "title": "Dragon Emperor",
+    "rank": "X",
+    "displayName": "Legendary Dragon Emperor X"
+  },
+  {
+    "level": 570,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "I",
+    "displayName": "Legendary Starforged Hero I"
+  },
+  {
+    "level": 571,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "II",
+    "displayName": "Legendary Starforged Hero II"
+  },
+  {
+    "level": 572,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "III",
+    "displayName": "Legendary Starforged Hero III"
+  },
+  {
+    "level": 573,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "IV",
+    "displayName": "Legendary Starforged Hero IV"
+  },
+  {
+    "level": 574,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "V",
+    "displayName": "Legendary Starforged Hero V"
+  },
+  {
+    "level": 575,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "VI",
+    "displayName": "Legendary Starforged Hero VI"
+  },
+  {
+    "level": 576,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "VII",
+    "displayName": "Legendary Starforged Hero VII"
+  },
+  {
+    "level": 577,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "VIII",
+    "displayName": "Legendary Starforged Hero VIII"
+  },
+  {
+    "level": 578,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "IX",
+    "displayName": "Legendary Starforged Hero IX"
+  },
+  {
+    "level": 579,
+    "rarity": "Legendary",
+    "title": "Starforged Hero",
+    "rank": "X",
+    "displayName": "Legendary Starforged Hero X"
+  },
+  {
+    "level": 580,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "I",
+    "displayName": "Legendary Eternal Warden I"
+  },
+  {
+    "level": 581,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "II",
+    "displayName": "Legendary Eternal Warden II"
+  },
+  {
+    "level": 582,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "III",
+    "displayName": "Legendary Eternal Warden III"
+  },
+  {
+    "level": 583,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "IV",
+    "displayName": "Legendary Eternal Warden IV"
+  },
+  {
+    "level": 584,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "V",
+    "displayName": "Legendary Eternal Warden V"
+  },
+  {
+    "level": 585,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "VI",
+    "displayName": "Legendary Eternal Warden VI"
+  },
+  {
+    "level": 586,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "VII",
+    "displayName": "Legendary Eternal Warden VII"
+  },
+  {
+    "level": 587,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "VIII",
+    "displayName": "Legendary Eternal Warden VIII"
+  },
+  {
+    "level": 588,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "IX",
+    "displayName": "Legendary Eternal Warden IX"
+  },
+  {
+    "level": 589,
+    "rarity": "Legendary",
+    "title": "Eternal Warden",
+    "rank": "X",
+    "displayName": "Legendary Eternal Warden X"
+  },
+  {
+    "level": 590,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "I",
+    "displayName": "Legendary Time Weaver I"
+  },
+  {
+    "level": 591,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "II",
+    "displayName": "Legendary Time Weaver II"
+  },
+  {
+    "level": 592,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "III",
+    "displayName": "Legendary Time Weaver III"
+  },
+  {
+    "level": 593,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "IV",
+    "displayName": "Legendary Time Weaver IV"
+  },
+  {
+    "level": 594,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "V",
+    "displayName": "Legendary Time Weaver V"
+  },
+  {
+    "level": 595,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "VI",
+    "displayName": "Legendary Time Weaver VI"
+  },
+  {
+    "level": 596,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "VII",
+    "displayName": "Legendary Time Weaver VII"
+  },
+  {
+    "level": 597,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "VIII",
+    "displayName": "Legendary Time Weaver VIII"
+  },
+  {
+    "level": 598,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "IX",
+    "displayName": "Legendary Time Weaver IX"
+  },
+  {
+    "level": 599,
+    "rarity": "Legendary",
+    "title": "Time Weaver",
+    "rank": "X",
+    "displayName": "Legendary Time Weaver X"
+  },
+  {
+    "level": 600,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "I",
+    "displayName": "Legendary Reality Shaper I"
+  },
+  {
+    "level": 601,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "II",
+    "displayName": "Legendary Reality Shaper II"
+  },
+  {
+    "level": 602,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "III",
+    "displayName": "Legendary Reality Shaper III"
+  },
+  {
+    "level": 603,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "IV",
+    "displayName": "Legendary Reality Shaper IV"
+  },
+  {
+    "level": 604,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "V",
+    "displayName": "Legendary Reality Shaper V"
+  },
+  {
+    "level": 605,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "VI",
+    "displayName": "Legendary Reality Shaper VI"
+  },
+  {
+    "level": 606,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "VII",
+    "displayName": "Legendary Reality Shaper VII"
+  },
+  {
+    "level": 607,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "VIII",
+    "displayName": "Legendary Reality Shaper VIII"
+  },
+  {
+    "level": 608,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "IX",
+    "displayName": "Legendary Reality Shaper IX"
+  },
+  {
+    "level": 609,
+    "rarity": "Legendary",
+    "title": "Reality Shaper",
+    "rank": "X",
+    "displayName": "Legendary Reality Shaper X"
+  },
+  {
+    "level": 610,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "I",
+    "displayName": "Legendary Dimensional King I"
+  },
+  {
+    "level": 611,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "II",
+    "displayName": "Legendary Dimensional King II"
+  },
+  {
+    "level": 612,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "III",
+    "displayName": "Legendary Dimensional King III"
+  },
+  {
+    "level": 613,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "IV",
+    "displayName": "Legendary Dimensional King IV"
+  },
+  {
+    "level": 614,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "V",
+    "displayName": "Legendary Dimensional King V"
+  },
+  {
+    "level": 615,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "VI",
+    "displayName": "Legendary Dimensional King VI"
+  },
+  {
+    "level": 616,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "VII",
+    "displayName": "Legendary Dimensional King VII"
+  },
+  {
+    "level": 617,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "VIII",
+    "displayName": "Legendary Dimensional King VIII"
+  },
+  {
+    "level": 618,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "IX",
+    "displayName": "Legendary Dimensional King IX"
+  },
+  {
+    "level": 619,
+    "rarity": "Legendary",
+    "title": "Dimensional King",
+    "rank": "X",
+    "displayName": "Legendary Dimensional King X"
+  },
+  {
+    "level": 620,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "I",
+    "displayName": "Legendary Cosmic Champion I"
+  },
+  {
+    "level": 621,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "II",
+    "displayName": "Legendary Cosmic Champion II"
+  },
+  {
+    "level": 622,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "III",
+    "displayName": "Legendary Cosmic Champion III"
+  },
+  {
+    "level": 623,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "IV",
+    "displayName": "Legendary Cosmic Champion IV"
+  },
+  {
+    "level": 624,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "V",
+    "displayName": "Legendary Cosmic Champion V"
+  },
+  {
+    "level": 625,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "VI",
+    "displayName": "Legendary Cosmic Champion VI"
+  },
+  {
+    "level": 626,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "VII",
+    "displayName": "Legendary Cosmic Champion VII"
+  },
+  {
+    "level": 627,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "VIII",
+    "displayName": "Legendary Cosmic Champion VIII"
+  },
+  {
+    "level": 628,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "IX",
+    "displayName": "Legendary Cosmic Champion IX"
+  },
+  {
+    "level": 629,
+    "rarity": "Legendary",
+    "title": "Cosmic Champion",
+    "rank": "X",
+    "displayName": "Legendary Cosmic Champion X"
+  },
+  {
+    "level": 630,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "I",
+    "displayName": "Legendary Fatebinder I"
+  },
+  {
+    "level": 631,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "II",
+    "displayName": "Legendary Fatebinder II"
+  },
+  {
+    "level": 632,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "III",
+    "displayName": "Legendary Fatebinder III"
+  },
+  {
+    "level": 633,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "IV",
+    "displayName": "Legendary Fatebinder IV"
+  },
+  {
+    "level": 634,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "V",
+    "displayName": "Legendary Fatebinder V"
+  },
+  {
+    "level": 635,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "VI",
+    "displayName": "Legendary Fatebinder VI"
+  },
+  {
+    "level": 636,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "VII",
+    "displayName": "Legendary Fatebinder VII"
+  },
+  {
+    "level": 637,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "VIII",
+    "displayName": "Legendary Fatebinder VIII"
+  },
+  {
+    "level": 638,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "IX",
+    "displayName": "Legendary Fatebinder IX"
+  },
+  {
+    "level": 639,
+    "rarity": "Legendary",
+    "title": "Fatebinder",
+    "rank": "X",
+    "displayName": "Legendary Fatebinder X"
+  },
+  {
+    "level": 640,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 641,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 642,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 643,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 644,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 645,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 646,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 647,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 648,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 649,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 650,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 651,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 652,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 653,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 654,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 655,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 656,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 657,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 658,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 659,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 660,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 661,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 662,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 663,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 664,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 665,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 666,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 667,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 668,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 669,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 670,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 671,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 672,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 673,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 674,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 675,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 676,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 677,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 678,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 679,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 680,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 681,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 682,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 683,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 684,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 685,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 686,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 687,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 688,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 689,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 690,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 691,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 692,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 693,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 694,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 695,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 696,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 697,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 698,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 699,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 700,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 701,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 702,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 703,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 704,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 705,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 706,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 707,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 708,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 709,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 710,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 711,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 712,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 713,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 714,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 715,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 716,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 717,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 718,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 719,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 720,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 721,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 722,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 723,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 724,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 725,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 726,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 727,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 728,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 729,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 730,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 731,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 732,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 733,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 734,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 735,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 736,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 737,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 738,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 739,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 740,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 741,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 742,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 743,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 744,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 745,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 746,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 747,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 748,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 749,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 750,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 751,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 752,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 753,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 754,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 755,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 756,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 757,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 758,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 759,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 760,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 761,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 762,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 763,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 764,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 765,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 766,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 767,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 768,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 769,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 770,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 771,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 772,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 773,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 774,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 775,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 776,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 777,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 778,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 779,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 780,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 781,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 782,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 783,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 784,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 785,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 786,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 787,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 788,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 789,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 790,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "I",
+    "displayName": "Legendary Immortal Sovereign I"
+  },
+  {
+    "level": 791,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "II",
+    "displayName": "Legendary Immortal Sovereign II"
+  },
+  {
+    "level": 792,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "III",
+    "displayName": "Legendary Immortal Sovereign III"
+  },
+  {
+    "level": 793,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IV",
+    "displayName": "Legendary Immortal Sovereign IV"
+  },
+  {
+    "level": 794,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "V",
+    "displayName": "Legendary Immortal Sovereign V"
+  },
+  {
+    "level": 795,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VI",
+    "displayName": "Legendary Immortal Sovereign VI"
+  },
+  {
+    "level": 796,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VII",
+    "displayName": "Legendary Immortal Sovereign VII"
+  },
+  {
+    "level": 797,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "VIII",
+    "displayName": "Legendary Immortal Sovereign VIII"
+  },
+  {
+    "level": 798,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "IX",
+    "displayName": "Legendary Immortal Sovereign IX"
+  },
+  {
+    "level": 799,
+    "rarity": "Legendary",
+    "title": "Immortal Sovereign",
+    "rank": "X",
+    "displayName": "Legendary Immortal Sovereign X"
+  },
+  {
+    "level": 800,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Ascendant I"
+  },
+  {
+    "level": 801,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Ascendant II"
+  },
+  {
+    "level": 802,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Ascendant III"
+  },
+  {
+    "level": 803,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Ascendant IV"
+  },
+  {
+    "level": 804,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Ascendant V"
+  },
+  {
+    "level": 805,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Ascendant VI"
+  },
+  {
+    "level": 806,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Ascendant VII"
+  },
+  {
+    "level": 807,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Ascendant VIII"
+  },
+  {
+    "level": 808,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Ascendant IX"
+  },
+  {
+    "level": 809,
+    "rarity": "Mythic",
+    "title": "Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Ascendant X"
+  },
+  {
+    "level": 810,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Celestial Ascendant I"
+  },
+  {
+    "level": 811,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Celestial Ascendant II"
+  },
+  {
+    "level": 812,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Celestial Ascendant III"
+  },
+  {
+    "level": 813,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Celestial Ascendant IV"
+  },
+  {
+    "level": 814,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Celestial Ascendant V"
+  },
+  {
+    "level": 815,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Celestial Ascendant VI"
+  },
+  {
+    "level": 816,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Celestial Ascendant VII"
+  },
+  {
+    "level": 817,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Celestial Ascendant VIII"
+  },
+  {
+    "level": 818,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Celestial Ascendant IX"
+  },
+  {
+    "level": 819,
+    "rarity": "Mythic",
+    "title": "Celestial Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Celestial Ascendant X"
+  },
+  {
+    "level": 820,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Void Ascendant I"
+  },
+  {
+    "level": 821,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Void Ascendant II"
+  },
+  {
+    "level": 822,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Void Ascendant III"
+  },
+  {
+    "level": 823,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Void Ascendant IV"
+  },
+  {
+    "level": 824,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Void Ascendant V"
+  },
+  {
+    "level": 825,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Void Ascendant VI"
+  },
+  {
+    "level": 826,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Void Ascendant VII"
+  },
+  {
+    "level": 827,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Void Ascendant VIII"
+  },
+  {
+    "level": 828,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Void Ascendant IX"
+  },
+  {
+    "level": 829,
+    "rarity": "Mythic",
+    "title": "Void Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Void Ascendant X"
+  },
+  {
+    "level": 830,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Divine Ascendant I"
+  },
+  {
+    "level": 831,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Divine Ascendant II"
+  },
+  {
+    "level": 832,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Divine Ascendant III"
+  },
+  {
+    "level": 833,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Divine Ascendant IV"
+  },
+  {
+    "level": 834,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Divine Ascendant V"
+  },
+  {
+    "level": 835,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Divine Ascendant VI"
+  },
+  {
+    "level": 836,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Divine Ascendant VII"
+  },
+  {
+    "level": 837,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Divine Ascendant VIII"
+  },
+  {
+    "level": 838,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Divine Ascendant IX"
+  },
+  {
+    "level": 839,
+    "rarity": "Mythic",
+    "title": "Divine Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Divine Ascendant X"
+  },
+  {
+    "level": 840,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Eternal Ascendant I"
+  },
+  {
+    "level": 841,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Eternal Ascendant II"
+  },
+  {
+    "level": 842,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Eternal Ascendant III"
+  },
+  {
+    "level": 843,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Eternal Ascendant IV"
+  },
+  {
+    "level": 844,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Eternal Ascendant V"
+  },
+  {
+    "level": 845,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Eternal Ascendant VI"
+  },
+  {
+    "level": 846,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Eternal Ascendant VII"
+  },
+  {
+    "level": 847,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Eternal Ascendant VIII"
+  },
+  {
+    "level": 848,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Eternal Ascendant IX"
+  },
+  {
+    "level": 849,
+    "rarity": "Mythic",
+    "title": "Eternal Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Eternal Ascendant X"
+  },
+  {
+    "level": 850,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "I",
+    "displayName": "Mythic Mythborn I"
+  },
+  {
+    "level": 851,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "II",
+    "displayName": "Mythic Mythborn II"
+  },
+  {
+    "level": 852,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "III",
+    "displayName": "Mythic Mythborn III"
+  },
+  {
+    "level": 853,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "IV",
+    "displayName": "Mythic Mythborn IV"
+  },
+  {
+    "level": 854,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "V",
+    "displayName": "Mythic Mythborn V"
+  },
+  {
+    "level": 855,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "VI",
+    "displayName": "Mythic Mythborn VI"
+  },
+  {
+    "level": 856,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "VII",
+    "displayName": "Mythic Mythborn VII"
+  },
+  {
+    "level": 857,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "VIII",
+    "displayName": "Mythic Mythborn VIII"
+  },
+  {
+    "level": 858,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "IX",
+    "displayName": "Mythic Mythborn IX"
+  },
+  {
+    "level": 859,
+    "rarity": "Mythic",
+    "title": "Mythborn",
+    "rank": "X",
+    "displayName": "Mythic Mythborn X"
+  },
+  {
+    "level": 860,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Star Ascendant I"
+  },
+  {
+    "level": 861,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Star Ascendant II"
+  },
+  {
+    "level": 862,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Star Ascendant III"
+  },
+  {
+    "level": 863,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Star Ascendant IV"
+  },
+  {
+    "level": 864,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Star Ascendant V"
+  },
+  {
+    "level": 865,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Star Ascendant VI"
+  },
+  {
+    "level": 866,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Star Ascendant VII"
+  },
+  {
+    "level": 867,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Star Ascendant VIII"
+  },
+  {
+    "level": 868,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Star Ascendant IX"
+  },
+  {
+    "level": 869,
+    "rarity": "Mythic",
+    "title": "Star Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Star Ascendant X"
+  },
+  {
+    "level": 870,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Nexus Ascendant I"
+  },
+  {
+    "level": 871,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Nexus Ascendant II"
+  },
+  {
+    "level": 872,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Nexus Ascendant III"
+  },
+  {
+    "level": 873,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Nexus Ascendant IV"
+  },
+  {
+    "level": 874,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Nexus Ascendant V"
+  },
+  {
+    "level": 875,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Nexus Ascendant VI"
+  },
+  {
+    "level": 876,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Nexus Ascendant VII"
+  },
+  {
+    "level": 877,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Nexus Ascendant VIII"
+  },
+  {
+    "level": 878,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Nexus Ascendant IX"
+  },
+  {
+    "level": 879,
+    "rarity": "Mythic",
+    "title": "Nexus Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Nexus Ascendant X"
+  },
+  {
+    "level": 880,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Infinite Ascendant I"
+  },
+  {
+    "level": 881,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Infinite Ascendant II"
+  },
+  {
+    "level": 882,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Infinite Ascendant III"
+  },
+  {
+    "level": 883,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Infinite Ascendant IV"
+  },
+  {
+    "level": 884,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Infinite Ascendant V"
+  },
+  {
+    "level": 885,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Infinite Ascendant VI"
+  },
+  {
+    "level": 886,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Infinite Ascendant VII"
+  },
+  {
+    "level": 887,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Infinite Ascendant VIII"
+  },
+  {
+    "level": 888,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Infinite Ascendant IX"
+  },
+  {
+    "level": 889,
+    "rarity": "Mythic",
+    "title": "Infinite Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Infinite Ascendant X"
+  },
+  {
+    "level": 890,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Apex Ascendant I"
+  },
+  {
+    "level": 891,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Apex Ascendant II"
+  },
+  {
+    "level": 892,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Apex Ascendant III"
+  },
+  {
+    "level": 893,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Apex Ascendant IV"
+  },
+  {
+    "level": 894,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Apex Ascendant V"
+  },
+  {
+    "level": 895,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Apex Ascendant VI"
+  },
+  {
+    "level": 896,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Apex Ascendant VII"
+  },
+  {
+    "level": 897,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Apex Ascendant VIII"
+  },
+  {
+    "level": 898,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Apex Ascendant IX"
+  },
+  {
+    "level": 899,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Apex Ascendant X"
+  },
+  {
+    "level": 900,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Apex Ascendant I"
+  },
+  {
+    "level": 901,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Apex Ascendant II"
+  },
+  {
+    "level": 902,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Apex Ascendant III"
+  },
+  {
+    "level": 903,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Apex Ascendant IV"
+  },
+  {
+    "level": 904,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Apex Ascendant V"
+  },
+  {
+    "level": 905,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Apex Ascendant VI"
+  },
+  {
+    "level": 906,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Apex Ascendant VII"
+  },
+  {
+    "level": 907,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Apex Ascendant VIII"
+  },
+  {
+    "level": 908,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Apex Ascendant IX"
+  },
+  {
+    "level": 909,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Apex Ascendant X"
+  },
+  {
+    "level": 910,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Apex Ascendant I"
+  },
+  {
+    "level": 911,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Apex Ascendant II"
+  },
+  {
+    "level": 912,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Apex Ascendant III"
+  },
+  {
+    "level": 913,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Apex Ascendant IV"
+  },
+  {
+    "level": 914,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Apex Ascendant V"
+  },
+  {
+    "level": 915,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Apex Ascendant VI"
+  },
+  {
+    "level": 916,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Apex Ascendant VII"
+  },
+  {
+    "level": 917,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Apex Ascendant VIII"
+  },
+  {
+    "level": 918,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Apex Ascendant IX"
+  },
+  {
+    "level": 919,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Apex Ascendant X"
+  },
+  {
+    "level": 920,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Apex Ascendant I"
+  },
+  {
+    "level": 921,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Apex Ascendant II"
+  },
+  {
+    "level": 922,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Apex Ascendant III"
+  },
+  {
+    "level": 923,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Apex Ascendant IV"
+  },
+  {
+    "level": 924,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Apex Ascendant V"
+  },
+  {
+    "level": 925,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Apex Ascendant VI"
+  },
+  {
+    "level": 926,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Apex Ascendant VII"
+  },
+  {
+    "level": 927,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Apex Ascendant VIII"
+  },
+  {
+    "level": 928,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Apex Ascendant IX"
+  },
+  {
+    "level": 929,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Apex Ascendant X"
+  },
+  {
+    "level": 930,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Apex Ascendant I"
+  },
+  {
+    "level": 931,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Apex Ascendant II"
+  },
+  {
+    "level": 932,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Apex Ascendant III"
+  },
+  {
+    "level": 933,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Apex Ascendant IV"
+  },
+  {
+    "level": 934,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Apex Ascendant V"
+  },
+  {
+    "level": 935,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Apex Ascendant VI"
+  },
+  {
+    "level": 936,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Apex Ascendant VII"
+  },
+  {
+    "level": 937,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Apex Ascendant VIII"
+  },
+  {
+    "level": 938,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Apex Ascendant IX"
+  },
+  {
+    "level": 939,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Apex Ascendant X"
+  },
+  {
+    "level": 940,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "I",
+    "displayName": "Mythic Apex Ascendant I"
+  },
+  {
+    "level": 941,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "II",
+    "displayName": "Mythic Apex Ascendant II"
+  },
+  {
+    "level": 942,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "III",
+    "displayName": "Mythic Apex Ascendant III"
+  },
+  {
+    "level": 943,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IV",
+    "displayName": "Mythic Apex Ascendant IV"
+  },
+  {
+    "level": 944,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "V",
+    "displayName": "Mythic Apex Ascendant V"
+  },
+  {
+    "level": 945,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VI",
+    "displayName": "Mythic Apex Ascendant VI"
+  },
+  {
+    "level": 946,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VII",
+    "displayName": "Mythic Apex Ascendant VII"
+  },
+  {
+    "level": 947,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "VIII",
+    "displayName": "Mythic Apex Ascendant VIII"
+  },
+  {
+    "level": 948,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "IX",
+    "displayName": "Mythic Apex Ascendant IX"
+  },
+  {
+    "level": 949,
+    "rarity": "Mythic",
+    "title": "Apex Ascendant",
+    "rank": "X",
+    "displayName": "Mythic Apex Ascendant X"
+  },
+  {
+    "level": 950,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "I",
+    "displayName": "Transcendent The Unbound I"
+  },
+  {
+    "level": 951,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "II",
+    "displayName": "Transcendent The Unbound II"
+  },
+  {
+    "level": 952,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "III",
+    "displayName": "Transcendent The Unbound III"
+  },
+  {
+    "level": 953,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "IV",
+    "displayName": "Transcendent The Unbound IV"
+  },
+  {
+    "level": 954,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "V",
+    "displayName": "Transcendent The Unbound V"
+  },
+  {
+    "level": 955,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "VI",
+    "displayName": "Transcendent The Unbound VI"
+  },
+  {
+    "level": 956,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "VII",
+    "displayName": "Transcendent The Unbound VII"
+  },
+  {
+    "level": 957,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "VIII",
+    "displayName": "Transcendent The Unbound VIII"
+  },
+  {
+    "level": 958,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "IX",
+    "displayName": "Transcendent The Unbound IX"
+  },
+  {
+    "level": 959,
+    "rarity": "Transcendent",
+    "title": "The Unbound",
+    "rank": "X",
+    "displayName": "Transcendent The Unbound X"
+  },
+  {
+    "level": 960,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "I",
+    "displayName": "Transcendent The Eternal I"
+  },
+  {
+    "level": 961,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "II",
+    "displayName": "Transcendent The Eternal II"
+  },
+  {
+    "level": 962,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "III",
+    "displayName": "Transcendent The Eternal III"
+  },
+  {
+    "level": 963,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "IV",
+    "displayName": "Transcendent The Eternal IV"
+  },
+  {
+    "level": 964,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "V",
+    "displayName": "Transcendent The Eternal V"
+  },
+  {
+    "level": 965,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "VI",
+    "displayName": "Transcendent The Eternal VI"
+  },
+  {
+    "level": 966,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "VII",
+    "displayName": "Transcendent The Eternal VII"
+  },
+  {
+    "level": 967,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "VIII",
+    "displayName": "Transcendent The Eternal VIII"
+  },
+  {
+    "level": 968,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "IX",
+    "displayName": "Transcendent The Eternal IX"
+  },
+  {
+    "level": 969,
+    "rarity": "Transcendent",
+    "title": "The Eternal",
+    "rank": "X",
+    "displayName": "Transcendent The Eternal X"
+  },
+  {
+    "level": 970,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "I",
+    "displayName": "Transcendent The Infinite I"
+  },
+  {
+    "level": 971,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "II",
+    "displayName": "Transcendent The Infinite II"
+  },
+  {
+    "level": 972,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "III",
+    "displayName": "Transcendent The Infinite III"
+  },
+  {
+    "level": 973,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "IV",
+    "displayName": "Transcendent The Infinite IV"
+  },
+  {
+    "level": 974,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "V",
+    "displayName": "Transcendent The Infinite V"
+  },
+  {
+    "level": 975,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "VI",
+    "displayName": "Transcendent The Infinite VI"
+  },
+  {
+    "level": 976,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "VII",
+    "displayName": "Transcendent The Infinite VII"
+  },
+  {
+    "level": 977,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "VIII",
+    "displayName": "Transcendent The Infinite VIII"
+  },
+  {
+    "level": 978,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "IX",
+    "displayName": "Transcendent The Infinite IX"
+  },
+  {
+    "level": 979,
+    "rarity": "Transcendent",
+    "title": "The Infinite",
+    "rank": "X",
+    "displayName": "Transcendent The Infinite X"
+  },
+  {
+    "level": 980,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "I",
+    "displayName": "Transcendent The Timeless I"
+  },
+  {
+    "level": 981,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "II",
+    "displayName": "Transcendent The Timeless II"
+  },
+  {
+    "level": 982,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "III",
+    "displayName": "Transcendent The Timeless III"
+  },
+  {
+    "level": 983,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "IV",
+    "displayName": "Transcendent The Timeless IV"
+  },
+  {
+    "level": 984,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "V",
+    "displayName": "Transcendent The Timeless V"
+  },
+  {
+    "level": 985,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "VI",
+    "displayName": "Transcendent The Timeless VI"
+  },
+  {
+    "level": 986,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "VII",
+    "displayName": "Transcendent The Timeless VII"
+  },
+  {
+    "level": 987,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "VIII",
+    "displayName": "Transcendent The Timeless VIII"
+  },
+  {
+    "level": 988,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "IX",
+    "displayName": "Transcendent The Timeless IX"
+  },
+  {
+    "level": 989,
+    "rarity": "Transcendent",
+    "title": "The Timeless",
+    "rank": "X",
+    "displayName": "Transcendent The Timeless X"
+  },
+  {
+    "level": 990,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "I",
+    "displayName": "Transcendent The Architect I"
+  },
+  {
+    "level": 991,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "II",
+    "displayName": "Transcendent The Architect II"
+  },
+  {
+    "level": 992,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "III",
+    "displayName": "Transcendent The Architect III"
+  },
+  {
+    "level": 993,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "IV",
+    "displayName": "Transcendent The Architect IV"
+  },
+  {
+    "level": 994,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "V",
+    "displayName": "Transcendent The Architect V"
+  },
+  {
+    "level": 995,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "VI",
+    "displayName": "Transcendent The Architect VI"
+  },
+  {
+    "level": 996,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "VII",
+    "displayName": "Transcendent The Architect VII"
+  },
+  {
+    "level": 997,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "VIII",
+    "displayName": "Transcendent The Architect VIII"
+  },
+  {
+    "level": 998,
+    "rarity": "Transcendent",
+    "title": "The Architect",
+    "rank": "IX",
+    "displayName": "Transcendent The Architect IX"
+  },
+  {
+    "level": 999,
+    "rarity": "Unique",
+    "title": "SideQuest Legend",
+    "rank": "MAX",
+    "displayName": "SideQuest Legend"
+  }
+]
