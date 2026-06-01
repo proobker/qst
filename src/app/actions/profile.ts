@@ -20,4 +20,5 @@ export async function updateBioAction(formData: FormData) {
   const bio = String(formData.get("bio") ?? "");
   await updateProfileBio(userId, bio);
   revalidatePath("/profile");
+  revalidatePath(`/profile/${userId}`);
 }

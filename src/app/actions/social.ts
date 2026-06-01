@@ -35,10 +35,13 @@ export async function approvePostAction(formData: FormData) {
     return;
   }
 
-  await voteOnPost(userId, postId, true);
+  const postOwnerId = await voteOnPost(userId, postId, true);
   revalidatePath("/feed");
   revalidatePath("/quests");
   revalidatePath("/profile");
+  if (postOwnerId) {
+    revalidatePath(`/profile/${postOwnerId}`);
+  }
   revalidatePath("/", "layout");
 }
 

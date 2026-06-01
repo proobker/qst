@@ -36,6 +36,7 @@ export async function updatePostImageAction(formData: FormData) {
   await updatePostImage(userId, postId, file, editMetadata);
   revalidatePath("/feed");
   revalidatePath("/profile");
+  revalidatePath(`/profile/${userId}`);
 }
 
 export async function rollbackPostEditAction(formData: FormData) {
@@ -47,4 +48,5 @@ export async function rollbackPostEditAction(formData: FormData) {
   await rollbackPostEdit(userId, postId);
   revalidatePath("/feed");
   revalidatePath("/profile");
+  revalidatePath(`/profile/${userId}`);
 }

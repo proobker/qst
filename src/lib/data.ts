@@ -682,25 +682,25 @@ export async function toggleLike(userId: string, postId: string) {
   }
 }
 
-export async function voteOnPost(userId: string, postId: string, vote: boolean) {
+export async function voteOnPost(userId: string, postId: string, vote: boolean): Promise<string | undefined> {
   const supabase = await createSupabaseServerClient();
   await supabase
     .from("approvals")
     .upsert({ post_id: postId, user_id: userId, vote }, { onConflict: "post_id,user_id" });
 
-  if (vote) {
-    const { data: post } = await supabase.from("posts").select("user_id").eq("id", postId).maybeSingle();
+  const { data: post } = await supabase.from("posts").select("user_id").eq("id", postId).maybeSingle();
+  const postOwnerId = post?.user_id;
+
+  if (vote && postOwnerId) {
     const { data: actor } = await supabase.from("users").select("name").eq("id", userId).maybeSingle();
-    if (post?.user_id) {
-      await createNotification({
-        userId: post.user_id,
-        type: "approval",
-        actorId: userId,
-        entityId: postId,
-        entityType: "post",
-        message: `${actor?.name ?? "Someone"} approved your quest completion`,
-      });
-    }
+    await createNotification({
+      userId: postOwnerId,
+      type: "approval",
+      actorId: userId,
+      entityId: postId,
+      entityType: "post",
+      message: `${actor?.name ?? "Someone"} approved your quest completion`,
+    });
   }
 
   const { data: votes } = await supabase.from("approvals").select("vote").eq("post_id", postId);
@@ -710,6 +710,8 @@ export async function voteOnPost(userId: string, postId: string, vote: boolean) 
   if (total > 0 && percentFromVotes(approved, total) >= 50) {
     await awardQuestRewards(postId);
   }
+
+  return postOwnerId;
 }
 
 function normalizeFriendPair(a: string, b: string): { user_1: string; user_2: string } {
@@ -1044,6 +1046,7 @@ export async function markAllNotificationsRead(userId: string) {
 }
 
 export async function getProfileSummary(userId: string): Promise<ProfileSummary> {
+  noStore();
   const supabase = await createSupabaseServerClient();
   const [profileResult, badgesResult, completedResult, postsResult, friendsResult] = await Promise.all([
     supabase.from("users").select("*").eq("id", userId).maybeSingle(),
