@@ -26,7 +26,7 @@ const GEMINI_MODELS = [
 ] as const;
 
 const MAX_HOBBIES_IN_PROMPT = 5;
-const QUEST_BATCH_SIZE = 5;
+const QUEST_BATCH_SIZE = 3;
 const RATE_LIMIT_COOLDOWN_MS = 120_000;
 
 let geminiCooldownUntil = 0;
@@ -208,7 +208,7 @@ function buildPrompt(context: QuestContext): string {
   const hobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
   const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
   const locationHints = getLocationHints(hobbies, hasLocation);
-  return `Generate 5 real-world RPG quests in JSON format.
+  return `Generate ${QUEST_BATCH_SIZE} real-world RPG quests in JSON format.
 Use only these inputs:
 - Hobbies: ${hobbies.join(", ") || "exploration"}
 - Location: ${hasLocation ? `${context.location.latitude},${context.location.longitude}` : "local area"}
@@ -352,7 +352,7 @@ function resolveModelsToTry(): string[] {
 }
 
 /**
- * Generates a quest batch via Gemini. On quota exhaustion, returns offline quests so the app keeps working.
+ * Generates a quest batch via Gemini first. Uses offline quests only when Gemini cannot produce a full batch.
  */
 export async function generateQuest(context: QuestContext): Promise<GenerateQuestResult> {
   const apiKey = getGeminiApiKey();
@@ -360,13 +360,7 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
 
   if (isGeminiInCooldown()) {
     const remainingSec = Math.ceil(getGeminiCooldownRemainingMs() / 1000);
-    console.warn(`[Gemini] In cooldown (${remainingSec}s left) — using offline quest batch builder`);
-    return {
-      ok: true,
-      quests: buildOfflineQuestBatch(context),
-      model: "offline",
-      offline: true,
-    };
+    console.warn(`[Gemini] In cooldown (${remainingSec}s left) — still trying API before offline fallback`);
   }
 
   console.log("[Gemini] generateQuest start", {
@@ -419,26 +413,14 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
       });
 
     const uniqueSanitized = dedupeQuestsByTitle(sanitized);
-    if (uniqueSanitized.length === 0) {
-      console.warn(`[Gemini] ${model} invalid or failed moderation`);
+    if (uniqueSanitized.length < QUEST_BATCH_SIZE) {
+      console.warn(
+        `[Gemini] ${model} returned ${uniqueSanitized.length}/${QUEST_BATCH_SIZE} valid quests — trying next model`,
+      );
       continue;
     }
 
-    const fallbackContext: QuestContext = {
-      ...context,
-      previousQuestTitles: [...context.previousQuestTitles, ...uniqueSanitized.map((quest) => quest.title)],
-    };
-
-    const fillers =
-      uniqueSanitized.length < QUEST_BATCH_SIZE
-        ? buildOfflineQuestBatch(fallbackContext, QUEST_BATCH_SIZE - uniqueSanitized.length)
-        : [];
-
-    const finalBatch = dedupeQuestsByTitle([...uniqueSanitized, ...fillers]).slice(0, QUEST_BATCH_SIZE);
-    if (finalBatch.length === 0) {
-      continue;
-    }
-
+    const finalBatch = uniqueSanitized.slice(0, QUEST_BATCH_SIZE);
     console.log(`[Gemini] Success via ${model}:`, finalBatch.map((quest) => quest.title).join(" | "));
     return { ok: true, quests: finalBatch, model };
   }
@@ -446,16 +428,16 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
   if (sawRateLimit) {
     markRateLimited();
     console.warn("[Gemini] All models rate limited — using offline quest batch builder until cooldown resets");
-    return {
-      ok: true,
-      quests: buildOfflineQuestBatch(context),
-      model: "offline",
-      offline: true,
-    };
+  } else {
+    console.warn("[Gemini] Could not produce a full batch from any model — using offline quest batch builder");
   }
 
-  console.error("[Gemini] All models failed");
-  return { ok: false, reason: "api_error", message: "Could not generate quests from any Gemini model." };
+  return {
+    ok: true,
+    quests: buildOfflineQuestBatch(context),
+    model: "offline",
+    offline: true,
+  };
 }
 
 export function moderateQuest(quest: QuestDefinition): boolean {
