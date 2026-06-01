@@ -1,7 +1,13 @@
 import { redirect } from "next/navigation";
 import { AppNav } from "@/components/nav";
+import { LevelUpProvider } from "@/components/level-up-provider";
 import { ToastProvider } from "@/components/ui/toast";
-import { ensureUserProfile, getNotifications, getUnreadNotificationCount } from "@/lib/data";
+import {
+  ensureUserProfile,
+  getNotifications,
+  getPendingLevelUp,
+  getUnreadNotificationCount,
+} from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function AppLayout({
@@ -20,17 +26,20 @@ export default async function AppLayout({
 
   await ensureUserProfile(user);
 
-  const [notifications, unreadCount] = await Promise.all([
+  const [notifications, unreadCount, pendingLevelUp] = await Promise.all([
     getNotifications(user.id),
     getUnreadNotificationCount(user.id),
+    getPendingLevelUp(user.id),
   ]);
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-background pb-20 sm:pb-0">
-        <AppNav notifications={notifications} unreadCount={unreadCount} />
-        <main className="mx-auto w-full max-w-6xl px-4 py-6 page-enter">{children}</main>
-      </div>
+      <LevelUpProvider initialCelebration={pendingLevelUp}>
+        <div className="min-h-screen bg-background pb-20 sm:pb-0">
+          <AppNav notifications={notifications} unreadCount={unreadCount} />
+          <main className="mx-auto w-full max-w-6xl px-4 py-6 page-enter">{children}</main>
+        </div>
+      </LevelUpProvider>
     </ToastProvider>
   );
 }

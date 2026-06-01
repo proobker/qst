@@ -1,7 +1,8 @@
 import type { User } from "@supabase/supabase-js";
 import { unstable_noStore as noStore } from "next/cache";
 import { DEFAULT_HOBBIES } from "@/lib/constants";
-import { levelFromXp, titleForLevel } from "@/lib/leveling";
+import { levelFromXp, titleForLevel, getLevelDefinition } from "@/lib/leveling";
+import { type LevelUpCelebration, parseLevelFromNotificationMessage } from "@/lib/level-up";
 import { generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
 import {
   FeedPost,
@@ -1034,6 +1035,43 @@ export async function markNotificationRead(userId: string, notificationId: strin
     .update({ read: true })
     .eq("id", notificationId)
     .eq("user_id", userId);
+}
+
+export async function getPendingLevelUp(userId: string): Promise<LevelUpCelebration | null> {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("notifications")
+    .select("id, message")
+    .eq("user_id", userId)
+    .eq("type", "level_up")
+    .eq("read", false)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (!data) {
+    return null;
+  }
+
+  const level = parseLevelFromNotificationMessage(data.message);
+  if (!level) {
+    return null;
+  }
+
+  const definition = getLevelDefinition(level);
+  if (!definition) {
+    return null;
+  }
+
+  return {
+    notificationId: data.id,
+    level: definition.level,
+    previousLevel: Math.max(1, definition.level - 1),
+    displayName: definition.displayName,
+    rarity: definition.rarity,
+    title: definition.title,
+    rank: definition.rank,
+  };
 }
 
 export async function markAllNotificationsRead(userId: string) {
