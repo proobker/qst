@@ -17,7 +17,8 @@ import {
   QuestDefinition,
   UserProfile,
 } from "@/lib/types";
-import { isFullEmailAddress, percentFromVotes } from "@/lib/utils";
+import { isFullEmailAddress, meetsApprovalThreshold, tallyFriendVotes } from "@/lib/utils";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function fallbackDisplayName(user: User) {
@@ -430,6 +431,7 @@ export async function swipeQuest(userId: string, userQuestId: string, direction:
 
 export async function listUserQuests(userId: string) {
   await expireStaleAcceptedQuests(userId);
+  await syncPendingQuestRewards(userId);
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("user_quests")
@@ -533,6 +535,7 @@ async function expireStaleAcceptedQuests(userId: string) {
 }
 
 export async function getFeed(userId: string): Promise<FeedPost[]> {
+  await syncPendingQuestRewards(userId);
   const supabase = await createSupabaseServerClient();
   const friendIds = await getFriendIds(userId);
   const visibleUserIds = [userId, ...friendIds];
@@ -549,16 +552,15 @@ export async function getFeed(userId: string): Promise<FeedPost[]> {
   return posts.map((post) => {
     const postOwnerId = post.user_id as string;
     const approvals = (post.approvals as Array<{ user_id: string; vote: boolean }> | undefined) ?? [];
+    const { total, percent: approvalPercent } = tallyFriendVotes(approvals, postOwnerId);
     const friendVotes = approvals.filter((vote) => vote.user_id !== postOwnerId);
-    const approved = friendVotes.filter((vote) => vote.vote).length;
-    const approvalPercent = percentFromVotes(approved, friendVotes.length);
     const votedByUser = friendVotes.find((vote) => vote.user_id === userId) ?? null;
 
     return {
       ...post,
       edited_at: (post.edited_at as string | null) ?? null,
       edit_count: Number(post.edit_count ?? 0),
-      approvalsCount: friendVotes.length,
+      approvalsCount: total,
       approvalPercent,
       votedByUser: votedByUser?.vote ?? null,
     } as FeedPost;
@@ -588,9 +590,57 @@ async function createNotification(payload: {
   });
 }
 
-async function awardQuestRewards(postId: string) {
-  const supabase = await createSupabaseServerClient();
-  const { data: post } = await supabase
+/** Re-award quests stuck in pending_approval when votes already meet the threshold. */
+async function syncPendingQuestRewards(userId: string) {
+  try {
+    const admin = createSupabaseAdminClient();
+    const { data: pending } = await admin
+      .from("user_quests")
+      .select("quest_id")
+      .eq("user_id", userId)
+      .eq("status", "pending_approval");
+
+    for (const row of pending ?? []) {
+      const { data: post } = await admin
+        .from("posts")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("quest_id", row.quest_id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (post?.id) {
+        await checkAndAwardQuestApproval(post.id, admin);
+      }
+    }
+  } catch (error) {
+    console.error("[QuestRewards] syncPendingQuestRewards skipped:", error);
+  }
+}
+
+async function checkAndAwardQuestApproval(
+  postId: string,
+  admin = createSupabaseAdminClient(),
+): Promise<boolean> {
+  const { data: post } = await admin.from("posts").select("user_id").eq("id", postId).maybeSingle();
+  if (!post?.user_id) {
+    return false;
+  }
+
+  const { data: votes } = await admin.from("approvals").select("vote,user_id").eq("post_id", postId);
+  const { approved, total } = tallyFriendVotes(votes ?? [], post.user_id);
+
+  if (!meetsApprovalThreshold(approved, total)) {
+    return false;
+  }
+
+  await awardQuestRewards(postId, admin);
+  return true;
+}
+
+async function awardQuestRewards(postId: string, admin = createSupabaseAdminClient()) {
+  const { data: post } = await admin
     .from("posts")
     .select("id,user_id,quest_id,quests(xp_reward,badge_reward,category)")
     .eq("id", postId)
@@ -600,7 +650,7 @@ async function awardQuestRewards(postId: string) {
     return;
   }
 
-  const { data: assignment } = await supabase
+  const { data: assignment } = await admin
     .from("user_quests")
     .select("id,status")
     .eq("user_id", post.user_id)
@@ -611,12 +661,17 @@ async function awardQuestRewards(postId: string) {
     return;
   }
 
-  await supabase
+  const { error: questUpdateError } = await admin
     .from("user_quests")
     .update({ status: "completed", completed_at: new Date().toISOString() })
     .eq("id", assignment.id);
 
-  const { data: profile } = await supabase.from("users").select("xp,level").eq("id", post.user_id).maybeSingle();
+  if (questUpdateError) {
+    console.error("[QuestRewards] Failed to mark quest completed:", questUpdateError);
+    return;
+  }
+
+  const { data: profile } = await admin.from("users").select("xp,level").eq("id", post.user_id).maybeSingle();
   const questData = post.quests as unknown as { xp_reward: number; badge_reward: string | null; category: string };
   const currentXp = Number(profile?.xp ?? 0);
   const oldLevel = Number(profile?.level ?? 1);
@@ -624,13 +679,18 @@ async function awardQuestRewards(postId: string) {
   const updatedXp = currentXp + rewardXp;
   const newLevel = levelFromXp(updatedXp);
 
-  await supabase
+  const { error: profileUpdateError } = await admin
     .from("users")
     .update({
       xp: updatedXp,
       level: newLevel,
     })
     .eq("id", post.user_id);
+
+  if (profileUpdateError) {
+    console.error("[QuestRewards] Failed to update XP:", profileUpdateError);
+    return;
+  }
 
   if (newLevel > oldLevel) {
     await createNotification({
@@ -644,17 +704,17 @@ async function awardQuestRewards(postId: string) {
 
   const badge = questData.badge_reward;
   if (badge) {
-    const { data: badgeRow } = await supabase
+    const { data: badgeRow } = await admin
       .from("badges")
       .upsert({ name: badge }, { onConflict: "name" })
       .select("id")
       .single();
     if (badgeRow) {
-      await supabase.from("user_badges").upsert({ user_id: post.user_id, badge_id: badgeRow.id });
+      await admin.from("user_badges").upsert({ user_id: post.user_id, badge_id: badgeRow.id });
     }
   }
 
-  const { data: completedCategories } = await supabase
+  const { data: completedCategories } = await admin
     .from("user_quests")
     .select("quests(category)")
     .eq("user_id", post.user_id)
@@ -666,13 +726,13 @@ async function awardQuestRewards(postId: string) {
 
   const aiBadges = recommendBadges(categories);
   if (aiBadges.length > 0) {
-    const { data: createdBadges } = await supabase
+    const { data: createdBadges } = await admin
       .from("badges")
       .upsert(aiBadges.map((name) => ({ name })), { onConflict: "name" })
       .select("id,name");
 
     if (createdBadges) {
-      await supabase.from("user_badges").upsert(
+      await admin.from("user_badges").upsert(
         createdBadges.map((badgeRow) => ({
           user_id: post.user_id,
           badge_id: badgeRow.id,
@@ -707,13 +767,10 @@ export async function voteOnPost(userId: string, postId: string, vote: boolean):
     });
   }
 
-  const { data: votes } = await supabase.from("approvals").select("vote,user_id").eq("post_id", postId);
-  const friendVotes = (votes ?? []).filter((row) => row.user_id !== postOwnerId);
-  const total = friendVotes.length;
-  const approved = friendVotes.filter((row) => row.vote).length;
-
-  if (total > 0 && percentFromVotes(approved, total) >= 50) {
-    await awardQuestRewards(postId);
+  try {
+    await checkAndAwardQuestApproval(postId);
+  } catch (error) {
+    console.error("[QuestRewards] Failed after vote on post:", postId, error);
   }
 
   return postOwnerId;

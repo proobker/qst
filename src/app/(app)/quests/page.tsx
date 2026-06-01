@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { QuestUploadForm } from "@/components/quest-upload-form";
 import { QuestListSkeleton } from "@/components/ui/skeleton";
 import { abandonQuestAction } from "@/app/actions/quests";
-import { MIN_FRIENDS_REQUIRED, QUEST_ACCEPT_DEADLINE_HOURS } from "@/lib/constants";
+import { APPROVAL_THRESHOLD_PERCENT, MIN_FRIENDS_REQUIRED, QUEST_ACCEPT_DEADLINE_HOURS } from "@/lib/constants";
 import { getFriendCount, listUserQuests } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -91,7 +91,7 @@ async function QuestsContent() {
               </div>
             ) : entry.status === "pending_approval" ? (
               <p className="mt-3 rounded-lg bg-accent/10 px-3 py-2 text-sm text-accent">
-                Pending approval. Your friends decide whether this quest is verified.
+                Pending approval — needs at least {APPROVAL_THRESHOLD_PERCENT}% friend approve votes to award XP.
               </p>
             ) : entry.status === "completed" ? (
               <p className="mt-3 rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
