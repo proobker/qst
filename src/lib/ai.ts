@@ -216,7 +216,8 @@ Use only these inputs:
 Do not use any user background information, profile details, history, or assumptions.
 All quests must be safe, legal, public, and completable in one session.
 Return strict JSON only (no markdown), as:
-{"quests":[{"title":"...","description":"...","difficulty":"easy|medium|hard","xp_reward":0,"badge_reward":"...","estimated_time":"...","category":"..."}]}`;
+{"quests":[{"title":"...","description":"...","difficulty":"easy|medium|hard","xp_reward":0,"badge_reward":"...","estimated_time":"...","category":"..."},
+{"title":"...","description":"...","difficulty":"easy|medium|hard","xp_reward":0,"badge_reward":"...","estimated_time":"...","category":"..."},...]}`;
 }
 
 /** Used only when Gemini quota is exhausted so Discover stays usable. */
@@ -320,9 +321,11 @@ async function callGeminiModel(
       config: {
         responseMimeType: "application/json",
         temperature: 0.7,
-        maxOutputTokens: 768,
+        maxOutputTokens: 2048,
       },
     });
+    console.log("TEXT:");
+    console.log(response.text);
 
     const text = response.text ?? "";
     if (!text) {
@@ -337,6 +340,7 @@ async function callGeminiModel(
       message: error instanceof Error ? error.message : String(error),
     };
   }
+  
 }
 
 function resolveModelsToTry(): string[] {
