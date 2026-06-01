@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { signInWithGoogle } from "@/app/actions/auth";
+import { Logo } from "@/components/logo";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function Home() {
@@ -17,9 +18,7 @@ export default async function Home() {
         <p className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
           real life adventure game
         </p>
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">
-          qst
-        </h1>
+        <Logo size="lg" className="justify-center" />
         <p className="text-base leading-relaxed text-muted">
           Turn real life into an RPG. Discover AI-generated side quests based on your hobbies and location, complete
           them, post proof, collect approvals, and level up with badges.

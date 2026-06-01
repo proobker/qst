@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Compass, Flag, LogOut, ScrollText, UserRound, Users } from "lucide-react";
 import { signOutAction } from "@/app/actions/auth";
+import { Logo } from "@/components/logo";
 import { NotificationBell } from "@/components/notification-bell";
 import { Notification } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -23,9 +24,7 @@ export function AppNav({ notifications, unreadCount }: AppNavProps) {
     <>
       <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3">
-          <Link href="/discover" className="text-xl font-bold tracking-tight text-primary">
-            qst
-          </Link>
+          <Logo href="/discover" size="sm" />
           <div className="flex items-center gap-2">
             <NotificationBell notifications={notifications} unreadCount={unreadCount} />
             <form action={signOutAction} className="hidden sm:block">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { completeOnboardingAction } from "@/app/actions/onboarding";
 import { HobbyPicker } from "@/components/hobby-picker";
+import { Logo } from "@/components/logo";
 import { LocationPicker } from "@/components/location-picker";
 import { getOnboardingState, listHobbies } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -20,6 +21,7 @@ export default async function OnboardingPage() {
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-border bg-surface p-6">
+        <Logo size="md" className="mb-4" />
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Onboarding</h1>
         <p className="mt-2 text-sm text-muted">
           Search and select hobbies, then set your location on the map so qst can generate nearby quests.
