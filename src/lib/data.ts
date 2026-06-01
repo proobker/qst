@@ -1,6 +1,10 @@
 import type { User } from "@supabase/supabase-js";
 import { unstable_noStore as noStore } from "next/cache";
-import { DEFAULT_HOBBIES } from "@/lib/constants";
+import {
+  DEFAULT_HOBBIES,
+  MIN_FRIENDS_REQUIRED,
+  QUEST_ACCEPT_DEADLINE_HOURS,
+} from "@/lib/constants";
 import { levelFromXp, titleForLevel, getLevelDefinition } from "@/lib/leveling";
 import { type LevelUpCelebration, parseLevelFromNotificationMessage } from "@/lib/level-up";
 import { generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
@@ -198,6 +202,8 @@ const discoveryInflight = new Map<string, Promise<DiscoveryQuestResult>>();
 async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuestResult> {
   noStore();
   const supabase = await createSupabaseServerClient();
+
+  await expireStaleAcceptedQuests(userId);
 
   const { data: generatedRows, error: fetchError } = await supabase
     .from("user_quests")
@@ -423,6 +429,7 @@ export async function swipeQuest(userId: string, userQuestId: string, direction:
 }
 
 export async function listUserQuests(userId: string) {
+  await expireStaleAcceptedQuests(userId);
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("user_quests")
@@ -459,6 +466,10 @@ export async function submitQuestCompletion(
 
   if (!assignment || assignment.status !== "accepted") {
     throw new Error("Quest is not active.");
+  }
+
+  if (!(await hasMinimumFriends(userId))) {
+    throw new Error(`Add at least ${MIN_FRIENDS_REQUIRED} friend before submitting quest proof.`);
   }
 
   let imageUrl = "https://placehold.co/1200x800/png?text=Quest+Completion";
@@ -499,6 +510,28 @@ async function getFriendIds(userId: string): Promise<string[]> {
   );
 }
 
+export async function getFriendCount(userId: string): Promise<number> {
+  const friendIds = await getFriendIds(userId);
+  return friendIds.length;
+}
+
+export async function hasMinimumFriends(userId: string): Promise<boolean> {
+  return (await getFriendCount(userId)) >= MIN_FRIENDS_REQUIRED;
+}
+
+async function expireStaleAcceptedQuests(userId: string) {
+  const supabase = await createSupabaseServerClient();
+  const cutoff = new Date(Date.now() - QUEST_ACCEPT_DEADLINE_HOURS * 60 * 60 * 1000).toISOString();
+
+  await supabase
+    .from("user_quests")
+    .update({ status: "incomplete", abandoned_at: new Date().toISOString() })
+    .eq("user_id", userId)
+    .eq("status", "accepted")
+    .not("started_at", "is", null)
+    .lt("started_at", cutoff);
+}
+
 export async function getFeed(userId: string): Promise<FeedPost[]> {
   const supabase = await createSupabaseServerClient();
   const friendIds = await getFriendIds(userId);
@@ -507,30 +540,26 @@ export async function getFeed(userId: string): Promise<FeedPost[]> {
   const { data } = await supabase
     .from("posts")
     .select(
-      "id,caption,image_url,created_at,edited_at,edit_count,user_id,quest_id,users(id,name,avatar),quests(id,title,difficulty,xp_reward,category),likes(id,user_id),approvals(id,user_id,vote)",
+      "id,caption,image_url,created_at,edited_at,edit_count,user_id,quest_id,users(id,name,avatar),quests(id,title,difficulty,xp_reward,category),approvals(id,user_id,vote)",
     )
     .in("user_id", visibleUserIds)
     .order("created_at", { ascending: false });
 
   const posts = (data as Array<Record<string, unknown>> | null) ?? [];
   return posts.map((post) => {
-    const likes = ((post.likes as Array<{ user_id: string }> | undefined) ?? []).length;
+    const postOwnerId = post.user_id as string;
     const approvals = (post.approvals as Array<{ user_id: string; vote: boolean }> | undefined) ?? [];
-    const approved = approvals.filter((vote) => vote.vote).length;
-    const approvalPercent = percentFromVotes(approved, approvals.length);
-    const likedByUser = ((post.likes as Array<{ user_id: string }> | undefined) ?? []).some(
-      (like) => like.user_id === userId,
-    );
-    const votedByUser = approvals.find((vote) => vote.user_id === userId) ?? null;
+    const friendVotes = approvals.filter((vote) => vote.user_id !== postOwnerId);
+    const approved = friendVotes.filter((vote) => vote.vote).length;
+    const approvalPercent = percentFromVotes(approved, friendVotes.length);
+    const votedByUser = friendVotes.find((vote) => vote.user_id === userId) ?? null;
 
     return {
       ...post,
       edited_at: (post.edited_at as string | null) ?? null,
       edit_count: Number(post.edit_count ?? 0),
-      likesCount: likes,
-      approvalsCount: approvals.length,
+      approvalsCount: friendVotes.length,
       approvalPercent,
-      likedByUser,
       votedByUser: votedByUser?.vote ?? null,
     } as FeedPost;
   });
@@ -653,46 +682,20 @@ async function awardQuestRewards(postId: string) {
   }
 }
 
-export async function toggleLike(userId: string, postId: string) {
-  const supabase = await createSupabaseServerClient();
-  const { data: existing } = await supabase
-    .from("likes")
-    .select("id")
-    .eq("post_id", postId)
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (existing) {
-    await supabase.from("likes").delete().eq("id", existing.id);
-    return;
-  }
-
-  await supabase.from("likes").insert({ post_id: postId, user_id: userId });
-
-  const { data: post } = await supabase.from("posts").select("user_id").eq("id", postId).maybeSingle();
-  const { data: actor } = await supabase.from("users").select("name").eq("id", userId).maybeSingle();
-  if (post?.user_id) {
-    await createNotification({
-      userId: post.user_id,
-      type: "like",
-      actorId: userId,
-      entityId: postId,
-      entityType: "post",
-      message: `${actor?.name ?? "Someone"} liked your quest completion`,
-    });
-  }
-}
-
 export async function voteOnPost(userId: string, postId: string, vote: boolean): Promise<string | undefined> {
   const supabase = await createSupabaseServerClient();
+  const { data: post } = await supabase.from("posts").select("user_id").eq("id", postId).maybeSingle();
+  const postOwnerId = post?.user_id;
+
+  if (!postOwnerId || postOwnerId === userId) {
+    return postOwnerId;
+  }
+
   await supabase
     .from("approvals")
     .upsert({ post_id: postId, user_id: userId, vote }, { onConflict: "post_id,user_id" });
 
-  const { data: post } = await supabase.from("posts").select("user_id").eq("id", postId).maybeSingle();
-  const postOwnerId = post?.user_id;
-
-  if (vote && postOwnerId) {
+  if (vote) {
     const { data: actor } = await supabase.from("users").select("name").eq("id", userId).maybeSingle();
     await createNotification({
       userId: postOwnerId,
@@ -704,9 +707,10 @@ export async function voteOnPost(userId: string, postId: string, vote: boolean):
     });
   }
 
-  const { data: votes } = await supabase.from("approvals").select("vote").eq("post_id", postId);
-  const total = (votes ?? []).length;
-  const approved = (votes ?? []).filter((row) => row.vote).length;
+  const { data: votes } = await supabase.from("approvals").select("vote,user_id").eq("post_id", postId);
+  const friendVotes = (votes ?? []).filter((row) => row.user_id !== postOwnerId);
+  const total = friendVotes.length;
+  const approved = friendVotes.filter((row) => row.vote).length;
 
   if (total > 0 && percentFromVotes(approved, total) >= 50) {
     await awardQuestRewards(postId);

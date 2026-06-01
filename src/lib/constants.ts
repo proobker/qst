@@ -302,6 +302,12 @@ export const DEFAULT_BADGES = [
 /** XP required to advance from level N to level N + 1 (same for every level). */
 export const XP_PER_LEVEL = 100;
 
+/** Minimum friends required before discovering or submitting quest completions. */
+export const MIN_FRIENDS_REQUIRED = 1;
+
+/** Hours after accepting a quest before it is marked incomplete if not finished. */
+export const QUEST_ACCEPT_DEADLINE_HOURS = 24;
+
 export const QUEST_STATUSES = [
   "generated",
   "accepted",
@@ -309,6 +315,7 @@ export const QUEST_STATUSES = [
   "pending_approval",
   "completed",
   "abandoned",
+  "incomplete",
 ] as const;
 
 export const NOTIFICATION_TYPES = [

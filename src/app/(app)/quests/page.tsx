@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import { QuestUploadForm } from "@/components/quest-upload-form";
 import { QuestListSkeleton } from "@/components/ui/skeleton";
 import { abandonQuestAction } from "@/app/actions/quests";
-import { listUserQuests } from "@/lib/data";
+import { MIN_FRIENDS_REQUIRED, QUEST_ACCEPT_DEADLINE_HOURS } from "@/lib/constants";
+import { getFriendCount, listUserQuests } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type QuestRow = {
@@ -26,15 +27,25 @@ async function QuestsContent() {
     return null;
   }
 
-  const quests = (await listUserQuests(user.id)) as QuestRow[];
+  const [quests, friendCount] = await Promise.all([
+    listUserQuests(user.id) as Promise<QuestRow[]>,
+    getFriendCount(user.id),
+  ]);
+  const needsFriends = friendCount < MIN_FRIENDS_REQUIRED;
 
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-border bg-surface p-6">
         <h1 className="text-2xl font-bold text-foreground">Active and completed quests</h1>
         <p className="mt-2 text-sm text-muted">
-          Upload proof with the built-in photo editor so friends can verify your completion.
+          Upload proof with the built-in photo editor so friends can verify your completion. Accepted quests expire
+          after {QUEST_ACCEPT_DEADLINE_HOURS} hours if not finished.
         </p>
+        {needsFriends ? (
+          <p className="mt-3 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-sm text-accent">
+            Add at least {MIN_FRIENDS_REQUIRED} friend before you can submit proof for approval.
+          </p>
+        ) : null}
       </div>
 
       <div className="space-y-4">
@@ -85,6 +96,10 @@ async function QuestsContent() {
             ) : entry.status === "completed" ? (
               <p className="mt-3 rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
                 Completed. Rewards have been applied.
+              </p>
+            ) : entry.status === "incomplete" ? (
+              <p className="mt-3 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">
+                Incomplete — this quest was not finished within {QUEST_ACCEPT_DEADLINE_HOURS} hours of accepting it.
               </p>
             ) : null}
           </article>

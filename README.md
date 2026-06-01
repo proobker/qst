@@ -7,7 +7,7 @@ qst turns real life into an RPG-style social adventure game. Players receive AI-
 - AI quest generation (Gemini with deterministic fallback)
 - Tinder-style quest acceptance/rejection
 - Active quest management + completion uploads
-- Social feed with likes and approval voting
+- Social feed with friend approve/disapprove voting
 - Reward pipeline (XP, level progression, badges)
 - Friends search/add/remove
 - Profile pages with stats, badges, completed quests, and posts

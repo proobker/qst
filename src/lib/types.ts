@@ -65,10 +65,8 @@ export type FeedPost = {
   quest_id: string;
   users: { id: string; name: string; avatar: string | null } | null;
   quests: { id: string; title: string; difficulty: string; xp_reward: number; category: string } | null;
-  likesCount: number;
   approvalsCount: number;
   approvalPercent: number;
-  likedByUser: boolean;
   votedByUser: boolean | null;
 };
 

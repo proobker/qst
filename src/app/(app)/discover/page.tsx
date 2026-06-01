@@ -4,7 +4,8 @@ import { QuestSwipeDeck } from "@/components/quest-swipe-deck";
 import { DiscoverSkeleton } from "@/components/ui/skeleton";
 import { isGeminiInCooldown, getGeminiCooldownRemainingMs } from "@/lib/ai";
 import { getGeminiApiKey } from "@/lib/env";
-import { getDiscoveryQuest, getOnboardingState } from "@/lib/data";
+import { MIN_FRIENDS_REQUIRED } from "@/lib/constants";
+import { getDiscoveryQuest, getFriendCount, getOnboardingState } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,25 @@ async function DiscoverContent() {
           className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
         >
           Complete onboarding
+        </Link>
+      </div>
+    );
+  }
+
+  const friendCount = await getFriendCount(user.id);
+  if (friendCount < MIN_FRIENDS_REQUIRED) {
+    return (
+      <div className="rounded-xl border border-accent/40 bg-accent/10 p-6">
+        <h1 className="text-xl font-semibold text-accent">Add a friend first</h1>
+        <p className="mt-2 text-sm text-muted">
+          You need at least {MIN_FRIENDS_REQUIRED} friend before you can discover quests. Friends also verify your
+          completions in the feed.
+        </p>
+        <Link
+          href="/friends?tab=find"
+          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+        >
+          Find friends
         </Link>
       </div>
     );

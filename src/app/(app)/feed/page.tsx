@@ -22,7 +22,7 @@ async function FeedContent() {
       <div className="rounded-xl border border-border bg-surface p-6">
         <h1 className="text-2xl font-bold text-foreground">Feed</h1>
         <p className="mt-2 text-sm text-muted">
-          Quest completions from you and your friends. Like, approve, or edit your own posts.
+          Quest completions from you and your friends. Friends approve or disapprove; you can edit your own posts.
         </p>
       </div>
 
