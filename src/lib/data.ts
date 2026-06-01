@@ -12,7 +12,7 @@ import {
   QuestDefinition,
   UserProfile,
 } from "@/lib/types";
-import { percentFromVotes } from "@/lib/utils";
+import { isFullEmailAddress, percentFromVotes } from "@/lib/utils";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function fallbackDisplayName(user: User) {
@@ -953,7 +953,7 @@ export async function removeFriend(userId: string, friendId: string) {
 export async function searchUsers(userId: string, query: string) {
   const supabase = await createSupabaseServerClient();
   const trimmed = query.trim();
-  if (!trimmed) {
+  if (!trimmed || !isFullEmailAddress(trimmed)) {
     return [] as Array<{
       id: string;
       name: string;
@@ -966,12 +966,13 @@ export async function searchUsers(userId: string, query: string) {
     }>;
   }
 
+  const email = trimmed.toLowerCase();
   const { data } = await supabase
     .from("users")
     .select("id,name,email,avatar,level,xp")
     .neq("id", userId)
-    .or(`name.ilike.%${trimmed}%,email.ilike.%${trimmed}%`)
-    .limit(10);
+    .eq("email", email)
+    .limit(1);
 
   const users = (data as Array<{
     id: string;

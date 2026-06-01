@@ -10,6 +10,7 @@ import { FriendButton } from "@/components/friend-button";
 import { getFriendRequests, getFriends, searchUsers } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { titleForLevel } from "@/lib/leveling";
+import { isFullEmailAddress } from "@/lib/utils";
 
 export default async function FriendsPage({
   searchParams,
@@ -188,9 +189,11 @@ export default async function FriendsPage({
             <form className="flex flex-col gap-3 sm:flex-row">
               <input type="hidden" name="tab" value="find" />
               <input
+                type="email"
                 name="q"
                 defaultValue={query}
-                placeholder="Search by name or email"
+                placeholder="Enter full email address"
+                autoComplete="off"
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
               />
               <button
@@ -205,10 +208,17 @@ export default async function FriendsPage({
           <div className="rounded-xl border border-border bg-surface p-6">
             <h2 className="text-lg font-semibold text-foreground">Search results</h2>
             <div className="mt-4 space-y-3">
-              {query && searchResults.length === 0 ? (
-                <p className="text-sm text-muted">No users found.</p>
+              {query && !isFullEmailAddress(query) ? (
+                <p className="text-sm text-muted">Enter a complete email address to search.</p>
               ) : null}
-              {!query ? <p className="text-sm text-muted">Enter a name or email to find adventurers.</p> : null}
+              {query && isFullEmailAddress(query) && searchResults.length === 0 ? (
+                <p className="text-sm text-muted">No user found with that email.</p>
+              ) : null}
+              {!query ? (
+                <p className="text-sm text-muted">
+                  Search by someone&apos;s full email address. Partial names or emails are not supported.
+                </p>
+              ) : null}
               {searchResults.map((candidate) => (
                 <div
                   key={candidate.id}
@@ -219,7 +229,7 @@ export default async function FriendsPage({
                     <div>
                       <p className="text-sm font-semibold text-foreground">{candidate.name}</p>
                       <p className="text-xs text-muted">
-                        Level {candidate.level} · {candidate.email}
+                        Level {candidate.level} · {titleForLevel(candidate.level)}
                       </p>
                     </div>
                   </Link>
