@@ -46,6 +46,8 @@ export function ImageEditor({
       return;
     }
 
+    // Resets the editor when the modal is opened.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSettings(DEFAULT_EDIT_SETTINGS);
     setCrop({ x: 0, y: 0 });
     setZoom(1);

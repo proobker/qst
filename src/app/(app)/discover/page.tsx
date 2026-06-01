@@ -38,9 +38,9 @@ async function DiscoverContent() {
   }
 
   const hasGeminiKey = Boolean(getGeminiApiKey());
-  const { assignment, error } = await getDiscoveryQuest(user.id);
+  const { assignments, error } = await getDiscoveryQuest(user.id);
 
-  if (!assignment) {
+  if (assignments.length === 0) {
     console.error("[DiscoverPage] No quest assignment:", error ?? "unknown");
     return (
       <div className="rounded-xl border border-border bg-surface p-6">
@@ -70,17 +70,19 @@ async function DiscoverContent() {
       </div>
     );
   }
-
-  const quest = assignment.quests;
-  if (!quest) {
-    console.error("[DiscoverPage] Assignment exists but quest data is missing:", assignment);
-    return (
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-xl font-semibold text-foreground">Quest data error</h1>
-        <p className="mt-2 text-sm text-muted">Please refresh the page.</p>
-      </div>
-    );
-  }
+  const questStack = assignments.map((assignment) => ({
+    userQuestId: assignment.id,
+    quest: {
+      id: assignment.quest_id,
+      title: assignment.quests.title,
+      description: assignment.quests.description,
+      difficulty: assignment.quests.difficulty,
+      xp_reward: assignment.quests.xp_reward,
+      estimated_time: assignment.quests.estimated_time,
+      category: assignment.quests.category,
+      badge_reward: assignment.quests.badge_reward,
+    },
+  }));
 
   const geminiCooldown = isGeminiInCooldown();
   const cooldownMinutes = Math.ceil(getGeminiCooldownRemainingMs() / 60_000);
@@ -98,21 +100,7 @@ async function DiscoverContent() {
           </p>
         ) : null}
       </div>
-
-      <QuestSwipeDeck
-        key={assignment.id}
-        userQuestId={assignment.id}
-        quest={{
-          id: assignment.quest_id,
-          title: quest.title,
-          description: quest.description,
-          difficulty: quest.difficulty,
-          xp_reward: quest.xp_reward,
-          estimated_time: quest.estimated_time,
-          category: quest.category,
-          badge_reward: quest.badge_reward,
-        }}
-      />
+      <QuestSwipeDeck key={questStack[0].userQuestId} quests={questStack} />
     </div>
   );
 }

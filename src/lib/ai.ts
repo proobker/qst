@@ -14,7 +14,7 @@ export type QuestContext = {
 export type GenerateQuestErrorReason = "missing_api_key" | "rate_limited" | "api_error" | "invalid_response";
 
 export type GenerateQuestResult =
-  | { ok: true; quest: QuestDefinition; model: string; offline?: boolean }
+  | { ok: true; quests: QuestDefinition[]; model: string; offline?: boolean }
   | { ok: false; reason: GenerateQuestErrorReason; message?: string };
 
 /** Valid v1beta generateContent models (no deprecated 1.5 names). */
@@ -26,6 +26,7 @@ const GEMINI_MODELS = [
 ] as const;
 
 const MAX_HOBBIES_IN_PROMPT = 5;
+const QUEST_BATCH_SIZE = 5;
 const RATE_LIMIT_COOLDOWN_MS = 120_000;
 
 let geminiCooldownUntil = 0;
@@ -137,6 +138,38 @@ function sanitizeQuest(input: Record<string, unknown>, context: QuestContext): Q
   };
 }
 
+function dedupeQuestsByTitle(quests: QuestDefinition[]): QuestDefinition[] {
+  const seen = new Set<string>();
+  return quests.filter((quest) => {
+    const key = quest.title.trim().toLowerCase();
+    if (!key || seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+function extractQuestCandidates(parsed: unknown): Record<string, unknown>[] {
+  if (!parsed || typeof parsed !== "object") {
+    return [];
+  }
+
+  if (Array.isArray(parsed)) {
+    return parsed.filter(isRecord);
+  }
+
+  if (isRecord(parsed)) {
+    const questsValue = parsed.quests;
+    if (Array.isArray(questsValue)) {
+      return questsValue.filter(isRecord);
+    }
+    return [parsed];
+  }
+
+  return [];
+}
+
 function getLocationHints(hobbies: string[], hasLocation: boolean): string {
   if (!hasLocation) {
     return "in your local area or neighborhood";
@@ -175,22 +208,22 @@ function buildPrompt(context: QuestContext): string {
   const hobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
   const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
   const locationHints = getLocationHints(hobbies, hasLocation);
-
-  return `Generate one real-world RPG quest as JSON.
-Hobbies: ${hobbies.join(", ") || "exploration"}
-Level: ${context.level}
-Location: ${hasLocation ? `${context.location.latitude},${context.location.longitude}` : "local area"}
-Nearby: ${locationHints}
-Avoid titles: ${context.previousQuestTitles.slice(0, 5).join(" | ") || "none"}
-Rejected: ${context.rejectedQuests?.slice(0, 4).join(" | ") || "none"}
-Safe, legal, public, one session.
-JSON keys: title, description, difficulty (easy|medium|hard), xp_reward, badge_reward, estimated_time, category`;
+  return `Generate 5 real-world RPG quests in JSON format.
+Use only these inputs:
+- Hobbies: ${hobbies.join(", ") || "exploration"}
+- Location: ${hasLocation ? `${context.location.latitude},${context.location.longitude}` : "local area"}
+- Nearby place hints: ${locationHints}
+Do not use any user background information, profile details, history, or assumptions.
+All quests must be safe, legal, public, and completable in one session.
+Return strict JSON only (no markdown), as:
+{"quests":[{"title":"...","description":"...","difficulty":"easy|medium|hard","xp_reward":0,"badge_reward":"...","estimated_time":"...","category":"..."}]}`;
 }
 
 /** Used only when Gemini quota is exhausted so Discover stays usable. */
-export function buildOfflineQuest(context: QuestContext): QuestDefinition {
+export function buildOfflineQuest(context: QuestContext, variantIndex = 0): QuestDefinition {
   const hobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
-  const mainHobby = hobbies[0] ?? "Exploration";
+  const hobbyIndex = hobbies.length > 0 ? variantIndex % hobbies.length : 0;
+  const mainHobby = hobbies[hobbyIndex] ?? "Exploration";
   const difficulty = clampDifficulty(context.level);
   const baseXp = difficulty === "easy" ? 80 : difficulty === "medium" ? 130 : 220;
   const hasLocation = context.location.latitude !== null && context.location.longitude !== null;
@@ -211,9 +244,27 @@ export function buildOfflineQuest(context: QuestContext): QuestDefinition {
       description: `Complete a small real-world task connected to ${mainHobby} ${place}. Document it with a photo and a short reflection.`,
       estimated_time: "45 min",
     },
+    {
+      title: `${mainHobby} Route Scout`,
+      description: `Plan and walk a short route tied to ${mainHobby} ${place}. Capture one highlight and one improvement idea.`,
+      estimated_time: "35-50 min",
+    },
+    {
+      title: `${mainHobby} Community Checkpoint`,
+      description: `Find a public place connected to ${mainHobby} ${place}. Complete one small activity and note what stood out.`,
+      estimated_time: "40 min",
+    },
+    {
+      title: `${mainHobby} Skill Sprint`,
+      description: `Do a focused ${mainHobby} task ${place} for 25 minutes, then write a short recap of what you practiced.`,
+      estimated_time: "30 min",
+    },
   ];
 
-  const chosen = templates.find((t) => !avoid.has(t.title)) ?? templates[0];
+  const template = templates[variantIndex % templates.length];
+  const chosen = avoid.has(template.title)
+    ? { ...template, title: `${template.title} ${variantIndex + 1}` }
+    : template;
 
   return {
     title: chosen.title,
@@ -224,6 +275,14 @@ export function buildOfflineQuest(context: QuestContext): QuestDefinition {
     estimated_time: chosen.estimated_time,
     category: mainHobby,
   };
+}
+
+function buildOfflineQuestBatch(context: QuestContext, size = QUEST_BATCH_SIZE): QuestDefinition[] {
+  const quests: QuestDefinition[] = [];
+  for (let index = 0; index < size; index += 1) {
+    quests.push(buildOfflineQuest(context, index));
+  }
+  return dedupeQuestsByTitle(quests).slice(0, size);
 }
 
 function isRateLimitError(error: unknown): boolean {
@@ -289,7 +348,7 @@ function resolveModelsToTry(): string[] {
 }
 
 /**
- * Generates a quest via Gemini. On quota exhaustion, returns an offline quest so the app keeps working.
+ * Generates a quest batch via Gemini. On quota exhaustion, returns offline quests so the app keeps working.
  */
 export async function generateQuest(context: QuestContext): Promise<GenerateQuestResult> {
   const apiKey = getGeminiApiKey();
@@ -297,10 +356,10 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
 
   if (isGeminiInCooldown()) {
     const remainingSec = Math.ceil(getGeminiCooldownRemainingMs() / 1000);
-    console.warn(`[Gemini] In cooldown (${remainingSec}s left) — using offline quest builder`);
+    console.warn(`[Gemini] In cooldown (${remainingSec}s left) — using offline quest batch builder`);
     return {
       ok: true,
-      quest: buildOfflineQuest(context),
+      quests: buildOfflineQuestBatch(context),
       model: "offline",
       offline: true,
     };
@@ -342,34 +401,57 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
     }
 
     const parsed = extractJson(result.text);
-    if (!isRecord(parsed)) {
-      console.warn(`[Gemini] ${model} unparseable JSON`);
+    const candidates = extractQuestCandidates(parsed);
+    if (candidates.length === 0) {
+      console.warn(`[Gemini] ${model} unparseable or empty JSON`);
       continue;
     }
 
-    const sanitized = sanitizeQuest(parsed, context);
-    if (!sanitized || !moderateQuest(sanitized)) {
+    const sanitized = candidates
+      .map((candidate) => sanitizeQuest(candidate, context))
+      .filter((quest): quest is QuestDefinition => {
+        if (!quest) return false;
+        return moderateQuest(quest);
+      });
+
+    const uniqueSanitized = dedupeQuestsByTitle(sanitized);
+    if (uniqueSanitized.length === 0) {
       console.warn(`[Gemini] ${model} invalid or failed moderation`);
       continue;
     }
 
-    console.log(`[Gemini] Success via ${model}:`, sanitized.title);
-    return { ok: true, quest: sanitized, model };
+    const fallbackContext: QuestContext = {
+      ...context,
+      previousQuestTitles: [...context.previousQuestTitles, ...uniqueSanitized.map((quest) => quest.title)],
+    };
+
+    const fillers =
+      uniqueSanitized.length < QUEST_BATCH_SIZE
+        ? buildOfflineQuestBatch(fallbackContext, QUEST_BATCH_SIZE - uniqueSanitized.length)
+        : [];
+
+    const finalBatch = dedupeQuestsByTitle([...uniqueSanitized, ...fillers]).slice(0, QUEST_BATCH_SIZE);
+    if (finalBatch.length === 0) {
+      continue;
+    }
+
+    console.log(`[Gemini] Success via ${model}:`, finalBatch.map((quest) => quest.title).join(" | "));
+    return { ok: true, quests: finalBatch, model };
   }
 
   if (sawRateLimit) {
     markRateLimited();
-    console.warn("[Gemini] All models rate limited — using offline quest builder until cooldown resets");
+    console.warn("[Gemini] All models rate limited — using offline quest batch builder until cooldown resets");
     return {
       ok: true,
-      quest: buildOfflineQuest(context),
+      quests: buildOfflineQuestBatch(context),
       model: "offline",
       offline: true,
     };
   }
 
   console.error("[Gemini] All models failed");
-  return { ok: false, reason: "api_error", message: "Could not generate a quest from any Gemini model." };
+  return { ok: false, reason: "api_error", message: "Could not generate quests from any Gemini model." };
 }
 
 export function moderateQuest(quest: QuestDefinition): boolean {

@@ -19,9 +19,13 @@ type QuestData = {
   badge_reward: string | null;
 };
 
-type QuestSwipeDeckProps = {
+type QuestStackEntry = {
   userQuestId: string;
   quest: QuestData;
+};
+
+type QuestSwipeDeckProps = {
+  quests: QuestStackEntry[];
 };
 
 const SWIPE_THRESHOLD = 120;
@@ -35,7 +39,21 @@ function isNextRedirect(error: unknown): boolean {
   );
 }
 
-export function QuestSwipeDeck({ userQuestId, quest }: QuestSwipeDeckProps) {
+export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
+  const active = quests[0];
+  const fallbackQuest: QuestData = {
+    id: "",
+    title: "",
+    description: "",
+    difficulty: "easy",
+    xp_reward: 0,
+    estimated_time: "",
+    category: "",
+    badge_reward: null,
+  };
+
+  const userQuestId = active?.userQuestId ?? "";
+  const quest = active?.quest ?? fallbackQuest;
   const { toast } = useToast();
   const [pending, startTransition] = useTransition();
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
@@ -94,6 +112,10 @@ export function QuestSwipeDeck({ userQuestId, quest }: QuestSwipeDeckProps) {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [commitSwipe, pending, exitDirection]);
+
+  if (!active) {
+    return null;
+  }
 
   return (
     <div className="relative mx-auto w-full max-w-md">
