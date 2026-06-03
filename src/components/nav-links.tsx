@@ -2,21 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import { Compass, Flag, ScrollText, UserRound, Users, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type NavLinkItem = {
+type NavLinkItem = {
   href: string;
   label: string;
   icon: LucideIcon;
 };
 
+const links: NavLinkItem[] = [
+  { href: "/discover", label: "Discover", icon: Compass },
+  { href: "/quests", label: "Quests", icon: Flag },
+  { href: "/feed", label: "Feed", icon: ScrollText },
+  { href: "/friends", label: "Friends", icon: Users },
+  { href: "/profile", label: "Profile", icon: UserRound },
+];
+
 type NavLinksProps = {
-  links: NavLinkItem[];
   variant: "desktop" | "mobile";
 };
 
-export function NavLinks({ links, variant }: NavLinksProps) {
+export function NavLinks({ variant }: NavLinksProps) {
   const pathname = usePathname();
 
   if (variant === "desktop") {

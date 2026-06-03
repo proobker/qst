@@ -1,7 +1,7 @@
-import { Compass, Flag, LogOut, ScrollText, UserRound, Users } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { signOutAction } from "@/app/actions/auth";
 import { Logo } from "@/components/logo";
-import { NavLinks, type NavLinkItem } from "@/components/nav-links";
+import { NavLinks } from "@/components/nav-links";
 import { NotificationBell } from "@/components/notification-bell";
 import { Notification } from "@/lib/types";
 
@@ -9,14 +9,6 @@ type AppNavProps = {
   notifications: Notification[];
   unreadCount: number;
 };
-
-const links: NavLinkItem[] = [
-  { href: "/discover", label: "Discover", icon: Compass },
-  { href: "/quests", label: "Quests", icon: Flag },
-  { href: "/feed", label: "Feed", icon: ScrollText },
-  { href: "/friends", label: "Friends", icon: Users },
-  { href: "/profile", label: "Profile", icon: UserRound },
-];
 
 export function AppNav({ notifications, unreadCount }: AppNavProps) {
   return (
@@ -35,13 +27,13 @@ export function AppNav({ notifications, unreadCount }: AppNavProps) {
           </div>
         </div>
         <nav className="mx-auto hidden max-w-6xl flex-wrap items-center gap-2 px-4 pb-3 sm:flex">
-          <NavLinks links={links} variant="desktop" />
+          <NavLinks variant="desktop" />
         </nav>
       </header>
 
       <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-border/80 bg-background/85 backdrop-blur-xl sm:hidden">
         <div className="mx-auto flex max-w-6xl items-center justify-around px-2 py-2">
-          <NavLinks links={links} variant="mobile" />
+          <NavLinks variant="mobile" />
         </div>
       </nav>
     </>
