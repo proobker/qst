@@ -449,7 +449,7 @@ async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuest
     return { assignments: existingAssignments, error: toppedUp.error };
   }
 
-  console.log("[QuestSwipe] No generated quest stack — calling Gemini for user:", userId);
+  console.log("[QuestSwipe] No generated quest stack — generating quest batch for user:", userId);
   return generateAndPersistDiscoveryQuests(userId);
 }
 
