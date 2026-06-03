@@ -199,6 +199,7 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
   const { toast } = useToast();
   const [deck, setDeck] = useState(quests);
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
+  const [emptyRefreshes, setEmptyRefreshes] = useState(0);
 
   const active = deck[0];
   const backOne = deck[1];
@@ -219,6 +220,7 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
 
     const swiped = { entry: active, direction: exitDirection };
 
+    setEmptyRefreshes(0);
     setDeck((prev) => prev.slice(1));
     setExitDirection(null);
 
@@ -251,8 +253,12 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
       return;
     }
 
-    const firstRetry = window.setTimeout(() => router.refresh(), 900);
-    const retryInterval = window.setInterval(() => router.refresh(), 3_000);
+    const refresh = () => {
+      setEmptyRefreshes((count) => count + 1);
+      router.refresh();
+    };
+    const firstRetry = window.setTimeout(refresh, 900);
+    const retryInterval = window.setInterval(refresh, 3_000);
 
     return () => {
       window.clearTimeout(firstRetry);
@@ -276,10 +282,28 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
   }, [commitSwipe, exitDirection]);
 
   if (deck.length === 0) {
+    const takingLong = emptyRefreshes >= 4;
+
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
         <Spinner label="Loading next quests..." />
-        <p className="max-w-xs text-sm text-muted">{loadingReason}</p>
+        <p className="max-w-xs text-sm text-muted">
+          {takingLong
+            ? "Still building quests. The local builder should recover this; try another refresh if it stays stuck."
+            : loadingReason}
+        </p>
+        {takingLong ? (
+          <button
+            type="button"
+            onClick={() => {
+              setEmptyRefreshes(0);
+              router.refresh();
+            }}
+            className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-muted transition hover:border-primary hover:text-primary"
+          >
+            Try local quests again
+          </button>
+        ) : null}
       </div>
     );
   }

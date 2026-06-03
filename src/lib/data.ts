@@ -8,7 +8,7 @@ import {
 } from "@/lib/constants";
 import { levelFromXp, titleForLevel, getLevelDefinition } from "@/lib/leveling";
 import { type LevelUpCelebration, parseLevelFromNotificationMessage } from "@/lib/level-up";
-import { generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
+import { buildOfflineQuest, generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
 import {
   FeedPost,
   FriendRequest,
@@ -426,6 +426,39 @@ async function generateAndPersistDiscoveryQuests(
   return persistGeneratedQuestBatch(userId, generatedQuests, maxCount);
 }
 
+async function generateAndPersistLocalDiscoveryQuests(
+  userId: string,
+  maxCount?: number,
+): Promise<DiscoveryQuestResult> {
+  const [profile, onboarding, history] = await Promise.all([
+    getProfile(userId),
+    getOnboardingState(userId),
+    getUserQuestHistory(userId),
+  ]);
+
+  if (!profile) {
+    console.error("[QuestSwipe] User profile not found for local quest fallback");
+    return { assignments: [], error: "api_error" };
+  }
+
+  const context = {
+    hobbies: onboarding.selectedHobbies,
+    location: { latitude: onboarding.latitude, longitude: onboarding.longitude },
+    level: profile.level,
+    previousQuestTitles: history.previousQuestTitles,
+    completedQuests: history.completedQuests,
+    rejectedQuests: history.rejectedQuests,
+  };
+  const questCount = Math.max(maxCount ?? DISCOVERY_MIN_STACK, 1);
+  const variantOffset = history.previousQuestTitles.length;
+  const generatedQuests = Array.from({ length: questCount }, (_, index) =>
+    buildOfflineQuest(context, variantOffset + index),
+  );
+
+  console.warn("[QuestSwipe] Persisting local fallback quest batch:", generatedQuests[0]?.title ?? "empty");
+  return persistGeneratedQuestBatch(userId, generatedQuests, maxCount);
+}
+
 async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuestResult> {
   noStore();
 
@@ -442,15 +475,27 @@ async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuest
     const needed = DISCOVERY_MIN_STACK - existingAssignments.length;
     console.log("[QuestSwipe] Topping up discovery stack:", { have: existingAssignments.length, needed });
     const toppedUp = await generateAndPersistDiscoveryQuests(userId, needed);
-    const merged = [...existingAssignments, ...toppedUp.assignments];
+    const fallbackTopUp =
+      toppedUp.assignments.length === 0
+        ? await generateAndPersistLocalDiscoveryQuests(userId, needed)
+        : null;
+    const merged = fallbackTopUp
+      ? [...existingAssignments, ...fallbackTopUp.assignments]
+      : [...existingAssignments, ...toppedUp.assignments];
     if (merged.length > 0) {
-      return { assignments: merged, error: toppedUp.error };
+      return { assignments: merged, error: toppedUp.error ?? fallbackTopUp?.error };
     }
     return { assignments: existingAssignments, error: toppedUp.error };
   }
 
   console.log("[QuestSwipe] No generated quest stack — generating quest batch for user:", userId);
-  return generateAndPersistDiscoveryQuests(userId);
+  const generated = await generateAndPersistDiscoveryQuests(userId);
+  if (generated.assignments.length > 0) {
+    return generated;
+  }
+
+  console.warn("[QuestSwipe] AI generation produced no assignments - forcing local quest fallback");
+  return generateAndPersistLocalDiscoveryQuests(userId);
 }
 
 /** Deduplicates concurrent discovery requests (prevents double Gemini calls on swipe + refresh). */

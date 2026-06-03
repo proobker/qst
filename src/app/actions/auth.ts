@@ -56,7 +56,7 @@ export async function requestEmailOtpAction(
   return {
     ok: true,
     email,
-    message: "Check your email for a one-time login code.",
+    message: "Check your email for a sign-in link. If your template includes a code, enter it below.",
   };
 }
 

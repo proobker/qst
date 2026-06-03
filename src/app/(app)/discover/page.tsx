@@ -25,7 +25,7 @@ function AiQuestLoading() {
       <div className="space-y-1">
         <p className="text-sm font-semibold text-foreground">Preparing your next quest stack</p>
         <p className="max-w-sm text-sm text-muted">
-          Asking AI for fresh ideas. If Gemini is unavailable, the local quest builder will take over automatically.
+          Trying AI briefly, then switching to the local quest builder automatically.
         </p>
       </div>
     </GlassCard>
@@ -41,20 +41,15 @@ async function DiscoveryQuestStack({ userId }: { userId: string }) {
     return (
       <GlassCard className="p-6">
         <h1 className="text-xl font-semibold text-foreground">Could not load a quest</h1>
-        {!hasGeminiKey ? (
+        {error === "rate_limited" ? (
           <p className="mt-2 text-sm text-muted">
-            Add <code className="text-primary">GOOGLE_GEMINI_API_KEY=your_key</code> to{" "}
-            <code className="text-primary">.env.local</code>, then restart{" "}
-            <code className="text-primary">npm run dev</code>.
-          </p>
-        ) : error === "rate_limited" ? (
-          <p className="mt-2 text-sm text-muted">
-            Gemini free-tier quota is exhausted (HTTP 429). Wait a few minutes and reduce rapid swipes/refreshes
+            Gemini quota was exhausted, and the local quest builder could not save a fallback quest. Try again in a
+            moment.
           </p>
         ) : (
           <p className="mt-2 text-sm text-muted">
-            Gemini or the database failed. Check your terminal for{" "}
-            <code className="text-primary">[Gemini]</code> logs.
+            The AI and local quest builder could not save a quest. Check the terminal for{" "}
+            <code className="text-primary">[QuestSwipe]</code> logs.
           </p>
         )}
         <Link href="/discover" className="btn-primary mt-4">
@@ -85,7 +80,7 @@ async function DiscoveryQuestStack({ userId }: { userId: string }) {
   const questStackKey = questStack.map((entry) => entry.userQuestId).join(":");
   const loadingReason =
     hasGeminiKey && !geminiCooldown
-      ? "Asking AI for fresh quests based on your hobbies and location."
+      ? "Trying AI briefly, then using the local quest builder if needed."
       : "Using the local quest builder while AI generation is unavailable.";
 
   return (

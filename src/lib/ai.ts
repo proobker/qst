@@ -22,7 +22,7 @@ const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-lite";
 const MAX_HOBBIES_IN_PROMPT = 5;
 const QUEST_BATCH_SIZE = 3;
 const RATE_LIMIT_COOLDOWN_MS = 120_000;
-const GEMINI_REQUEST_TIMEOUT_MS = 6_000;
+const GEMINI_REQUEST_TIMEOUT_MS = 3_000;
 
 let geminiCooldownUntil = 0;
 
@@ -36,6 +36,16 @@ export function getGeminiCooldownRemainingMs(): number {
 
 function markRateLimited() {
   geminiCooldownUntil = Date.now() + RATE_LIMIT_COOLDOWN_MS;
+}
+
+function offlineQuestResult(context: QuestContext, message: string): Extract<GenerateQuestResult, { ok: true }> {
+  console.warn(message);
+  return {
+    ok: true,
+    quests: buildOfflineQuestBatch(context),
+    model: "offline",
+    offline: true,
+  };
 }
 
 function clampDifficulty(level: number): QuestDefinition["difficulty"] {
@@ -352,7 +362,30 @@ async function callGeminiModel(
       message: error instanceof Error ? error.message : String(error),
     };
   }
-  
+}
+
+async function withTimeout<T>(
+  promise: Promise<T>,
+  milliseconds: number,
+  onTimeout: () => T,
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  return new Promise<T>((resolve, reject) => {
+    timeoutId = setTimeout(() => {
+      timeoutId = undefined;
+      resolve(onTimeout());
+    }, milliseconds);
+
+    promise
+      .then(resolve)
+      .catch(reject)
+      .finally(() => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      });
+  });
 }
 
 function resolveModelsToTry(): string[] {
@@ -399,7 +432,18 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
       };
     }
 
-    const { GoogleGenAI } = await import("@google/genai");
+    const geminiModule = await withTimeout(
+      import("@google/genai"),
+      GEMINI_REQUEST_TIMEOUT_MS,
+      () => null,
+    );
+
+    if (!geminiModule) {
+      markRateLimited();
+      return offlineQuestResult(context, "[Gemini] SDK import timed out - using offline quest batch");
+    }
+
+    const { GoogleGenAI } = geminiModule;
     let client: GeminiClient;
     try {
       client = new GoogleGenAI({ apiKey });

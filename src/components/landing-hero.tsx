@@ -155,6 +155,10 @@ export function LandingHero() {
                 <label htmlFor="email-otp" className="sr-only">
                   One-time code
                 </label>
+                <p className="text-xs leading-relaxed text-muted">
+                  You can also use the sign-in link in the email. To enter a code here, include the OTP token in your
+                  Supabase email template.
+                </p>
                 <div className="flex items-center gap-2 rounded-xl border border-border bg-background/70 px-3 py-2.5 transition focus-within:border-primary">
                   <KeyRound size={18} className="shrink-0 text-muted" />
                   <input
