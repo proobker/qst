@@ -61,9 +61,7 @@ function ActiveQuestCard({
   const { quest } = entry;
   const [dragX, setDragX] = useState(0);
   const x = useMotionValue(0);
-  const y = useMotionValue(0);
   const rotate = useTransform(x, [-260, 0, 260], [-16, 0, 16]);
-  const scale = useTransform(x, [-260, 0, 260], [0.98, 1, 0.98]);
   const acceptOpacity = useTransform(x, [20, SWIPE_THRESHOLD], [0, 1]);
   const rejectOpacity = useTransform(x, [-SWIPE_THRESHOLD, -20], [1, 0]);
   const isAnimatingExitRef = useRef(false);
@@ -79,10 +77,7 @@ function ActiveQuestCard({
     }
 
     setDragX(0);
-    void Promise.all([
-      animate(x, 0, { type: "spring", stiffness: 520, damping: 38 }),
-      animate(y, 0, { type: "spring", stiffness: 520, damping: 38 }),
-    ]);
+    void animate(x, 0, { type: "spring", stiffness: 520, damping: 38 });
   }
 
   useEffect(() => {
@@ -96,41 +91,33 @@ function ActiveQuestCard({
     const viewportWidth = typeof window === "undefined" ? 520 : window.innerWidth;
     const directionMultiplier = exitDirection === "right" ? 1 : -1;
     const exitX = directionMultiplier * Math.max(viewportWidth * 1.25, 540);
-    const exitY = Math.min(Math.max(Math.abs(x.get()) * 0.18, 42), 120);
 
-    void Promise.all([
-      animate(x, exitX, {
-        type: "spring",
-        stiffness: 220,
-        damping: 24,
-        mass: 0.9,
-        velocity: directionMultiplier * 900,
-      }),
-      animate(y, exitY, {
-        type: "spring",
-        stiffness: 240,
-        damping: 28,
-      }),
-    ]).then(() => {
+    void animate(x, exitX, {
+      type: "spring",
+      stiffness: 260,
+      damping: 28,
+      mass: 0.8,
+      velocity: directionMultiplier * 900,
+    }).then(() => {
       onExitComplete();
     });
-  }, [exitDirection, onExitComplete, x, y]);
+  }, [exitDirection, onExitComplete, x]);
 
   return (
     <motion.article
       key={entry.userQuestId}
-      drag={exitDirection ? false : true}
+      drag={exitDirection ? false : "x"}
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.82}
+      dragElastic={0.92}
       dragMomentum={false}
-      style={{ x, y, rotate, scale }}
+      style={{ x, rotate }}
       onDrag={(_, info) => setDragX(info.offset.x)}
       onDragEnd={handleDragEnd}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.16 }}
       className={cn(
-        "glass-card relative z-10 flex min-h-[420px] cursor-grab touch-none select-none flex-col rounded-2xl bg-surface-solid p-6 active:cursor-grabbing",
+        "glass-card quest-swipe-card relative z-10 flex min-h-[420px] cursor-grab touch-none select-none flex-col rounded-2xl p-6 active:cursor-grabbing",
         exitDirection && "pointer-events-none",
       )}
       role="group"
@@ -337,6 +324,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
         )}
 
         <ActiveQuestCard
+          key={active.userQuestId}
           entry={active}
           exitDirection={exitDirection}
           onCommitSwipe={commitSwipe}

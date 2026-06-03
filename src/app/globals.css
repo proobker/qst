@@ -109,6 +109,12 @@ body {
   transform: translateY(-1px);
 }
 
+.quest-swipe-card {
+  background: var(--surface-solid);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .text-gradient {
   color: var(--foreground);
 }
