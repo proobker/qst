@@ -45,7 +45,6 @@ body {
 /* Ambient mesh background */
 .app-mesh {
   position: relative;
-  isolation: isolate;
   min-height: 100vh;
 }
 
@@ -53,20 +52,20 @@ body {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -2;
+  z-index: 0;
+  pointer-events: none;
   background:
     radial-gradient(ellipse 80% 50% at 15% -10%, var(--glow-primary), transparent 55%),
     radial-gradient(ellipse 60% 40% at 85% 5%, var(--glow-accent), transparent 50%),
     radial-gradient(ellipse 50% 35% at 50% 100%, color-mix(in srgb, var(--primary) 15%, transparent), transparent 55%),
     var(--background);
-  pointer-events: none;
 }
 
 .app-mesh::after {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   opacity: 0.4;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   pointer-events: none;
@@ -111,17 +110,29 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, var(--foreground) 0%, var(--primary) 55%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--foreground);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .text-gradient {
+    background: linear-gradient(135deg, var(--foreground) 0%, var(--primary) 55%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .text-gradient-subtle {
-  background: linear-gradient(180deg, var(--foreground), color-mix(in srgb, var(--muted) 70%, var(--foreground)));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--foreground);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .text-gradient-subtle {
+    background: linear-gradient(180deg, var(--foreground), color-mix(in srgb, var(--muted) 70%, var(--foreground)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .btn-primary {
@@ -280,24 +291,26 @@ body {
   animation: xp-fill 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.stagger-children > * {
-  animation: page-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
+@media (prefers-reduced-motion: no-preference) {
+  .stagger-children > * {
+    animation: page-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 
-.stagger-children > *:nth-child(1) {
-  animation-delay: 0.03s;
-}
-.stagger-children > *:nth-child(2) {
-  animation-delay: 0.08s;
-}
-.stagger-children > *:nth-child(3) {
-  animation-delay: 0.13s;
-}
-.stagger-children > *:nth-child(4) {
-  animation-delay: 0.18s;
-}
-.stagger-children > *:nth-child(5) {
-  animation-delay: 0.23s;
+  .stagger-children > *:nth-child(1) {
+    animation-delay: 0.03s;
+  }
+  .stagger-children > *:nth-child(2) {
+    animation-delay: 0.08s;
+  }
+  .stagger-children > *:nth-child(3) {
+    animation-delay: 0.13s;
+  }
+  .stagger-children > *:nth-child(4) {
+    animation-delay: 0.18s;
+  }
+  .stagger-children > *:nth-child(5) {
+    animation-delay: 0.23s;
+  }
 }
 
 /* Custom scrollbar */
