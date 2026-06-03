@@ -36,7 +36,7 @@ export async function swipeRightAction(userQuestId: string) {
   await swipeQuest(userId, userQuestId, "right");
   revalidatePath("/discover", "page");
   revalidatePath("/quests", "page");
-  redirect("/quests");
+  redirect("/discover");
 }
 
 export async function uploadQuestCompletionAction(formData: FormData) {
