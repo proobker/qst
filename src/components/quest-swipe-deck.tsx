@@ -247,6 +247,20 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
   }, [active, exitDirection, remainingAfterActive, router, toast]);
 
   useEffect(() => {
+    if (deck.length > 0 || exitDirection) {
+      return;
+    }
+
+    const firstRetry = window.setTimeout(() => router.refresh(), 900);
+    const retryInterval = window.setInterval(() => router.refresh(), 3_000);
+
+    return () => {
+      window.clearTimeout(firstRetry);
+      window.clearInterval(retryInterval);
+    };
+  }, [deck.length, exitDirection, router]);
+
+  useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (exitDirection) {
         return;
