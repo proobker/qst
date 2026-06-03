@@ -31,19 +31,9 @@ type QuestSwipeDeckProps = {
 
 const SWIPE_THRESHOLD = 120;
 
-function mergeServerQuests(prev: QuestStackEntry[], fromServer: QuestStackEntry[]): QuestStackEntry[] {
-  if (prev.length === 0) {
-    return fromServer;
-  }
-
-  const known = new Set(prev.map((entry) => entry.userQuestId));
-  const appended = fromServer.filter((entry) => !known.has(entry.userQuestId));
-  return appended.length > 0 ? [...prev, ...appended] : prev;
-}
-
 function QuestCardPreview({ quest, className }: { quest: QuestData; className?: string }) {
   return (
-    <div className={cn("glass-card rounded-2xl p-6", className)}>
+    <div className={cn("glass-card flex h-full min-h-[420px] flex-col overflow-hidden rounded-2xl p-6", className)}>
       <div className="mb-3 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
         <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
           {quest.category}
@@ -107,7 +97,7 @@ function ActiveQuestCard({
         }
       }}
       className={cn(
-        "glass-card relative z-10 touch-none rounded-2xl bg-surface-solid p-6",
+        "glass-card relative z-10 flex min-h-[420px] touch-none flex-col rounded-2xl bg-surface-solid p-6",
         pending && "pointer-events-none opacity-70",
       )}
       role="group"
@@ -153,11 +143,11 @@ function ActiveQuestCard({
       ) : null}
 
       {pending ? (
-        <div className="mt-6 flex justify-center">
+        <div className="mt-auto flex justify-center pt-6">
           <Spinner label="Processing..." />
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-2 gap-3">
+        <div className="mt-auto grid grid-cols-2 gap-3 pt-6">
           <button
             type="button"
             onClick={() => onCommitSwipe("left")}
@@ -178,8 +168,8 @@ function ActiveQuestCard({
       )}
 
       <p className="mt-3 text-center text-xs text-muted">
-        Drag the card or use ← → arrow keys
-        {dragX !== 0 ? ` · ${Math.abs(Math.round(dragX))}px` : ""}
+        Drag the card or use left/right arrow keys
+        {dragX !== 0 ? ` - ${Math.abs(Math.round(dragX))}px` : ""}
       </p>
     </motion.article>
   );
@@ -192,10 +182,6 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
   const [pending, startTransition] = useTransition();
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
   const pendingSwipeRef = useRef<{ entry: QuestStackEntry; direction: "left" | "right" } | null>(null);
-
-  useEffect(() => {
-    setDeck((prev) => mergeServerQuests(prev, quests));
-  }, [quests]);
 
   const active = deck[0];
   const backOne = deck[1];
@@ -223,7 +209,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
       try {
         if (swiped.direction === "right") {
           await swipeRightAction(swiped.entry.userQuestId);
-          toast("Quest accepted — view it anytime on Quests.", "success");
+          toast("Quest accepted - view it anytime on Quests.", "success");
         } else {
           await swipeLeftAction(swiped.entry.userQuestId);
         }
@@ -273,64 +259,66 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
   const showStack = !exitDirection;
 
   return (
-    <div className="relative mx-auto w-full max-w-md">
-      {backTwo ? (
-        <div
-          className={cn(
-            "absolute inset-x-3 top-3 z-0 transition-opacity duration-200",
-            showStack ? "opacity-100" : "opacity-0",
-          )}
-          aria-hidden="true"
-        >
-          <QuestCardPreview
-            quest={backTwo.quest}
-            className="pointer-events-none scale-[0.96] bg-surface-solid"
-          />
-        </div>
-      ) : (
-        <div
-          className={cn(
-            "absolute inset-x-3 top-3 z-0 h-full min-h-[280px] rounded-2xl border border-border/60 bg-surface-solid transition-opacity duration-200",
-            showStack ? "opacity-100" : "opacity-0",
-          )}
-          aria-hidden="true"
-        />
-      )}
-
-      {backOne ? (
-        <div
-          className={cn(
-            "absolute inset-x-1.5 top-1.5 z-0 transition-opacity duration-200",
-            showStack ? "opacity-100" : "opacity-0",
-          )}
-          aria-hidden="true"
-        >
-          <QuestCardPreview
-            quest={backOne.quest}
-            className="pointer-events-none scale-[0.98] bg-surface-solid"
-          />
-        </div>
-      ) : (
-        <div
-          className={cn(
-            "absolute inset-x-1.5 top-1.5 z-0 h-full min-h-[280px] rounded-2xl border border-border/80 bg-surface-solid transition-opacity duration-200",
-            showStack ? "opacity-100" : "opacity-0",
-          )}
-          aria-hidden="true"
-        />
-      )}
-
+    <div className="mx-auto w-full max-w-md">
       {deck.length > 1 ? (
-        <p className="relative mb-2 text-center text-xs text-muted">{deck.length - 1} more in stack</p>
+        <p className="mb-2 text-center text-xs text-muted">{deck.length - 1} more in stack</p>
       ) : null}
 
-      <ActiveQuestCard
-        entry={active}
-        exitDirection={exitDirection}
-        pending={pending}
-        onCommitSwipe={commitSwipe}
-        onExitComplete={handleExitComplete}
-      />
+      <div className="relative">
+        {backTwo ? (
+          <div
+            className={cn(
+              "absolute inset-x-3 bottom-0 top-3 z-0 transition-opacity duration-200",
+              showStack ? "opacity-100" : "opacity-0",
+            )}
+            aria-hidden="true"
+          >
+            <QuestCardPreview
+              quest={backTwo.quest}
+              className="pointer-events-none scale-[0.96] bg-surface-solid"
+            />
+          </div>
+        ) : (
+          <div
+            className={cn(
+              "absolute inset-x-3 bottom-0 top-3 z-0 min-h-[420px] rounded-2xl border border-border/60 bg-surface-solid transition-opacity duration-200",
+              showStack ? "opacity-100" : "opacity-0",
+            )}
+            aria-hidden="true"
+          />
+        )}
+
+        {backOne ? (
+          <div
+            className={cn(
+              "absolute inset-x-1.5 bottom-0 top-1.5 z-0 transition-opacity duration-200",
+              showStack ? "opacity-100" : "opacity-0",
+            )}
+            aria-hidden="true"
+          >
+            <QuestCardPreview
+              quest={backOne.quest}
+              className="pointer-events-none scale-[0.98] bg-surface-solid"
+            />
+          </div>
+        ) : (
+          <div
+            className={cn(
+              "absolute inset-x-1.5 bottom-0 top-1.5 z-0 min-h-[420px] rounded-2xl border border-border/80 bg-surface-solid transition-opacity duration-200",
+              showStack ? "opacity-100" : "opacity-0",
+            )}
+            aria-hidden="true"
+          />
+        )}
+
+        <ActiveQuestCard
+          entry={active}
+          exitDirection={exitDirection}
+          pending={pending}
+          onCommitSwipe={commitSwipe}
+          onExitComplete={handleExitComplete}
+        />
+      </div>
     </div>
   );
 }

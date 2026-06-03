@@ -107,6 +107,7 @@ async function DiscoverContent() {
 
   const geminiCooldown = isGeminiInCooldown();
   const cooldownMinutes = Math.ceil(getGeminiCooldownRemainingMs() / 60_000);
+  const questStackKey = questStack.map((entry) => entry.userQuestId).join(":");
 
   return (
     <div className="space-y-6">
@@ -120,7 +121,7 @@ async function DiscoverContent() {
           </p>
         ) : null}
       </PageHeader>
-      <QuestSwipeDeck quests={questStack} />
+      <QuestSwipeDeck key={questStackKey} quests={questStack} />
     </div>
   );
 }
