@@ -96,9 +96,9 @@ function ActiveQuestCard({
       initial={{ x: 0, opacity: 1 }}
       animate={
         exitDirection === "right"
-          ? { x: 500, opacity: 0, transition: { duration: 0.28 } }
+          ? { x: 500, opacity: 1, transition: { duration: 0.28 } }
           : exitDirection === "left"
-            ? { x: -500, opacity: 0, transition: { duration: 0.28 } }
+            ? { x: -500, opacity: 1, transition: { duration: 0.28 } }
             : { x: 0, opacity: 1 }
       }
       onAnimationComplete={() => {
@@ -107,14 +107,14 @@ function ActiveQuestCard({
         }
       }}
       className={cn(
-        "glass-card relative touch-none rounded-2xl p-6",
+        "glass-card relative z-10 touch-none rounded-2xl bg-surface-solid p-6",
         pending && "pointer-events-none opacity-70",
       )}
       role="group"
       aria-label={`Quest card: ${quest.title}. Swipe right to accept, left to reject.`}
     >
       <motion.div
-        style={{ opacity: acceptOpacity }}
+        style={{ opacity: exitDirection === "right" ? 1 : acceptOpacity }}
         className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-4 border-success bg-success/10"
       >
         <div className="flex items-center gap-2 text-3xl font-bold text-success">
@@ -124,7 +124,7 @@ function ActiveQuestCard({
       </motion.div>
 
       <motion.div
-        style={{ opacity: rejectOpacity }}
+        style={{ opacity: exitDirection === "left" ? 1 : rejectOpacity }}
         className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-4 border-red-400 bg-red-500/10"
       >
         <div className="flex items-center gap-2 text-3xl font-bold text-red-400">
@@ -270,26 +270,52 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
     return null;
   }
 
+  const showStack = !exitDirection;
+
   return (
     <div className="relative mx-auto w-full max-w-md">
       {backTwo ? (
-        <div className="absolute inset-x-3 top-3 opacity-50" aria-hidden="true">
-          <QuestCardPreview quest={backTwo.quest} className="pointer-events-none scale-[0.96]" />
+        <div
+          className={cn(
+            "absolute inset-x-3 top-3 z-0 transition-opacity duration-200",
+            showStack ? "opacity-100" : "opacity-0",
+          )}
+          aria-hidden="true"
+        >
+          <QuestCardPreview
+            quest={backTwo.quest}
+            className="pointer-events-none scale-[0.96] bg-surface-solid"
+          />
         </div>
       ) : (
         <div
-          className="absolute inset-x-3 top-3 h-full min-h-[280px] rounded-2xl border border-border/60 bg-surface-solid/40"
+          className={cn(
+            "absolute inset-x-3 top-3 z-0 h-full min-h-[280px] rounded-2xl border border-border/60 bg-surface-solid transition-opacity duration-200",
+            showStack ? "opacity-100" : "opacity-0",
+          )}
           aria-hidden="true"
         />
       )}
 
       {backOne ? (
-        <div className="absolute inset-x-1.5 top-1.5 opacity-75" aria-hidden="true">
-          <QuestCardPreview quest={backOne.quest} className="pointer-events-none scale-[0.98]" />
+        <div
+          className={cn(
+            "absolute inset-x-1.5 top-1.5 z-0 transition-opacity duration-200",
+            showStack ? "opacity-100" : "opacity-0",
+          )}
+          aria-hidden="true"
+        >
+          <QuestCardPreview
+            quest={backOne.quest}
+            className="pointer-events-none scale-[0.98] bg-surface-solid"
+          />
         </div>
       ) : (
         <div
-          className="absolute inset-x-1.5 top-1.5 h-full min-h-[280px] rounded-2xl border border-border/80 bg-surface-solid/60"
+          className={cn(
+            "absolute inset-x-1.5 top-1.5 z-0 h-full min-h-[280px] rounded-2xl border border-border/80 bg-surface-solid transition-opacity duration-200",
+            showStack ? "opacity-100" : "opacity-0",
+          )}
           aria-hidden="true"
         />
       )}
