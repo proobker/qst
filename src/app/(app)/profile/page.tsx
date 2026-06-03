@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { updateBioAction } from "@/app/actions/profile";
 import { Avatar } from "@/components/avatar";
 import { BadgePill } from "@/components/badge-pill";
@@ -55,6 +56,12 @@ export default async function ProfilePage() {
               Save bio
             </button>
           </form>
+
+          <div className="mt-4 border-t border-border pt-4">
+            <Link href="/onboarding" className="btn-ghost">
+              Retake onboarding to change hobbies
+            </Link>
+          </div>
         </div>
       </section>
 

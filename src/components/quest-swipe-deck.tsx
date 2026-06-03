@@ -27,10 +27,12 @@ export type QuestStackEntry = {
 
 type QuestSwipeDeckProps = {
   quests: QuestStackEntry[];
+  loadingReason: string;
 };
 
 const SWIPE_THRESHOLD = 110;
 const SWIPE_VELOCITY_THRESHOLD = 700;
+const SWIPE_FEEDBACK_DELAY_MS = 240;
 
 function QuestCardPreview({ quest, className }: { quest: QuestData; className?: string }) {
   return (
@@ -91,16 +93,19 @@ function ActiveQuestCard({
     const viewportWidth = typeof window === "undefined" ? 520 : window.innerWidth;
     const directionMultiplier = exitDirection === "right" ? 1 : -1;
     const exitX = directionMultiplier * Math.max(viewportWidth * 1.25, 540);
+    const timeout = window.setTimeout(() => {
+      void animate(x, exitX, {
+        type: "spring",
+        stiffness: 260,
+        damping: 28,
+        mass: 0.8,
+        velocity: directionMultiplier * 900,
+      }).then(() => {
+        onExitComplete();
+      });
+    }, SWIPE_FEEDBACK_DELAY_MS);
 
-    void animate(x, exitX, {
-      type: "spring",
-      stiffness: 260,
-      damping: 28,
-      mass: 0.8,
-      velocity: directionMultiplier * 900,
-    }).then(() => {
-      onExitComplete();
-    });
+    return () => window.clearTimeout(timeout);
   }, [exitDirection, onExitComplete, x]);
 
   return (
@@ -189,7 +194,7 @@ function ActiveQuestCard({
   );
 }
 
-export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
+export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deck, setDeck] = useState(quests);
@@ -258,8 +263,9 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
 
   if (deck.length === 0) {
     return (
-      <div className="flex justify-center py-16">
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
         <Spinner label="Loading next quests..." />
+        <p className="max-w-xs text-sm text-muted">{loadingReason}</p>
       </div>
     );
   }

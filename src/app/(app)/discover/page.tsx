@@ -108,6 +108,10 @@ async function DiscoverContent() {
   const geminiCooldown = isGeminiInCooldown();
   const cooldownMinutes = Math.ceil(getGeminiCooldownRemainingMs() / 60_000);
   const questStackKey = questStack.map((entry) => entry.userQuestId).join(":");
+  const loadingReason =
+    hasGeminiKey && !geminiCooldown
+      ? "Asking AI for fresh quests based on your hobbies and location."
+      : "Using the local quest builder while AI generation is unavailable.";
 
   return (
     <div className="space-y-6">
@@ -121,7 +125,7 @@ async function DiscoverContent() {
           </p>
         ) : null}
       </PageHeader>
-      <QuestSwipeDeck key={questStackKey} quests={questStack} />
+      <QuestSwipeDeck key={questStackKey} quests={questStack} loadingReason={loadingReason} />
     </div>
   );
 }
