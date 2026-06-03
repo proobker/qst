@@ -145,6 +145,8 @@ export async function saveOnboarding(
       longitude: options.longitude,
     })
     .eq("id", userId);
+
+  await supabase.from("user_quests").delete().eq("user_id", userId).eq("status", "generated");
 }
 
 async function getUserQuestHistory(userId: string): Promise<{

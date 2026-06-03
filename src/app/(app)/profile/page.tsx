@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { updateBioAction } from "@/app/actions/profile";
 import { Avatar } from "@/components/avatar";
 import { BadgePill } from "@/components/badge-pill";
@@ -38,6 +39,13 @@ export default async function ProfilePage() {
             Level {profile.level} · {titleForLevel(profile.level)}
           </p>
           {profile.bio ? <p className="mt-2 text-sm text-foreground">{profile.bio}</p> : null}
+
+          <Link
+            href="/onboarding"
+            className="mt-4 inline-flex rounded-lg border border-border px-4 py-2 text-sm font-semibold text-muted transition hover:border-primary hover:text-primary"
+          >
+            Update hobbies & location
+          </Link>
 
           <form action={updateBioAction} className="mt-4 space-y-2">
             <label htmlFor="bio" className="text-xs font-medium uppercase tracking-wide text-muted">

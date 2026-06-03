@@ -49,5 +49,6 @@ export async function completeOnboardingAction(formData: FormData) {
 
   revalidatePath("/onboarding");
   revalidatePath("/discover");
+  revalidatePath("/quests");
   redirect("/discover");
 }

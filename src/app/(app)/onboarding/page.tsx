@@ -17,14 +17,19 @@ export default async function OnboardingPage() {
   }
 
   const [hobbies, onboarding] = await Promise.all([listHobbies(), getOnboardingState(user.id)]);
+  const isUpdating = onboarding.complete;
 
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-border bg-surface p-6">
         <Logo size="md" className="mb-4" />
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Onboarding</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          {isUpdating ? "Update onboarding" : "Onboarding"}
+        </h1>
         <p className="mt-2 text-sm text-muted">
-          Search and select hobbies, then set your location on the map so qst can generate nearby quests.
+          {isUpdating
+            ? "Update your hobbies and location so qst can tune future quest discovery."
+            : "Search and select hobbies, then set your location on the map so qst can generate nearby quests."}
         </p>
       </div>
 
@@ -43,7 +48,7 @@ export default async function OnboardingPage() {
           type="submit"
           className="inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
         >
-          Save onboarding
+          {isUpdating ? "Save changes" : "Save onboarding"}
         </button>
       </form>
 
