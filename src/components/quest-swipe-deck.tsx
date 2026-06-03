@@ -25,6 +25,15 @@ export type QuestStackEntry = {
   quest: QuestData;
 };
 
+type PendingSwipe = {
+  entry: QuestStackEntry;
+  direction: "left" | "right";
+  animationDone: boolean;
+  saveDone: boolean;
+  saveError: string | null;
+  successMessage: string | null;
+};
+
 type QuestSwipeDeckProps = {
   quests: QuestStackEntry[];
   loadingReason: string;
@@ -32,7 +41,14 @@ type QuestSwipeDeckProps = {
 
 const SWIPE_THRESHOLD = 110;
 const SWIPE_VELOCITY_THRESHOLD = 700;
-const SWIPE_FEEDBACK_DELAY_MS = 520;
+const SWIPE_FEEDBACK_DELAY_MS = 120;
+const SNAP_BACK_TRANSITION = { type: "spring", stiffness: 420, damping: 34 } as const;
+const EXIT_TRANSITION = {
+  type: "spring",
+  stiffness: 190,
+  damping: 25,
+  mass: 0.9,
+} as const;
 
 function QuestCardPreview({ quest, className }: { quest: QuestData; className?: string }) {
   return (
@@ -79,7 +95,7 @@ function ActiveQuestCard({
     }
 
     setDragX(0);
-    void animate(x, 0, { type: "spring", stiffness: 520, damping: 38 });
+    void animate(x, 0, SNAP_BACK_TRANSITION);
   }
 
   useEffect(() => {
@@ -95,14 +111,9 @@ function ActiveQuestCard({
     const exitX = directionMultiplier * Math.max(viewportWidth * 1.25, 540);
     const timeout = window.setTimeout(() => {
       void animate(x, exitX, {
-        type: "spring",
-        stiffness: 260,
-        damping: 28,
-        mass: 0.8,
-        velocity: directionMultiplier * 900,
-      }).then(() => {
-        onExitComplete();
-      });
+        ...EXIT_TRANSITION,
+        velocity: directionMultiplier * 760,
+      }).then(onExitComplete, onExitComplete);
     }, SWIPE_FEEDBACK_DELAY_MS);
 
     return () => window.clearTimeout(timeout);
@@ -114,7 +125,7 @@ function ActiveQuestCard({
     }
 
     isAnimatingExitRef.current = false;
-    void animate(x, 0, { type: "spring", stiffness: 520, damping: 38 });
+    void animate(x, 0, SNAP_BACK_TRANSITION);
   }, [entry.userQuestId, exitDirection, x]);
 
   return (
@@ -129,7 +140,7 @@ function ActiveQuestCard({
       onDragEnd={handleDragEnd}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.16 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
       className={cn(
         "glass-card quest-swipe-card relative z-10 flex min-h-[420px] cursor-grab touch-none select-none flex-col rounded-2xl p-6 active:cursor-grabbing",
         exitDirection && "pointer-events-none",
@@ -209,45 +220,79 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
   const [deck, setDeck] = useState(quests);
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
   const [emptyRefreshes, setEmptyRefreshes] = useState(0);
+  const pendingSwipeRef = useRef<PendingSwipe | null>(null);
 
   const active = deck[0];
   const backOne = deck[1];
   const backTwo = deck[2];
 
+  const finishPendingSwipe = useCallback(() => {
+    const pending = pendingSwipeRef.current;
+    if (!pending || !pending.animationDone || !pending.saveDone) {
+      return;
+    }
+
+    pendingSwipeRef.current = null;
+
+    if (pending.saveError) {
+      toast(pending.saveError, "error");
+      setExitDirection(null);
+      return;
+    }
+
+    setDeck((prev) => prev.filter((entry) => entry.userQuestId !== pending.entry.userQuestId));
+    setExitDirection(null);
+    router.refresh();
+
+    if (pending.successMessage) {
+      toast(pending.successMessage, "success");
+    }
+  }, [router, toast]);
+
   const commitSwipe = useCallback((direction: "left" | "right") => {
-    if (exitDirection || !active) {
-      return;
-    }
-    setExitDirection(direction);
-  }, [active, exitDirection]);
-
-  const handleExitComplete = useCallback(() => {
-    if (!exitDirection || !active) {
+    if (exitDirection || !active || pendingSwipeRef.current) {
       return;
     }
 
-    const swiped = { entry: active, direction: exitDirection };
+    const pending: PendingSwipe = {
+      entry: active,
+      direction,
+      animationDone: false,
+      saveDone: false,
+      saveError: null,
+      successMessage: null,
+    };
 
+    pendingSwipeRef.current = pending;
     setEmptyRefreshes(0);
+    setExitDirection(direction);
 
     void (async () => {
       try {
-        if (swiped.direction === "right") {
-          await swipeRightAction(swiped.entry.userQuestId);
-          toast("Quest accepted - view it anytime on Quests.", "success");
+        if (pending.direction === "right") {
+          await swipeRightAction(pending.entry.userQuestId);
+          pending.successMessage = "Quest accepted - view it anytime on Quests.";
         } else {
-          await swipeLeftAction(swiped.entry.userQuestId);
+          await swipeLeftAction(pending.entry.userQuestId);
         }
-        setDeck((prev) => prev.filter((entry) => entry.userQuestId !== swiped.entry.userQuestId));
-        setExitDirection(null);
-        router.refresh();
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Something went wrong.";
-        toast(message, "error");
-        setExitDirection(null);
+        pending.saveError = err instanceof Error ? err.message : "Something went wrong.";
+      } finally {
+        pending.saveDone = true;
+        finishPendingSwipe();
       }
     });
-  }, [active, exitDirection, router, toast]);
+  }, [active, exitDirection, finishPendingSwipe]);
+
+  const handleExitComplete = useCallback(() => {
+    const pending = pendingSwipeRef.current;
+    if (!pending) {
+      return;
+    }
+
+    pending.animationDone = true;
+    finishPendingSwipe();
+  }, [finishPendingSwipe]);
 
   useEffect(() => {
     if (deck.length > 0 || exitDirection) {
