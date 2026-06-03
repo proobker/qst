@@ -32,7 +32,7 @@ type QuestSwipeDeckProps = {
 
 const SWIPE_THRESHOLD = 110;
 const SWIPE_VELOCITY_THRESHOLD = 700;
-const SWIPE_FEEDBACK_DELAY_MS = 240;
+const SWIPE_FEEDBACK_DELAY_MS = 520;
 
 function QuestCardPreview({ quest, className }: { quest: QuestData; className?: string }) {
   return (
@@ -130,20 +130,20 @@ function ActiveQuestCard({
     >
       <motion.div
         style={{ opacity: exitDirection === "right" ? 1 : acceptOpacity }}
-        className="pointer-events-none absolute left-5 top-6 z-10 -rotate-12 rounded-xl border-4 border-success px-4 py-2 text-success"
+        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-4 border-success bg-success/20 text-success"
       >
-        <div className="flex items-center gap-2 text-2xl font-black uppercase">
-          <Check size={34} />
+        <div className="-rotate-12 flex items-center gap-3 text-4xl font-black uppercase">
+          <Check size={48} />
           Accept
         </div>
       </motion.div>
 
       <motion.div
         style={{ opacity: exitDirection === "left" ? 1 : rejectOpacity }}
-        className="pointer-events-none absolute right-5 top-6 z-10 rotate-12 rounded-xl border-4 border-red-400 px-4 py-2 text-red-400"
+        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-4 border-red-400 bg-red-500/20 text-red-400"
       >
-        <div className="flex items-center gap-2 text-2xl font-black uppercase">
-          <X size={34} />
+        <div className="rotate-12 flex items-center gap-3 text-4xl font-black uppercase">
+          <X size={48} />
           Reject
         </div>
       </motion.div>

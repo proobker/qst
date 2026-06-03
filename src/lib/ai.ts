@@ -372,7 +372,13 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
 
     if (isGeminiInCooldown()) {
       const remainingSec = Math.ceil(getGeminiCooldownRemainingMs() / 1000);
-      console.warn(`[Gemini] In cooldown (${remainingSec}s left) — still trying API before offline fallback`);
+      console.warn(`[Gemini] In cooldown (${remainingSec}s left) — using offline quest batch`);
+      return {
+        ok: true,
+        quests: buildOfflineQuestBatch(context),
+        model: "offline",
+        offline: true,
+      };
     }
 
     console.log("[Gemini] generateQuest start", {
@@ -416,9 +422,15 @@ export async function generateQuest(context: QuestContext): Promise<GenerateQues
 
       if (!result.ok) {
         if (result.rateLimited) {
+          markRateLimited();
           sawRateLimit = true;
-          console.warn(`[Gemini] ${model} rate limited — trying next model`);
-          continue;
+          console.warn(`[Gemini] ${model} rate limited — using offline quest batch`);
+          return {
+            ok: true,
+            quests: buildOfflineQuestBatch(context),
+            model: "offline",
+            offline: true,
+          };
         }
         if (result.notFound) {
           console.warn(`[Gemini] ${model} not found (404) — skipping`);
