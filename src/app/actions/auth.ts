@@ -1,31 +1,66 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getAppUrl } from "@/lib/env";
+import { isFullEmailAddress } from "@/lib/utils";
 
-export async function signInWithGoogle() {
+const AUTH_CALLBACK_URL = "https://qst-kappa.vercel.app/auth/callback";
+
+async function signInWithOAuth(provider: "google" | "github") {
   const supabase = await createSupabaseServerClient();
-  const requestHeaders = await headers();
-  const origin = requestHeaders.get("origin") ?? getAppUrl();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
+    provider,
     options: {
-      redirectTo: `${origin}/auth/callback`,
-      queryParams: {
-        access_type: "offline",
-        prompt: "consent",
-      },
+      redirectTo: AUTH_CALLBACK_URL,
+      ...(provider === "google"
+        ? {
+            queryParams: {
+              access_type: "offline",
+              prompt: "consent",
+            },
+          }
+        : {}),
     },
   });
 
   if (error || !data.url) {
-    redirect("/");
+    redirect("/?auth=oauth-error");
   }
 
   redirect(data.url);
+}
+
+export async function signInWithGoogle() {
+  await signInWithOAuth("google");
+}
+
+export async function signInWithGitHub() {
+  await signInWithOAuth("github");
+}
+
+export async function signInWithEmail(formData: FormData) {
+  const email = formData.get("email");
+
+  if (typeof email !== "string" || !isFullEmailAddress(email)) {
+    redirect("/?auth=invalid-email");
+  }
+
+  const trimmedEmail = email.trim().toLowerCase();
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: trimmedEmail,
+    options: {
+      emailRedirectTo: AUTH_CALLBACK_URL,
+    },
+  });
+
+  if (error) {
+    redirect("/?auth=email-error");
+  }
+
+  redirect("/?auth=check-email");
 }
 
 export async function signOutAction() {
