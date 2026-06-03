@@ -6,6 +6,7 @@ import { uploadQuestCompletionAction } from "@/app/actions/quests";
 import { ImageEditor } from "@/components/image-editor";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/toast";
+import type { ImageEditSettings } from "@/lib/image-editor";
 
 type QuestUploadFormProps = {
   userQuestId: string;
@@ -106,7 +107,7 @@ export function QuestUploadForm({ userQuestId }: QuestUploadFormProps) {
         onClose={() => setEditorOpen(false)}
         initialFile={selectedFile}
         title="Edit quest photo"
-        onSave={async (file) => {
+        onSave={async (file, _metadata: ImageEditSettings) => {
           setEditedFile(file);
           toast("Photo edited and ready to upload.", "success");
         }}

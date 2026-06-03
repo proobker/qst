@@ -1,10 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { updateBioAction } from "@/app/actions/profile";
 import { Avatar } from "@/components/avatar";
 import { BadgePill } from "@/components/badge-pill";
 import { StatCard } from "@/components/stat-card";
-import { GlassCard } from "@/components/ui/glass-card";
 import { XpBar } from "@/components/xp-bar";
 import { titleForLevel } from "@/lib/leveling";
 import { getProfileSummary } from "@/lib/data";
@@ -29,13 +27,13 @@ export default async function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <section className="glass-card overflow-hidden rounded-2xl">
-        <div className="h-28 bg-gradient-to-r from-primary/40 via-accent/25 to-primary/40" />
+      <section className="overflow-hidden rounded-xl border border-border bg-surface">
+        <div className="h-24 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/30" />
         <div className="relative px-6 pb-6">
           <div className="-mt-12">
             <Avatar name={profile.name} src={profile.avatar} size="xl" />
           </div>
-          <h1 className="mt-4 text-2xl font-bold text-gradient">{profile.name}</h1>
+          <h1 className="mt-4 text-2xl font-bold text-foreground">{profile.name}</h1>
           <p className="text-sm text-muted">
             Level {profile.level} · {titleForLevel(profile.level)}
           </p>
@@ -52,16 +50,13 @@ export default async function ProfilePage() {
               placeholder="Tell others about your adventures..."
               className="min-h-20 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
             />
-            <button type="submit" className="btn-primary">
+            <button
+              type="submit"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+            >
               Save bio
             </button>
           </form>
-
-          <div className="mt-4 border-t border-border pt-4">
-            <Link href="/onboarding" className="btn-ghost">
-              Retake onboarding to change hobbies
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -72,12 +67,12 @@ export default async function ProfilePage() {
         <StatCard label="Quests completed" value={summary.completedQuests.length} />
       </div>
 
-      <GlassCard as="section" className="p-6">
+      <section className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">XP Progress</h2>
         <XpBar xp={profile.xp} level={profile.level} className="mt-4" />
-      </GlassCard>
+      </section>
 
-      <GlassCard as="section" className="p-6">
+      <section className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">Badges</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {summary.badges.length === 0 ? (
@@ -86,9 +81,9 @@ export default async function ProfilePage() {
             summary.badges.map((badge) => <BadgePill key={badge.id} name={badge.name} icon={badge.icon} />)
           )}
         </div>
-      </GlassCard>
+      </section>
 
-      <GlassCard as="section" className="p-6">
+      <section className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">Completed quests</h2>
         <div className="mt-4 space-y-2">
           {summary.completedQuests.length === 0 ? (
@@ -107,9 +102,9 @@ export default async function ProfilePage() {
             })
           )}
         </div>
-      </GlassCard>
+      </section>
 
-      <GlassCard as="section" className="p-6">
+      <section className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">Quest posts</h2>
         {summary.posts.length === 0 ? (
           <p className="mt-4 text-sm text-muted">No posts yet.</p>
@@ -133,7 +128,7 @@ export default async function ProfilePage() {
             ))}
           </div>
         )}
-      </GlassCard>
+      </section>
     </div>
   );
 }

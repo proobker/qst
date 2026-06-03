@@ -4,7 +4,6 @@ import { Avatar } from "@/components/avatar";
 import { BadgePill } from "@/components/badge-pill";
 import { FriendButton } from "@/components/friend-button";
 import { StatCard } from "@/components/stat-card";
-import { GlassCard } from "@/components/ui/glass-card";
 import { XpBar } from "@/components/xp-bar";
 import { titleForLevel } from "@/lib/leveling";
 import { getFriendRelationship, getProfileSummary } from "@/lib/data";
@@ -34,8 +33,8 @@ export default async function PublicProfilePage({
 
   return (
     <div className="space-y-6">
-      <section className="glass-card overflow-hidden rounded-2xl">
-        <div className="h-28 bg-gradient-to-r from-primary/40 via-accent/25 to-primary/40" />
+      <section className="overflow-hidden rounded-xl border border-border bg-surface">
+        <div className="h-24 bg-gradient-to-r from-primary/30 via-accent/20 to-primary/30" />
         <div className="relative px-6 pb-6">
           <div className="-mt-12 flex items-end justify-between gap-4">
             <Avatar name={profile.name} src={profile.avatar} size="xl" />
@@ -47,7 +46,7 @@ export default async function PublicProfilePage({
               />
             ) : null}
           </div>
-          <h1 className="mt-4 text-2xl font-bold text-gradient">{profile.name}</h1>
+          <h1 className="mt-4 text-2xl font-bold text-foreground">{profile.name}</h1>
           <p className="text-sm text-muted">
             Level {profile.level} · {titleForLevel(profile.level)}
           </p>
@@ -62,12 +61,12 @@ export default async function PublicProfilePage({
         <StatCard label="Quests completed" value={summary.completedQuests.length} />
       </div>
 
-      <GlassCard as="section" className="p-6">
+      <section className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">XP Progress</h2>
         <XpBar xp={profile.xp} level={profile.level} className="mt-4" />
-      </GlassCard>
+      </section>
 
-      <GlassCard as="section" className="p-6">
+      <section className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">Badges</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {summary.badges.length === 0 ? (
@@ -76,9 +75,9 @@ export default async function PublicProfilePage({
             summary.badges.map((badge) => <BadgePill key={badge.id} name={badge.name} icon={badge.icon} />)
           )}
         </div>
-      </GlassCard>
+      </section>
 
-      <GlassCard as="section" className="p-6">
+      <section className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">Completed quests</h2>
         <div className="mt-4 space-y-2">
           {summary.completedQuests.length === 0 ? (
@@ -97,9 +96,9 @@ export default async function PublicProfilePage({
             })
           )}
         </div>
-      </GlassCard>
+      </section>
 
-      <GlassCard as="section" className="p-6">
+      <section className="rounded-xl border border-border bg-surface p-6">
         <h2 className="text-lg font-semibold text-foreground">Quest posts</h2>
         {summary.posts.length === 0 ? (
           <p className="mt-4 text-sm text-muted">No posts yet.</p>
@@ -123,7 +122,7 @@ export default async function PublicProfilePage({
             ))}
           </div>
         )}
-      </GlassCard>
+      </section>
     </div>
   );
 }

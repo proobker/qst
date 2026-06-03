@@ -2,13 +2,12 @@ import type { User } from "@supabase/supabase-js";
 import { unstable_noStore as noStore } from "next/cache";
 import {
   DEFAULT_HOBBIES,
-  DISCOVERY_MIN_STACK,
   MIN_FRIENDS_REQUIRED,
   QUEST_ACCEPT_DEADLINE_HOURS,
 } from "@/lib/constants";
 import { levelFromXp, titleForLevel, getLevelDefinition } from "@/lib/leveling";
 import { type LevelUpCelebration, parseLevelFromNotificationMessage } from "@/lib/level-up";
-import { buildOfflineQuest, generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
+import { generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
 import {
   FeedPost,
   FriendRequest,
@@ -48,11 +47,7 @@ export async function ensureUserProfile(user: User): Promise<UserProfile> {
     xp: 0,
   };
 
-  const { data, error } = await supabase.from("users").insert(payload).select("*").single();
-  if (error || !data) {
-    console.error("[ensureUserProfile] Failed to insert profile:", error);
-    throw new Error("Failed to create user profile");
-  }
+  const { data } = await supabase.from("users").insert(payload).select("*").single();
   return data as UserProfile;
 }
 
@@ -187,64 +182,20 @@ type DiscoveryAssignment = {
 };
 
 function normalizeEmbeddedQuest(quests: unknown): (QuestDefinition & { id: string }) | null {
-  const raw =
-    quests == null
-      ? null
-      : Array.isArray(quests)
-        ? quests[0]
-        : quests;
-
-  if (!raw || typeof raw !== "object") {
+  if (!quests) {
     return null;
   }
-
-  const record = raw as Record<string, unknown>;
-  const id = typeof record.id === "string" ? record.id : null;
-  const title = typeof record.title === "string" ? record.title.trim() : "";
-  const description = typeof record.description === "string" ? record.description.trim() : "";
-  const difficulty = record.difficulty;
-
-  if (!id || !title || !description) {
-    return null;
+  if (Array.isArray(quests)) {
+    const first = quests[0];
+    if (!first || typeof first !== "object") {
+      return null;
+    }
+    return first as QuestDefinition & { id: string };
   }
-
-  if (difficulty !== "easy" && difficulty !== "medium" && difficulty !== "hard") {
-    return null;
+  if (typeof quests === "object") {
+    return quests as QuestDefinition & { id: string };
   }
-
-  return {
-    id,
-    title,
-    description,
-    difficulty,
-    xp_reward: typeof record.xp_reward === "number" ? record.xp_reward : Number(record.xp_reward) || 0,
-    badge_reward: typeof record.badge_reward === "string" ? record.badge_reward : null,
-    estimated_time:
-      typeof record.estimated_time === "string" && record.estimated_time.trim().length > 0
-        ? record.estimated_time
-        : "30 min",
-    category:
-      typeof record.category === "string" && record.category.trim().length > 0
-        ? record.category
-        : "General",
-  };
-}
-
-export type DiscoveryQuestCard = {
-  userQuestId: string;
-  quest: QuestDefinition & { id: string };
-};
-
-export function toDiscoveryQuestStack(assignments: DiscoveryAssignment[]): DiscoveryQuestCard[] {
-  return assignments
-    .map((assignment) => {
-      const quest = normalizeEmbeddedQuest(assignment.quests);
-      if (!quest) {
-        return null;
-      }
-      return { userQuestId: assignment.id, quest };
-    })
-    .filter((value): value is DiscoveryQuestCard => value !== null);
+  return null;
 }
 
 export type DiscoveryQuestResult = {
@@ -254,8 +205,11 @@ export type DiscoveryQuestResult = {
 
 const discoveryInflight = new Map<string, Promise<DiscoveryQuestResult>>();
 
-async function fetchGeneratedDiscoveryAssignments(userId: string): Promise<DiscoveryAssignment[]> {
+async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuestResult> {
+  noStore();
   const supabase = await createSupabaseServerClient();
+
+  await expireStaleAcceptedQuests(userId);
 
   const { data: generatedRows, error: fetchError } = await supabase
     .from("user_quests")
@@ -268,16 +222,7 @@ async function fetchGeneratedDiscoveryAssignments(userId: string): Promise<Disco
     console.error("[QuestSwipe] Failed to fetch generated assignments:", fetchError);
   }
 
-  const orphanAssignmentIds = (generatedRows ?? [])
-    .filter((row) => !normalizeEmbeddedQuest(row.quests))
-    .map((row) => row.id as string);
-
-  if (orphanAssignmentIds.length > 0) {
-    console.warn("[QuestSwipe] Removing orphaned generated assignments:", orphanAssignmentIds.length);
-    await supabase.from("user_quests").delete().in("id", orphanAssignmentIds);
-  }
-
-  return (generatedRows ?? [])
+  const existingAssignments = (generatedRows ?? [])
     .map((row) => {
       const existingQuest = normalizeEmbeddedQuest(row.quests);
       if (!existingQuest) {
@@ -291,92 +236,14 @@ async function fetchGeneratedDiscoveryAssignments(userId: string): Promise<Disco
       } satisfies DiscoveryAssignment;
     })
     .filter((value): value is DiscoveryAssignment => Boolean(value));
-}
 
-async function persistGeneratedQuestBatch(
-  userId: string,
-  generatedQuests: QuestDefinition[],
-  maxCount?: number,
-): Promise<DiscoveryQuestResult> {
-  const supabase = await createSupabaseServerClient();
-  const questsToPersist = maxCount ? generatedQuests.slice(0, maxCount) : generatedQuests;
-  const createdAssignments: DiscoveryAssignment[] = [];
-
-  for (const generatedQuest of questsToPersist) {
-    const { data: insertedQuest, error: insertQuestError } = await supabase
-      .from("quests")
-      .insert({
-        creator_ai: true,
-        title: generatedQuest.title,
-        description: generatedQuest.description,
-        difficulty: generatedQuest.difficulty,
-        xp_reward: generatedQuest.xp_reward,
-        badge_reward: generatedQuest.badge_reward,
-        estimated_time: generatedQuest.estimated_time,
-        category: generatedQuest.category,
-      })
-      .select("*")
-      .single();
-
-    if (insertQuestError || !insertedQuest) {
-      console.error("[QuestSwipe] Failed to insert quest into database:", insertQuestError);
-      return { assignments: createdAssignments, error: "api_error" };
-    }
-
-    const insertedQuestId = (insertedQuest as { id: string }).id;
-
-    const { data: assignment, error: assignmentError } = await supabase
-      .from("user_quests")
-      .insert({
-        user_id: userId,
-        quest_id: insertedQuestId,
-        status: "generated",
-      })
-      .select("id, quest_id, status, quests(*)")
-      .maybeSingle();
-
-    if (assignmentError) {
-      console.error("[QuestSwipe] Failed to create user quest assignment:", assignmentError);
-      if (assignmentError.code === "23505") {
-        await supabase.from("quests").delete().eq("id", insertedQuestId);
-        const parallelAssignments = await fetchGeneratedDiscoveryAssignments(userId);
-        return { assignments: parallelAssignments };
-      }
-
-      await supabase.from("quests").delete().eq("id", insertedQuestId);
-      return { assignments: createdAssignments, error: "api_error" };
-    }
-
-    if (!assignment) {
-      console.error("[QuestSwipe] Failed to create user quest assignment");
-      await supabase.from("quests").delete().eq("id", insertedQuestId);
-      return { assignments: createdAssignments, error: "api_error" };
-    }
-
-    const assignmentQuest =
-      normalizeEmbeddedQuest(assignment.quests) ??
-      (insertedQuest as unknown as QuestDefinition & { id: string });
-
-    if (!assignmentQuest) {
-      console.error("[QuestSwipe] Assignment created but quest data missing");
-      return { assignments: createdAssignments, error: "api_error" };
-    }
-
-    createdAssignments.push({
-      id: assignment.id,
-      quest_id: assignment.quest_id,
-      status: assignment.status,
-      quests: assignmentQuest,
-    });
+  if (existingAssignments.length > 0) {
+    console.log("[QuestSwipe] Serving existing generated quest stack:", existingAssignments.length);
+    return { assignments: existingAssignments };
   }
 
-  return { assignments: createdAssignments };
-}
+  console.log("[QuestSwipe] No generated quest stack — calling Gemini for user:", userId);
 
-async function generateAndPersistDiscoveryQuests(
-  userId: string,
-  maxCount?: number,
-): Promise<DiscoveryQuestResult> {
   const [profile, onboarding, history] = await Promise.all([
     getProfile(userId),
     getOnboardingState(userId),
@@ -393,7 +260,6 @@ async function generateAndPersistDiscoveryQuests(
     level: profile.level,
     historyCount: history.previousQuestTitles.length,
     rejectedCount: history.rejectedQuests.length,
-    maxCount: maxCount ?? "full-batch",
   });
 
   const generation = await generateQuest({
@@ -423,79 +289,100 @@ async function generateAndPersistDiscoveryQuests(
     console.log("[QuestSwipe] Persisting Gemini quest batch:", generatedQuests[0].title, `(${generation.model})`);
   }
 
-  return persistGeneratedQuestBatch(userId, generatedQuests, maxCount);
-}
+  const createdAssignments: DiscoveryAssignment[] = [];
 
-async function generateAndPersistLocalDiscoveryQuests(
-  userId: string,
-  maxCount?: number,
-): Promise<DiscoveryQuestResult> {
-  const [profile, onboarding, history] = await Promise.all([
-    getProfile(userId),
-    getOnboardingState(userId),
-    getUserQuestHistory(userId),
-  ]);
+  for (const generatedQuest of generatedQuests) {
+    const { data: insertedQuest, error: insertQuestError } = await supabase
+      .from("quests")
+      .insert({
+        creator_ai: true,
+        title: generatedQuest.title,
+        description: generatedQuest.description,
+        difficulty: generatedQuest.difficulty,
+        xp_reward: generatedQuest.xp_reward,
+        badge_reward: generatedQuest.badge_reward,
+        estimated_time: generatedQuest.estimated_time,
+        category: generatedQuest.category,
+      })
+      .select("*")
+      .single();
 
-  if (!profile) {
-    console.error("[QuestSwipe] User profile not found for local quest fallback");
-    return { assignments: [], error: "api_error" };
-  }
-
-  const context = {
-    hobbies: onboarding.selectedHobbies,
-    location: { latitude: onboarding.latitude, longitude: onboarding.longitude },
-    level: profile.level,
-    previousQuestTitles: history.previousQuestTitles,
-    completedQuests: history.completedQuests,
-    rejectedQuests: history.rejectedQuests,
-  };
-  const questCount = Math.max(maxCount ?? DISCOVERY_MIN_STACK, 1);
-  const variantOffset = history.previousQuestTitles.length;
-  const generatedQuests = Array.from({ length: questCount }, (_, index) =>
-    buildOfflineQuest(context, variantOffset + index),
-  );
-
-  console.warn("[QuestSwipe] Persisting local fallback quest batch:", generatedQuests[0]?.title ?? "empty");
-  return persistGeneratedQuestBatch(userId, generatedQuests, maxCount);
-}
-
-async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuestResult> {
-  noStore();
-
-  await expireStaleAcceptedQuests(userId);
-
-  const existingAssignments = await fetchGeneratedDiscoveryAssignments(userId);
-
-  if (existingAssignments.length >= DISCOVERY_MIN_STACK) {
-    console.log("[QuestSwipe] Serving existing generated quest stack:", existingAssignments.length);
-    return { assignments: existingAssignments };
-  }
-
-  if (existingAssignments.length > 0) {
-    const needed = DISCOVERY_MIN_STACK - existingAssignments.length;
-    console.log("[QuestSwipe] Topping up discovery stack:", { have: existingAssignments.length, needed });
-    const toppedUp = await generateAndPersistDiscoveryQuests(userId, needed);
-    const fallbackTopUp =
-      toppedUp.assignments.length === 0
-        ? await generateAndPersistLocalDiscoveryQuests(userId, needed)
-        : null;
-    const merged = fallbackTopUp
-      ? [...existingAssignments, ...fallbackTopUp.assignments]
-      : [...existingAssignments, ...toppedUp.assignments];
-    if (merged.length > 0) {
-      return { assignments: merged, error: toppedUp.error ?? fallbackTopUp?.error };
+    if (insertQuestError || !insertedQuest) {
+      console.error("[QuestSwipe] Failed to insert quest into database:", insertQuestError);
+      return { assignments: [], error: "api_error" };
     }
-    return { assignments: existingAssignments, error: toppedUp.error };
+
+    const insertedQuestId = (insertedQuest as { id: string }).id;
+
+    const { data: assignment, error: assignmentError } = await supabase
+      .from("user_quests")
+      .insert({
+        user_id: userId,
+        quest_id: insertedQuestId,
+        status: "generated",
+      })
+      .select("id, quest_id, status, quests(*)")
+      .maybeSingle();
+
+    if (assignmentError) {
+      console.error("[QuestSwipe] Failed to create user quest assignment:", assignmentError);
+      if (assignmentError.code === "23505") {
+        // Another concurrent request likely created a full stack; serve the canonical one.
+        await supabase.from("quests").delete().eq("id", insertedQuestId);
+        const { data: parallelRows } = await supabase
+          .from("user_quests")
+          .select("id, quest_id, status, quests(*)")
+          .eq("user_id", userId)
+          .eq("status", "generated")
+          .order("created_at", { ascending: true });
+
+        const parallelAssignments = (parallelRows ?? [])
+          .map((row) => {
+            const existingQuest = normalizeEmbeddedQuest(row.quests);
+            if (!existingQuest) {
+              return null;
+            }
+            return {
+              id: row.id,
+              quest_id: row.quest_id,
+              status: row.status,
+              quests: existingQuest,
+            } satisfies DiscoveryAssignment;
+          })
+          .filter((value): value is DiscoveryAssignment => Boolean(value));
+
+        return { assignments: parallelAssignments };
+      }
+
+      // Best-effort cleanup of an orphaned quest record.
+      await supabase.from("quests").delete().eq("id", insertedQuestId);
+      return { assignments: [], error: "api_error" };
+    }
+
+    if (!assignment) {
+      console.error("[QuestSwipe] Failed to create user quest assignment");
+      await supabase.from("quests").delete().eq("id", insertedQuestId);
+      return { assignments: [], error: "api_error" };
+    }
+
+    const assignmentQuest =
+      normalizeEmbeddedQuest(assignment.quests) ??
+      (insertedQuest as unknown as QuestDefinition & { id: string });
+
+    if (!assignmentQuest) {
+      console.error("[QuestSwipe] Assignment created but quest data missing");
+      return { assignments: [], error: "api_error" };
+    }
+
+    createdAssignments.push({
+      id: assignment.id,
+      quest_id: assignment.quest_id,
+      status: assignment.status,
+      quests: assignmentQuest,
+    });
   }
 
-  console.log("[QuestSwipe] No generated quest stack — generating quest batch for user:", userId);
-  const generated = await generateAndPersistDiscoveryQuests(userId);
-  if (generated.assignments.length > 0) {
-    return generated;
-  }
-
-  console.warn("[QuestSwipe] AI generation produced no assignments - forcing local quest fallback");
-  return generateAndPersistLocalDiscoveryQuests(userId);
+  return { assignments: createdAssignments };
 }
 
 /** Deduplicates concurrent discovery requests (prevents double Gemini calls on swipe + refresh). */
@@ -506,14 +393,9 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryQuestR
     return inflight;
   }
 
-  const promise = getDiscoveryQuestInternal(userId)
-    .catch((error: unknown) => {
-      console.error("[QuestSwipe] getDiscoveryQuest failed:", error);
-      return { assignments: [], error: "api_error" as const } satisfies DiscoveryQuestResult;
-    })
-    .finally(() => {
-      discoveryInflight.delete(userId);
-    });
+  const promise = getDiscoveryQuestInternal(userId).finally(() => {
+    discoveryInflight.delete(userId);
+  });
   discoveryInflight.set(userId, promise);
   return promise;
 }

@@ -35,13 +35,9 @@ export default async function AppLayout({
   return (
     <ToastProvider>
       <LevelUpProvider initialCelebration={pendingLevelUp}>
-        <div className="app-mesh min-h-screen pb-20 sm:pb-0">
-          <div className="relative z-40">
-            <AppNav notifications={notifications} unreadCount={unreadCount} />
-          </div>
-          <main className="relative z-[1] mx-auto w-full max-w-6xl px-4 py-6 page-enter">
-            {children}
-          </main>
+        <div className="min-h-screen bg-background pb-20 sm:pb-0">
+          <AppNav notifications={notifications} unreadCount={unreadCount} />
+          <main className="mx-auto w-full max-w-6xl px-4 py-6 page-enter">{children}</main>
         </div>
       </LevelUpProvider>
     </ToastProvider>

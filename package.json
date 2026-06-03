@@ -27,7 +27,6 @@
     "react-easy-crop": "^5.5.7",
     "react-hook-form": "^7.76.1",
     "react-leaflet": "^5.0.0",
-    "supabase": "^2.104.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

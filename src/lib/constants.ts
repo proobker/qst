@@ -305,9 +305,6 @@ export const XP_PER_LEVEL = 100;
 /** Minimum friends required before discovering or submitting quest completions. */
 export const MIN_FRIENDS_REQUIRED = 1;
 
-/** Regenerate discovery quests when fewer than this many are left in the swipe stack. */
-export const DISCOVERY_MIN_STACK = 2;
-
 /** Hours after accepting a quest before it is marked incomplete if not finished. */
 export const QUEST_ACCEPT_DEADLINE_HOURS = 24;
 

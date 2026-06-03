@@ -58,7 +58,7 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
 
   return (
     <>
-      <article className="glass-card glass-card-hover overflow-hidden rounded-2xl">
+      <article className="overflow-hidden rounded-xl border border-border bg-surface transition-shadow hover:shadow-lg hover:shadow-primary/5">
         <div className="flex items-center gap-3 px-4 py-3">
           <Link href={`/profile/${user?.id ?? post.user_id}`}>
             <Avatar name={user?.name ?? "User"} src={user?.avatar} size="sm" />
