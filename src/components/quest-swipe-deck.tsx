@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, useMotionValue, useTransform, type PanInfo } from "framer-motion";
+import { animate, motion, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { swipeLeftAction, swipeRightAction } from "@/app/actions/quests";
 import { useToast } from "@/components/ui/toast";
@@ -29,7 +29,8 @@ type QuestSwipeDeckProps = {
   quests: QuestStackEntry[];
 };
 
-const SWIPE_THRESHOLD = 120;
+const SWIPE_THRESHOLD = 110;
+const SWIPE_VELOCITY_THRESHOLD = 700;
 
 function QuestCardPreview({ quest, className }: { quest: QuestData; className?: string }) {
   return (
@@ -49,76 +50,108 @@ function QuestCardPreview({ quest, className }: { quest: QuestData; className?: 
 function ActiveQuestCard({
   entry,
   exitDirection,
-  pending,
   onCommitSwipe,
   onExitComplete,
 }: {
   entry: QuestStackEntry;
   exitDirection: "left" | "right" | null;
-  pending: boolean;
   onCommitSwipe: (direction: "left" | "right") => void;
   onExitComplete: () => void;
 }) {
   const { quest } = entry;
   const [dragX, setDragX] = useState(0);
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 0, 200], [-12, 0, 12]);
-  const acceptOpacity = useTransform(x, [0, SWIPE_THRESHOLD], [0, 1]);
-  const rejectOpacity = useTransform(x, [-SWIPE_THRESHOLD, 0], [1, 0]);
+  const y = useMotionValue(0);
+  const rotate = useTransform(x, [-260, 0, 260], [-16, 0, 16]);
+  const scale = useTransform(x, [-260, 0, 260], [0.98, 1, 0.98]);
+  const acceptOpacity = useTransform(x, [20, SWIPE_THRESHOLD], [0, 1]);
+  const rejectOpacity = useTransform(x, [-SWIPE_THRESHOLD, -20], [1, 0]);
+  const isAnimatingExitRef = useRef(false);
 
   function handleDragEnd(_: unknown, info: PanInfo) {
-    if (info.offset.x > SWIPE_THRESHOLD) {
-      onCommitSwipe("right");
-    } else if (info.offset.x < -SWIPE_THRESHOLD) {
-      onCommitSwipe("left");
+    const hasEnoughDistance = Math.abs(info.offset.x) > SWIPE_THRESHOLD;
+    const hasEnoughVelocity =
+      Math.abs(info.velocity.x) > SWIPE_VELOCITY_THRESHOLD && Math.abs(info.offset.x) > 35;
+
+    if (hasEnoughDistance || hasEnoughVelocity) {
+      onCommitSwipe(info.offset.x > 0 || info.velocity.x > 0 ? "right" : "left");
+      return;
     }
+
+    setDragX(0);
+    void Promise.all([
+      animate(x, 0, { type: "spring", stiffness: 520, damping: 38 }),
+      animate(y, 0, { type: "spring", stiffness: 520, damping: 38 }),
+    ]);
   }
+
+  useEffect(() => {
+    if (!exitDirection || isAnimatingExitRef.current) {
+      return;
+    }
+
+    isAnimatingExitRef.current = true;
+    setDragX(0);
+
+    const viewportWidth = typeof window === "undefined" ? 520 : window.innerWidth;
+    const directionMultiplier = exitDirection === "right" ? 1 : -1;
+    const exitX = directionMultiplier * Math.max(viewportWidth * 1.25, 540);
+    const exitY = Math.min(Math.max(Math.abs(x.get()) * 0.18, 42), 120);
+
+    void Promise.all([
+      animate(x, exitX, {
+        type: "spring",
+        stiffness: 220,
+        damping: 24,
+        mass: 0.9,
+        velocity: directionMultiplier * 900,
+      }),
+      animate(y, exitY, {
+        type: "spring",
+        stiffness: 240,
+        damping: 28,
+      }),
+    ]).then(() => {
+      onExitComplete();
+    });
+  }, [exitDirection, onExitComplete, x, y]);
 
   return (
     <motion.article
       key={entry.userQuestId}
-      drag={pending || exitDirection ? false : "x"}
+      drag={exitDirection ? false : true}
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.9}
-      style={{ x, rotate }}
+      dragElastic={0.82}
+      dragMomentum={false}
+      style={{ x, y, rotate, scale }}
       onDrag={(_, info) => setDragX(info.offset.x)}
       onDragEnd={handleDragEnd}
-      initial={{ x: 0, opacity: 1 }}
-      animate={
-        exitDirection === "right"
-          ? { x: 500, opacity: 1, transition: { duration: 0.28 } }
-          : exitDirection === "left"
-            ? { x: -500, opacity: 1, transition: { duration: 0.28 } }
-            : { x: 0, opacity: 1 }
-      }
-      onAnimationComplete={() => {
-        if (exitDirection) {
-          onExitComplete();
-        }
-      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.16 }}
       className={cn(
-        "glass-card relative z-10 flex min-h-[420px] touch-none flex-col rounded-2xl bg-surface-solid p-6",
-        pending && "pointer-events-none opacity-70",
+        "glass-card relative z-10 flex min-h-[420px] cursor-grab touch-none select-none flex-col rounded-2xl bg-surface-solid p-6 active:cursor-grabbing",
+        exitDirection && "pointer-events-none",
       )}
       role="group"
       aria-label={`Quest card: ${quest.title}. Swipe right to accept, left to reject.`}
     >
       <motion.div
         style={{ opacity: exitDirection === "right" ? 1 : acceptOpacity }}
-        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-4 border-success bg-success/10"
+        className="pointer-events-none absolute left-5 top-6 z-10 -rotate-12 rounded-xl border-4 border-success px-4 py-2 text-success"
       >
-        <div className="flex items-center gap-2 text-3xl font-bold text-success">
-          <Check size={40} />
+        <div className="flex items-center gap-2 text-2xl font-black uppercase">
+          <Check size={34} />
           Accept
         </div>
       </motion.div>
 
       <motion.div
         style={{ opacity: exitDirection === "left" ? 1 : rejectOpacity }}
-        className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-4 border-red-400 bg-red-500/10"
+        className="pointer-events-none absolute right-5 top-6 z-10 rotate-12 rounded-xl border-4 border-red-400 px-4 py-2 text-red-400"
       >
-        <div className="flex items-center gap-2 text-3xl font-bold text-red-400">
-          <X size={40} />
+        <div className="flex items-center gap-2 text-2xl font-black uppercase">
+          <X size={34} />
           Reject
         </div>
       </motion.div>
@@ -142,33 +175,27 @@ function ActiveQuestCard({
         </p>
       ) : null}
 
-      {pending ? (
-        <div className="mt-auto flex justify-center pt-6">
-          <Spinner label="Processing..." />
-        </div>
-      ) : (
-        <div className="mt-auto grid grid-cols-2 gap-3 pt-6">
-          <button
-            type="button"
-            onClick={() => onCommitSwipe("left")}
-            className="rounded-lg border border-border px-4 py-3 text-sm font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
-            aria-label="Reject quest"
-          >
-            Reject
-          </button>
-          <button
-            type="button"
-            onClick={() => onCommitSwipe("right")}
-            className="btn-primary w-full py-3"
-            aria-label="Accept quest"
-          >
-            Accept
-          </button>
-        </div>
-      )}
+      <div className="mt-auto grid grid-cols-2 gap-3 pt-6">
+        <button
+          type="button"
+          onClick={() => onCommitSwipe("left")}
+          className="rounded-lg border border-border px-4 py-3 text-sm font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
+          aria-label="Reject quest"
+        >
+          Reject
+        </button>
+        <button
+          type="button"
+          onClick={() => onCommitSwipe("right")}
+          className="btn-primary w-full py-3"
+          aria-label="Accept quest"
+        >
+          Accept
+        </button>
+      </div>
 
       <p className="mt-3 text-center text-xs text-muted">
-        Drag the card or use left/right arrow keys
+        Swipe or use left/right arrow keys
         {dragX !== 0 ? ` - ${Math.abs(Math.round(dragX))}px` : ""}
       </p>
     </motion.article>
@@ -179,20 +206,19 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [deck, setDeck] = useState(quests);
-  const [pending, startTransition] = useTransition();
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
-  const pendingSwipeRef = useRef<{ entry: QuestStackEntry; direction: "left" | "right" } | null>(null);
 
   const active = deck[0];
   const backOne = deck[1];
   const backTwo = deck[2];
+  const remainingAfterActive = Math.max(deck.length - 1, 0);
 
   const commitSwipe = useCallback((direction: "left" | "right") => {
-    if (pending || exitDirection || !active) {
+    if (exitDirection || !active) {
       return;
     }
     setExitDirection(direction);
-  }, [active, exitDirection, pending]);
+  }, [active, exitDirection]);
 
   const handleExitComplete = useCallback(() => {
     if (!exitDirection || !active) {
@@ -200,12 +226,11 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
     }
 
     const swiped = { entry: active, direction: exitDirection };
-    pendingSwipeRef.current = swiped;
 
     setDeck((prev) => prev.slice(1));
     setExitDirection(null);
 
-    startTransition(async () => {
+    void (async () => {
       try {
         if (swiped.direction === "right") {
           await swipeRightAction(swiped.entry.userQuestId);
@@ -213,8 +238,9 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
         } else {
           await swipeLeftAction(swiped.entry.userQuestId);
         }
-        pendingSwipeRef.current = null;
-        router.refresh();
+        if (remainingAfterActive === 0) {
+          router.refresh();
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : "Something went wrong.";
         toast(message, "error");
@@ -224,14 +250,13 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
           }
           return [swiped.entry, ...prev];
         });
-        pendingSwipeRef.current = null;
       }
     });
-  }, [active, exitDirection, router, toast]);
+  }, [active, exitDirection, remainingAfterActive, router, toast]);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (pending || exitDirection) {
+      if (exitDirection) {
         return;
       }
       if (e.key === "ArrowRight") {
@@ -242,7 +267,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [commitSwipe, pending, exitDirection]);
+  }, [commitSwipe, exitDirection]);
 
   if (deck.length === 0) {
     return (
@@ -314,7 +339,6 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
         <ActiveQuestCard
           entry={active}
           exitDirection={exitDirection}
-          pending={pending}
           onCommitSwipe={commitSwipe}
           onExitComplete={handleExitComplete}
         />
