@@ -15,11 +15,13 @@ export default async function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
       <main className="w-full max-w-2xl space-y-6 rounded-2xl border border-border bg-surface p-8 shadow-xl shadow-primary/10">
-        <p className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
-          real life adventure game
-        </p>
-        <Logo size="lg" className="justify-center" />
-        <p className="text-base leading-relaxed text-muted">
+        <header className="flex flex-col items-center gap-4 text-center">
+          <Logo size="lg" />
+          <p className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
+            real life adventure game
+          </p>
+        </header>
+        <p className="text-center text-base leading-relaxed text-muted">
           Turn real life into an RPG. Discover AI-generated side quests based on your hobbies and location, complete
           them, post proof, collect approvals, and level up with badges.
         </p>
