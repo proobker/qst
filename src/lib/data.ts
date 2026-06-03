@@ -47,7 +47,11 @@ export async function ensureUserProfile(user: User): Promise<UserProfile> {
     xp: 0,
   };
 
-  const { data } = await supabase.from("users").insert(payload).select("*").single();
+  const { data, error } = await supabase.from("users").insert(payload).select("*").single();
+  if (error || !data) {
+    console.error("[ensureUserProfile] Failed to insert profile:", error);
+    throw new Error("Failed to create user profile");
+  }
   return data as UserProfile;
 }
 
@@ -182,20 +186,64 @@ type DiscoveryAssignment = {
 };
 
 function normalizeEmbeddedQuest(quests: unknown): (QuestDefinition & { id: string }) | null {
-  if (!quests) {
+  const raw =
+    quests == null
+      ? null
+      : Array.isArray(quests)
+        ? quests[0]
+        : quests;
+
+  if (!raw || typeof raw !== "object") {
     return null;
   }
-  if (Array.isArray(quests)) {
-    const first = quests[0];
-    if (!first || typeof first !== "object") {
-      return null;
-    }
-    return first as QuestDefinition & { id: string };
+
+  const record = raw as Record<string, unknown>;
+  const id = typeof record.id === "string" ? record.id : null;
+  const title = typeof record.title === "string" ? record.title.trim() : "";
+  const description = typeof record.description === "string" ? record.description.trim() : "";
+  const difficulty = record.difficulty;
+
+  if (!id || !title || !description) {
+    return null;
   }
-  if (typeof quests === "object") {
-    return quests as QuestDefinition & { id: string };
+
+  if (difficulty !== "easy" && difficulty !== "medium" && difficulty !== "hard") {
+    return null;
   }
-  return null;
+
+  return {
+    id,
+    title,
+    description,
+    difficulty,
+    xp_reward: typeof record.xp_reward === "number" ? record.xp_reward : Number(record.xp_reward) || 0,
+    badge_reward: typeof record.badge_reward === "string" ? record.badge_reward : null,
+    estimated_time:
+      typeof record.estimated_time === "string" && record.estimated_time.trim().length > 0
+        ? record.estimated_time
+        : "30 min",
+    category:
+      typeof record.category === "string" && record.category.trim().length > 0
+        ? record.category
+        : "General",
+  };
+}
+
+export type DiscoveryQuestCard = {
+  userQuestId: string;
+  quest: QuestDefinition & { id: string };
+};
+
+export function toDiscoveryQuestStack(assignments: DiscoveryAssignment[]): DiscoveryQuestCard[] {
+  return assignments
+    .map((assignment) => {
+      const quest = normalizeEmbeddedQuest(assignment.quests);
+      if (!quest) {
+        return null;
+      }
+      return { userQuestId: assignment.id, quest };
+    })
+    .filter((value): value is DiscoveryQuestCard => value !== null);
 }
 
 export type DiscoveryQuestResult = {
@@ -220,6 +268,15 @@ async function getDiscoveryQuestInternal(userId: string): Promise<DiscoveryQuest
 
   if (fetchError) {
     console.error("[QuestSwipe] Failed to fetch generated assignments:", fetchError);
+  }
+
+  const orphanAssignmentIds = (generatedRows ?? [])
+    .filter((row) => !normalizeEmbeddedQuest(row.quests))
+    .map((row) => row.id as string);
+
+  if (orphanAssignmentIds.length > 0) {
+    console.warn("[QuestSwipe] Removing orphaned generated assignments:", orphanAssignmentIds.length);
+    await supabase.from("user_quests").delete().in("id", orphanAssignmentIds);
   }
 
   const existingAssignments = (generatedRows ?? [])
@@ -393,9 +450,14 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryQuestR
     return inflight;
   }
 
-  const promise = getDiscoveryQuestInternal(userId).finally(() => {
-    discoveryInflight.delete(userId);
-  });
+  const promise = getDiscoveryQuestInternal(userId)
+    .catch((error: unknown) => {
+      console.error("[QuestSwipe] getDiscoveryQuest failed:", error);
+      return { assignments: [], error: "api_error" as const } satisfies DiscoveryQuestResult;
+    })
+    .finally(() => {
+      discoveryInflight.delete(userId);
+    });
   discoveryInflight.set(userId, promise);
   return promise;
 }

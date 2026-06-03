@@ -7,7 +7,12 @@ import { DiscoverSkeleton } from "@/components/ui/skeleton";
 import { isGeminiInCooldown, getGeminiCooldownRemainingMs } from "@/lib/ai";
 import { getGeminiApiKey } from "@/lib/env";
 import { MIN_FRIENDS_REQUIRED } from "@/lib/constants";
-import { getDiscoveryQuest, getFriendCount, getOnboardingState } from "@/lib/data";
+import {
+  getDiscoveryQuest,
+  getFriendCount,
+  getOnboardingState,
+  toDiscoveryQuestStack,
+} from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -83,19 +88,22 @@ async function DiscoverContent() {
       </GlassCard>
     );
   }
-  const questStack = assignments.map((assignment) => ({
-    userQuestId: assignment.id,
-    quest: {
-      id: assignment.quest_id,
-      title: assignment.quests.title,
-      description: assignment.quests.description,
-      difficulty: assignment.quests.difficulty,
-      xp_reward: assignment.quests.xp_reward,
-      estimated_time: assignment.quests.estimated_time,
-      category: assignment.quests.category,
-      badge_reward: assignment.quests.badge_reward,
-    },
-  }));
+  const questStack = toDiscoveryQuestStack(assignments);
+
+  if (questStack.length === 0) {
+    console.error("[DiscoverPage] Assignments missing embedded quest data");
+    return (
+      <GlassCard className="p-6">
+        <h1 className="text-xl font-semibold text-foreground">Could not load a quest</h1>
+        <p className="mt-2 text-sm text-muted">
+          Your quest stack was out of sync. Refresh to generate a new batch.
+        </p>
+        <Link href="/discover" className="btn-primary mt-4">
+          Try again
+        </Link>
+      </GlassCard>
+    );
+  }
 
   const geminiCooldown = isGeminiInCooldown();
   const cooldownMinutes = Math.ceil(getGeminiCooldownRemainingMs() / 60_000);

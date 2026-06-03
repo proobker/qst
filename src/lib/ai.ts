@@ -1,4 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
 import { getGeminiApiKey, getGeminiModelOverride } from "@/lib/env";
 import { QuestDefinition } from "@/lib/types";
 
@@ -309,8 +308,22 @@ function isModelNotFoundError(error: unknown): boolean {
   return String(err.message ?? error).toLowerCase().includes("not found");
 }
 
+type GeminiClient = {
+  models: {
+    generateContent: (request: {
+      model: string;
+      contents: string;
+      config?: {
+        responseMimeType?: string;
+        temperature?: number;
+        maxOutputTokens?: number;
+      };
+    }) => Promise<{ text?: string | null }>;
+  };
+};
+
 async function callGeminiModel(
-  client: GoogleGenAI,
+  client: GeminiClient,
   model: string,
   prompt: string,
 ): Promise<{ ok: true; text: string } | { ok: false; rateLimited: boolean; notFound: boolean; message: string }> {
@@ -324,8 +337,6 @@ async function callGeminiModel(
         maxOutputTokens: 2048,
       },
     });
-    console.log("TEXT:");
-    console.log(response.text);
 
     const text = response.text ?? "";
     if (!text) {
@@ -355,89 +366,117 @@ function resolveModelsToTry(): string[] {
  * Generates a quest batch via Gemini first. Uses offline quests only when Gemini cannot produce a full batch.
  */
 export async function generateQuest(context: QuestContext): Promise<GenerateQuestResult> {
-  const apiKey = getGeminiApiKey();
-  const promptHobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
+  try {
+    const apiKey = getGeminiApiKey();
+    const promptHobbies = pickHobbiesForPrompt(context.hobbies, context.rejectedQuests?.length ?? 0);
 
-  if (isGeminiInCooldown()) {
-    const remainingSec = Math.ceil(getGeminiCooldownRemainingMs() / 1000);
-    console.warn(`[Gemini] In cooldown (${remainingSec}s left) — still trying API before offline fallback`);
-  }
+    if (isGeminiInCooldown()) {
+      const remainingSec = Math.ceil(getGeminiCooldownRemainingMs() / 1000);
+      console.warn(`[Gemini] In cooldown (${remainingSec}s left) — still trying API before offline fallback`);
+    }
 
-  console.log("[Gemini] generateQuest start", {
-    apiKeyConfigured: Boolean(apiKey),
-    hobbiesInPrompt: promptHobbies,
-    totalHobbies: context.hobbies.length,
-    level: context.level,
-  });
+    console.log("[Gemini] generateQuest start", {
+      apiKeyConfigured: Boolean(apiKey),
+      hobbiesInPrompt: promptHobbies,
+      totalHobbies: context.hobbies.length,
+      level: context.level,
+    });
 
-  if (!apiKey) {
-    console.error("[Gemini] Missing GOOGLE_GEMINI_API_KEY in .env.local");
-    return { ok: false, reason: "missing_api_key" };
-  }
+    if (!apiKey) {
+      console.warn("[Gemini] Missing GOOGLE_GEMINI_API_KEY — using offline quest batch");
+      return {
+        ok: true,
+        quests: buildOfflineQuestBatch(context),
+        model: "offline",
+        offline: true,
+      };
+    }
 
-  const client = new GoogleGenAI({ apiKey });
-  const prompt = buildPrompt(context);
-  const models = resolveModelsToTry();
-  let sawRateLimit = false;
+    const { GoogleGenAI } = await import("@google/genai");
+    let client: GeminiClient;
+    try {
+      client = new GoogleGenAI({ apiKey });
+    } catch (error) {
+      console.error("[Gemini] Failed to initialize client:", error);
+      return {
+        ok: true,
+        quests: buildOfflineQuestBatch(context),
+        model: "offline",
+        offline: true,
+      };
+    }
 
-  for (const model of models) {
-    console.log(`[Gemini] Trying model: ${model}`);
-    const result = await callGeminiModel(client, model, prompt);
+    const prompt = buildPrompt(context);
+    const models = resolveModelsToTry();
+    let sawRateLimit = false;
 
-    if (!result.ok) {
-      if (result.rateLimited) {
-        sawRateLimit = true;
-        console.warn(`[Gemini] ${model} rate limited — trying next model`);
+    for (const model of models) {
+      console.log(`[Gemini] Trying model: ${model}`);
+      const result = await callGeminiModel(client, model, prompt);
+
+      if (!result.ok) {
+        if (result.rateLimited) {
+          sawRateLimit = true;
+          console.warn(`[Gemini] ${model} rate limited — trying next model`);
+          continue;
+        }
+        if (result.notFound) {
+          console.warn(`[Gemini] ${model} not found (404) — skipping`);
+          continue;
+        }
+        console.error(`[Gemini] ${model} failed:`, result.message.slice(0, 200));
         continue;
       }
-      if (result.notFound) {
-        console.warn(`[Gemini] ${model} not found (404) — skipping`);
+
+      const parsed = extractJson(result.text);
+      const candidates = extractQuestCandidates(parsed);
+      if (candidates.length === 0) {
+        console.warn(`[Gemini] ${model} unparseable or empty JSON`);
         continue;
       }
-      console.error(`[Gemini] ${model} failed:`, result.message.slice(0, 200));
-      continue;
+
+      const sanitized = candidates
+        .map((candidate) => sanitizeQuest(candidate, context))
+        .filter((quest): quest is QuestDefinition => {
+          if (!quest) return false;
+          return moderateQuest(quest);
+        });
+
+      const uniqueSanitized = dedupeQuestsByTitle(sanitized);
+      if (uniqueSanitized.length < QUEST_BATCH_SIZE) {
+        console.warn(
+          `[Gemini] ${model} returned ${uniqueSanitized.length}/${QUEST_BATCH_SIZE} valid quests — trying next model`,
+        );
+        continue;
+      }
+
+      const finalBatch = uniqueSanitized.slice(0, QUEST_BATCH_SIZE);
+      console.log(`[Gemini] Success via ${model}:`, finalBatch.map((quest) => quest.title).join(" | "));
+      return { ok: true, quests: finalBatch, model };
     }
 
-    const parsed = extractJson(result.text);
-    const candidates = extractQuestCandidates(parsed);
-    if (candidates.length === 0) {
-      console.warn(`[Gemini] ${model} unparseable or empty JSON`);
-      continue;
+    if (sawRateLimit) {
+      markRateLimited();
+      console.warn("[Gemini] All models rate limited — using offline quest batch builder until cooldown resets");
+    } else {
+      console.warn("[Gemini] Could not produce a full batch from any model — using offline quest batch builder");
     }
 
-    const sanitized = candidates
-      .map((candidate) => sanitizeQuest(candidate, context))
-      .filter((quest): quest is QuestDefinition => {
-        if (!quest) return false;
-        return moderateQuest(quest);
-      });
-
-    const uniqueSanitized = dedupeQuestsByTitle(sanitized);
-    if (uniqueSanitized.length < QUEST_BATCH_SIZE) {
-      console.warn(
-        `[Gemini] ${model} returned ${uniqueSanitized.length}/${QUEST_BATCH_SIZE} valid quests — trying next model`,
-      );
-      continue;
-    }
-
-    const finalBatch = uniqueSanitized.slice(0, QUEST_BATCH_SIZE);
-    console.log(`[Gemini] Success via ${model}:`, finalBatch.map((quest) => quest.title).join(" | "));
-    return { ok: true, quests: finalBatch, model };
+    return {
+      ok: true,
+      quests: buildOfflineQuestBatch(context),
+      model: "offline",
+      offline: true,
+    };
+  } catch (error) {
+    console.error("[Gemini] generateQuest threw:", error);
+    return {
+      ok: true,
+      quests: buildOfflineQuestBatch(context),
+      model: "offline",
+      offline: true,
+    };
   }
-
-  if (sawRateLimit) {
-    markRateLimited();
-    console.warn("[Gemini] All models rate limited — using offline quest batch builder until cooldown resets");
-  } else {
-    console.warn("[Gemini] Could not produce a full batch from any model — using offline quest batch builder");
-  }
-
-  return {
-    ok: true,
-    quests: buildOfflineQuestBatch(context),
-    model: "offline",
-    offline: true,
-  };
 }
 
 export function moderateQuest(quest: QuestDefinition): boolean {
