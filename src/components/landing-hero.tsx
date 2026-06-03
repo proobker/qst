@@ -59,6 +59,11 @@ export function LandingHero() {
     requestEmailOtpAction,
     initialEmailOtpState,
   );
+  const [verifyOtpState, verifyEmailOtp, verifyingOtp] = useActionState(
+    verifyEmailOtpAction,
+    initialEmailOtpState,
+  );
+  const otpEmail = emailOtpState.email || verifyOtpState.email;
 
   return (
     <div className="landing-mesh app-mesh flex min-h-screen flex-col items-center justify-center px-4 py-16">
@@ -145,8 +150,8 @@ export function LandingHero() {
             ) : null}
 
             {emailOtpState.ok ? (
-              <form action={verifyEmailOtpAction} className="space-y-3 rounded-xl border border-border p-3">
-                <input type="hidden" name="email" value={emailOtpState.email} />
+              <form action={verifyEmailOtp} className="space-y-3 rounded-xl border border-border p-3">
+                <input type="hidden" name="email" value={otpEmail} />
                 <label htmlFor="email-otp" className="sr-only">
                   One-time code
                 </label>
@@ -163,8 +168,18 @@ export function LandingHero() {
                     className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted focus:outline-none"
                   />
                 </div>
-                <button type="submit" className="btn-primary w-full py-3">
-                  Verify code
+                {verifyOtpState.message ? (
+                  <p className="rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                    {verifyOtpState.message}
+                  </p>
+                ) : null}
+                <button
+                  type="submit"
+                  disabled={verifyingOtp}
+                  className="btn-primary flex w-full items-center justify-center py-3 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {verifyingOtp ? <Spinner size="sm" /> : null}
+                  {verifyingOtp ? "Verifying..." : "Verify code"}
                 </button>
               </form>
             ) : null}

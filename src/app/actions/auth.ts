@@ -60,12 +60,20 @@ export async function requestEmailOtpAction(
   };
 }
 
-export async function verifyEmailOtpAction(formData: FormData) {
+export async function verifyEmailOtpAction(
+  previousState: EmailOtpState = initialEmailOtpState,
+  formData: FormData,
+): Promise<EmailOtpState> {
+  void previousState;
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const token = String(formData.get("token") ?? "").trim().replace(/\s/g, "");
 
   if (!isFullEmailAddress(email) || token.length < 6) {
-    redirect("/?error=otp");
+    return {
+      ok: false,
+      email,
+      message: "Enter the 6-digit code from your email.",
+    };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -77,7 +85,11 @@ export async function verifyEmailOtpAction(formData: FormData) {
 
   if (error) {
     console.error("[Auth] Failed to verify email OTP:", error);
-    redirect("/?error=otp");
+    return {
+      ok: false,
+      email,
+      message: "That code did not work. Check it and try again.",
+    };
   }
 
   redirect("/discover");
