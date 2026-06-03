@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { motion, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { swipeLeftAction, swipeRightAction } from "@/app/actions/quests";
 import { useToast } from "@/components/ui/toast";
@@ -19,7 +20,7 @@ type QuestData = {
   badge_reward: string | null;
 };
 
-type QuestStackEntry = {
+export type QuestStackEntry = {
   userQuestId: string;
   quest: QuestData;
 };
@@ -30,34 +31,41 @@ type QuestSwipeDeckProps = {
 
 const SWIPE_THRESHOLD = 120;
 
-function isNextRedirect(error: unknown): boolean {
+function QuestCardPreview({ quest, className }: { quest: QuestData; className?: string }) {
   return (
-    typeof error === "object" &&
-    error !== null &&
-    "digest" in error &&
-    String((error as { digest?: string }).digest).startsWith("NEXT_REDIRECT")
+    <div className={cn("glass-card rounded-2xl p-6", className)}>
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
+        <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
+          {quest.category}
+        </span>
+        <span className="rounded-full border border-border px-2 py-1">{quest.difficulty}</span>
+      </div>
+      <h2 className="text-lg font-bold tracking-tight text-foreground">{quest.title}</h2>
+      <p className="mt-2 line-clamp-3 text-sm text-muted">{quest.description}</p>
+    </div>
   );
 }
 
 export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
-  const active = quests[0];
-  const fallbackQuest: QuestData = {
-    id: "",
-    title: "",
-    description: "",
-    difficulty: "easy",
-    xp_reward: 0,
-    estimated_time: "",
-    category: "",
-    badge_reward: null,
-  };
-
-  const userQuestId = active?.userQuestId ?? "";
-  const quest = active?.quest ?? fallbackQuest;
+  const router = useRouter();
   const { toast } = useToast();
+  const [deck, setDeck] = useState(quests);
   const [pending, startTransition] = useTransition();
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
   const [dragX, setDragX] = useState(0);
+
+  useEffect(() => {
+    setDeck(quests);
+    setExitDirection(null);
+    setDragX(0);
+  }, [quests]);
+
+  const active = deck[0];
+  const backOne = deck[1];
+  const backTwo = deck[2];
+
+  const userQuestId = active?.userQuestId ?? "";
+  const quest = active?.quest;
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 0, 200], [-12, 0, 12]);
@@ -66,7 +74,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
 
   const commitSwipe = useCallback(
     (direction: "left" | "right") => {
-      if (pending) {
+      if (pending || !userQuestId) {
         return;
       }
       setExitDirection(direction);
@@ -74,20 +82,20 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
         try {
           if (direction === "right") {
             await swipeRightAction(userQuestId);
+            toast("Quest accepted — view it anytime on Quests.", "success");
           } else {
             await swipeLeftAction(userQuestId);
           }
+          setDeck((prev) => prev.filter((entry) => entry.userQuestId !== userQuestId));
+          router.refresh();
         } catch (err) {
-          if (isNextRedirect(err)) {
-            throw err;
-          }
           const message = err instanceof Error ? err.message : "Something went wrong.";
           toast(message, "error");
           setExitDirection(null);
         }
       });
     },
-    [pending, userQuestId, toast],
+    [pending, userQuestId, toast, router],
   );
 
   function handleDragEnd(_: unknown, info: PanInfo) {
@@ -113,21 +121,41 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [commitSwipe, pending, exitDirection]);
 
-  if (!active) {
+  if (deck.length === 0) {
+    return (
+      <div className="flex justify-center py-16">
+        <Spinner label="Loading next quests..." />
+      </div>
+    );
+  }
+
+  if (!quest) {
     return null;
   }
 
   return (
     <div className="relative mx-auto w-full max-w-md">
-      {/* Back card (stack effect) */}
-      <div
-        className="absolute inset-x-3 top-3 h-full rounded-2xl border border-border/60 bg-surface-solid/40"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-x-1.5 top-1.5 h-full rounded-2xl border border-border/80 bg-surface-solid/60"
-        aria-hidden="true"
-      />
+      {backTwo ? (
+        <div className="absolute inset-x-3 top-3 opacity-50" aria-hidden="true">
+          <QuestCardPreview quest={backTwo.quest} className="pointer-events-none scale-[0.96]" />
+        </div>
+      ) : (
+        <div
+          className="absolute inset-x-3 top-3 h-full min-h-[280px] rounded-2xl border border-border/60 bg-surface-solid/40"
+          aria-hidden="true"
+        />
+      )}
+
+      {backOne ? (
+        <div className="absolute inset-x-1.5 top-1.5 opacity-75" aria-hidden="true">
+          <QuestCardPreview quest={backOne.quest} className="pointer-events-none scale-[0.98]" />
+        </div>
+      ) : (
+        <div
+          className="absolute inset-x-1.5 top-1.5 h-full min-h-[280px] rounded-2xl border border-border/80 bg-surface-solid/60"
+          aria-hidden="true"
+        />
+      )}
 
       <motion.article
         drag={pending || exitDirection ? false : "x"}
@@ -186,6 +214,12 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
         {quest.badge_reward ? (
           <p className="mt-3 text-sm text-muted">
             Badge reward: <span className="font-semibold text-accent">{quest.badge_reward}</span>
+          </p>
+        ) : null}
+
+        {deck.length > 1 ? (
+          <p className="mt-3 text-center text-xs text-muted">
+            {deck.length - 1} more in stack
           </p>
         ) : null}
 
