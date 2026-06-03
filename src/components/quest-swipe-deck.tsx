@@ -108,6 +108,15 @@ function ActiveQuestCard({
     return () => window.clearTimeout(timeout);
   }, [exitDirection, onExitComplete, x]);
 
+  useEffect(() => {
+    if (exitDirection) {
+      return;
+    }
+
+    isAnimatingExitRef.current = false;
+    void animate(x, 0, { type: "spring", stiffness: 520, damping: 38 });
+  }, [entry.userQuestId, exitDirection, x]);
+
   return (
     <motion.article
       key={entry.userQuestId}
@@ -204,7 +213,6 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
   const active = deck[0];
   const backOne = deck[1];
   const backTwo = deck[2];
-  const remainingAfterActive = Math.max(deck.length - 1, 0);
 
   const commitSwipe = useCallback((direction: "left" | "right") => {
     if (exitDirection || !active) {
@@ -221,8 +229,6 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
     const swiped = { entry: active, direction: exitDirection };
 
     setEmptyRefreshes(0);
-    setDeck((prev) => prev.slice(1));
-    setExitDirection(null);
 
     void (async () => {
       try {
@@ -232,21 +238,16 @@ export function QuestSwipeDeck({ quests, loadingReason }: QuestSwipeDeckProps) {
         } else {
           await swipeLeftAction(swiped.entry.userQuestId);
         }
-        if (remainingAfterActive === 0) {
-          router.refresh();
-        }
+        setDeck((prev) => prev.filter((entry) => entry.userQuestId !== swiped.entry.userQuestId));
+        setExitDirection(null);
+        router.refresh();
       } catch (err) {
         const message = err instanceof Error ? err.message : "Something went wrong.";
         toast(message, "error");
-        setDeck((prev) => {
-          if (prev.some((entry) => entry.userQuestId === swiped.entry.userQuestId)) {
-            return prev;
-          }
-          return [swiped.entry, ...prev];
-        });
+        setExitDirection(null);
       }
     });
-  }, [active, exitDirection, remainingAfterActive, router, toast]);
+  }, [active, exitDirection, router, toast]);
 
   useEffect(() => {
     if (deck.length > 0 || exitDirection) {
