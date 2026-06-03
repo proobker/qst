@@ -7,6 +7,8 @@ import {
 } from "@/app/actions/friends";
 import { Avatar } from "@/components/avatar";
 import { FriendButton } from "@/components/friend-button";
+import { GlassCard } from "@/components/ui/glass-card";
+import { PageHeader } from "@/components/ui/page-header";
 import { getFriendRequests, getFriends, searchUsers } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { titleForLevel } from "@/lib/leveling";
@@ -44,12 +46,10 @@ export default async function FriendsPage({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-2xl font-bold text-foreground">Friends</h1>
-        <p className="mt-2 text-sm text-muted">
-          Send requests, accept invitations, and build your adventuring party.
-        </p>
-      </div>
+      <PageHeader
+        title="Friends"
+        description="Send requests, accept invitations, and build your adventuring party."
+      />
 
       <div className="flex flex-wrap gap-2">
         {tabs.map((item) => (
@@ -69,7 +69,7 @@ export default async function FriendsPage({
       </div>
 
       {tab === "friends" ? (
-        <section className="rounded-xl border border-border bg-surface p-6">
+        <GlassCard as="section" className="p-6">
           <h2 className="text-lg font-semibold text-foreground">Your friends</h2>
           <div className="mt-4 space-y-3">
             {friends.length === 0 ? (
@@ -101,12 +101,12 @@ export default async function FriendsPage({
               </div>
             ))}
           </div>
-        </section>
+        </GlassCard>
       ) : null}
 
       {tab === "requests" ? (
         <section className="grid gap-4 lg:grid-cols-2">
-          <div className="rounded-xl border border-border bg-surface p-6">
+          <GlassCard className="p-6">
             <h2 className="text-lg font-semibold text-foreground">Incoming requests</h2>
             <div className="mt-4 space-y-3">
               {requests.incoming.length === 0 ? (
@@ -147,9 +147,9 @@ export default async function FriendsPage({
                 </div>
               ))}
             </div>
-          </div>
+          </GlassCard>
 
-          <div className="rounded-xl border border-border bg-surface p-6">
+          <GlassCard className="p-6">
             <h2 className="text-lg font-semibold text-foreground">Sent requests</h2>
             <div className="mt-4 space-y-3">
               {requests.outgoing.length === 0 ? (
@@ -179,13 +179,13 @@ export default async function FriendsPage({
                 </div>
               ))}
             </div>
-          </div>
+          </GlassCard>
         </section>
       ) : null}
 
       {tab === "find" ? (
         <section className="space-y-4">
-          <div className="rounded-xl border border-border bg-surface p-6">
+          <GlassCard className="p-6">
             <form className="flex flex-col gap-3 sm:flex-row">
               <input type="hidden" name="tab" value="find" />
               <input
@@ -196,16 +196,13 @@ export default async function FriendsPage({
                 autoComplete="off"
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
               />
-              <button
-                type="submit"
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
-              >
+              <button type="submit" className="btn-primary shrink-0">
                 Search
               </button>
             </form>
-          </div>
+          </GlassCard>
 
-          <div className="rounded-xl border border-border bg-surface p-6">
+          <GlassCard className="p-6">
             <h2 className="text-lg font-semibold text-foreground">Search results</h2>
             <div className="mt-4 space-y-3">
               {query && !isFullEmailAddress(query) ? (
@@ -241,7 +238,7 @@ export default async function FriendsPage({
                 </div>
               ))}
             </div>
-          </div>
+          </GlassCard>
         </section>
       ) : null}
     </div>

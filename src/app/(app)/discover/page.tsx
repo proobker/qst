@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { QuestSwipeDeck } from "@/components/quest-swipe-deck";
+import { GlassCard } from "@/components/ui/glass-card";
+import { PageHeader } from "@/components/ui/page-header";
 import { DiscoverSkeleton } from "@/components/ui/skeleton";
 import { isGeminiInCooldown, getGeminiCooldownRemainingMs } from "@/lib/ai";
 import { getGeminiApiKey } from "@/lib/env";
@@ -23,37 +25,31 @@ async function DiscoverContent() {
   const onboarding = await getOnboardingState(user.id);
   if (!onboarding.complete) {
     return (
-      <div className="rounded-xl border border-accent/40 bg-accent/10 p-6">
+      <GlassCard className="border-accent/40 bg-accent/10 p-6">
         <h1 className="text-xl font-semibold text-accent">Finish onboarding first</h1>
         <p className="mt-2 text-sm text-muted">
           We need your hobbies and location to generate relevant real-world quests.
         </p>
-        <Link
-          href="/onboarding"
-          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
-        >
+        <Link href="/onboarding" className="btn-primary mt-4">
           Complete onboarding
         </Link>
-      </div>
+      </GlassCard>
     );
   }
 
   const friendCount = await getFriendCount(user.id);
   if (friendCount < MIN_FRIENDS_REQUIRED) {
     return (
-      <div className="rounded-xl border border-accent/40 bg-accent/10 p-6">
+      <GlassCard className="border-accent/40 bg-accent/10 p-6">
         <h1 className="text-xl font-semibold text-accent">Add a friend first</h1>
         <p className="mt-2 text-sm text-muted">
           You need at least {MIN_FRIENDS_REQUIRED} friend before you can discover quests. Friends also verify your
           completions in the feed.
         </p>
-        <Link
-          href="/friends?tab=find"
-          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
-        >
+        <Link href="/friends?tab=find" className="btn-primary mt-4">
           Find friends
         </Link>
-      </div>
+      </GlassCard>
     );
   }
 
@@ -63,7 +59,7 @@ async function DiscoverContent() {
   if (assignments.length === 0) {
     console.error("[DiscoverPage] No quest assignment:", error ?? "unknown");
     return (
-      <div className="rounded-xl border border-border bg-surface p-6">
+      <GlassCard className="p-6">
         <h1 className="text-xl font-semibold text-foreground">Could not load a quest</h1>
         {!hasGeminiKey ? (
           <p className="mt-2 text-sm text-muted">
@@ -81,13 +77,10 @@ async function DiscoverContent() {
             <code className="text-primary">[Gemini]</code> logs.
           </p>
         )}
-        <Link
-          href="/discover"
-          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
-        >
+        <Link href="/discover" className="btn-primary mt-4">
           Try again
         </Link>
-      </div>
+      </GlassCard>
     );
   }
   const questStack = assignments.map((assignment) => ({
@@ -109,17 +102,16 @@ async function DiscoverContent() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-2xl font-bold text-foreground">Discover a quest</h1>
-        <p className="mt-2 text-sm text-muted">
-          Swipe right to accept, left to reject. Drag the card or use arrow keys.
-        </p>
+      <PageHeader
+        title="Discover a quest"
+        description="Swipe right to accept, left to reject. Drag the card or use arrow keys."
+      >
         {geminiCooldown ? (
-          <p className="mt-3 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-xs text-accent">
+          <p className="rounded-xl border border-accent/40 bg-accent/10 px-3 py-2 text-xs text-accent">
             Gemini quota is resting (~{cooldownMinutes} min). Quests use the offline builder until API limits reset.
           </p>
         ) : null}
-      </div>
+      </PageHeader>
       <QuestSwipeDeck key={questStack[0].userQuestId} quests={questStack} />
     </div>
   );

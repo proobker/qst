@@ -7,7 +7,7 @@ type SkeletonProps = {
 export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
-      className={cn("animate-pulse rounded-lg bg-surface-hover", className)}
+      className={cn("skeleton-shimmer rounded-lg", className)}
       aria-hidden="true"
     />
   );

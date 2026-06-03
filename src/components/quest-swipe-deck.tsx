@@ -121,11 +121,11 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
     <div className="relative mx-auto w-full max-w-md">
       {/* Back card (stack effect) */}
       <div
-        className="absolute inset-x-3 top-3 h-full rounded-2xl border border-border bg-surface/60"
+        className="absolute inset-x-3 top-3 h-full rounded-2xl border border-border/60 bg-surface-solid/40"
         aria-hidden="true"
       />
       <div
-        className="absolute inset-x-1.5 top-1.5 h-full rounded-2xl border border-border bg-surface/80"
+        className="absolute inset-x-1.5 top-1.5 h-full rounded-2xl border border-border/80 bg-surface-solid/60"
         aria-hidden="true"
       />
 
@@ -144,7 +144,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
               : { x: 0, opacity: 1 }
         }
         className={cn(
-          "relative touch-none rounded-2xl border border-border bg-surface p-6 shadow-xl shadow-primary/10",
+          "glass-card relative touch-none rounded-2xl p-6",
           pending && "pointer-events-none opacity-70",
         )}
         role="group"
@@ -181,7 +181,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
           <span className="rounded-full border border-border px-2 py-1">{quest.estimated_time}</span>
         </div>
 
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">{quest.title}</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-gradient-subtle">{quest.title}</h2>
         <p className="mt-3 whitespace-pre-wrap text-muted">{quest.description}</p>
         {quest.badge_reward ? (
           <p className="mt-3 text-sm text-muted">
@@ -206,7 +206,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
             <button
               type="button"
               onClick={() => commitSwipe("right")}
-              className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover"
+              className="btn-primary w-full py-3"
               aria-label="Accept quest"
             >
               Accept

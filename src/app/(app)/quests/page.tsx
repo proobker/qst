@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { QuestUploadForm } from "@/components/quest-upload-form";
+import { GlassCard } from "@/components/ui/glass-card";
+import { PageHeader } from "@/components/ui/page-header";
 import { QuestListSkeleton } from "@/components/ui/skeleton";
 import { abandonQuestAction } from "@/app/actions/quests";
 import { APPROVAL_THRESHOLD_PERCENT, MIN_FRIENDS_REQUIRED, QUEST_ACCEPT_DEADLINE_HOURS } from "@/lib/constants";
@@ -35,30 +37,28 @@ async function QuestsContent() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-2xl font-bold text-foreground">Active and completed quests</h1>
-        <p className="mt-2 text-sm text-muted">
-          Upload proof with the built-in photo editor so friends can verify your completion. Accepted quests expire
-          after {QUEST_ACCEPT_DEADLINE_HOURS} hours if not finished.
-        </p>
+      <PageHeader
+        title="Active and completed quests"
+        description={`Upload proof with the built-in photo editor so friends can verify your completion. Accepted quests expire after ${QUEST_ACCEPT_DEADLINE_HOURS} hours if not finished.`}
+      >
         {needsFriends ? (
-          <p className="mt-3 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-sm text-accent">
+          <p className="rounded-xl border border-accent/40 bg-accent/10 px-3 py-2 text-sm text-accent">
             Add at least {MIN_FRIENDS_REQUIRED} friend before you can submit proof for approval.
           </p>
         ) : null}
-      </div>
+      </PageHeader>
 
       <div className="space-y-4">
         {quests.length === 0 ? (
-          <div className="rounded-xl border border-border bg-surface p-6 text-sm text-muted">
+          <GlassCard className="p-6 text-sm text-muted">
             No quests yet. Accept one from Discover.
-          </div>
+          </GlassCard>
         ) : null}
 
         {quests.map((entry) => (
           <article
             key={entry.id}
-            className="rounded-xl border border-border bg-surface p-6 transition-shadow hover:shadow-md hover:shadow-primary/5"
+            className="glass-card glass-card-hover rounded-2xl p-6"
           >
             <div className="mb-3 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
               <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
