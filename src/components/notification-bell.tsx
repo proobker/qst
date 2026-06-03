@@ -40,13 +40,8 @@ function notificationLink(notification: Notification): string {
 
 export function NotificationBell({ notifications, unreadCount }: NotificationBellProps) {
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [panelPosition, setPanelPosition] = useState<{ top: number; right: number } | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!open) {
@@ -150,7 +145,7 @@ export function NotificationBell({ notifications, unreadCount }: NotificationBel
         ) : null}
       </button>
 
-      {mounted && overlay ? createPortal(overlay, document.body) : null}
+      {overlay && typeof document !== "undefined" ? createPortal(overlay, document.body) : null}
     </div>
   );
 }

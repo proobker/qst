@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { QuestSwipeDeck } from "@/components/quest-swipe-deck";
+import { Spinner } from "@/components/ui/spinner";
 import { GlassCard } from "@/components/ui/glass-card";
 import { PageHeader } from "@/components/ui/page-header";
 import { DiscoverSkeleton } from "@/components/ui/skeleton";
@@ -17,49 +18,23 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-async function DiscoverContent() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return null;
-  }
-
-  const onboarding = await getOnboardingState(user.id);
-  if (!onboarding.complete) {
-    return (
-      <GlassCard className="border-accent/40 bg-accent/10 p-6">
-        <h1 className="text-xl font-semibold text-accent">Finish onboarding first</h1>
-        <p className="mt-2 text-sm text-muted">
-          We need your hobbies and location to generate relevant real-world quests.
+function AiQuestLoading() {
+  return (
+    <GlassCard className="flex min-h-[420px] flex-col items-center justify-center gap-4 p-8 text-center">
+      <Spinner size="lg" label="Loading quests..." />
+      <div className="space-y-1">
+        <p className="text-sm font-semibold text-foreground">Preparing your next quest stack</p>
+        <p className="max-w-sm text-sm text-muted">
+          Asking AI for fresh ideas. If Gemini is unavailable, the local quest builder will take over automatically.
         </p>
-        <Link href="/onboarding" className="btn-primary mt-4">
-          Complete onboarding
-        </Link>
-      </GlassCard>
-    );
-  }
+      </div>
+    </GlassCard>
+  );
+}
 
-  const friendCount = await getFriendCount(user.id);
-  if (friendCount < MIN_FRIENDS_REQUIRED) {
-    return (
-      <GlassCard className="border-accent/40 bg-accent/10 p-6">
-        <h1 className="text-xl font-semibold text-accent">Add a friend first</h1>
-        <p className="mt-2 text-sm text-muted">
-          You need at least {MIN_FRIENDS_REQUIRED} friend before you can discover quests. Friends also verify your
-          completions in the feed.
-        </p>
-        <Link href="/friends?tab=find" className="btn-primary mt-4">
-          Find friends
-        </Link>
-      </GlassCard>
-    );
-  }
-
+async function DiscoveryQuestStack({ userId }: { userId: string }) {
   const hasGeminiKey = Boolean(getGeminiApiKey());
-  const { assignments, error } = await getDiscoveryQuest(user.id);
+  const { assignments, error } = await getDiscoveryQuest(userId);
 
   if (assignments.length === 0) {
     console.error("[DiscoverPage] No quest assignment:", error ?? "unknown");
@@ -114,18 +89,70 @@ async function DiscoverContent() {
       : "Using the local quest builder while AI generation is unavailable.";
 
   return (
+    <div className="space-y-4">
+      {geminiCooldown ? (
+        <p className="rounded-xl border border-accent/40 bg-accent/10 px-3 py-2 text-xs text-accent">
+          Gemini quota is resting (~{cooldownMinutes} min). Quests use the offline builder until API limits reset.
+        </p>
+      ) : null}
+      <QuestSwipeDeck key={questStackKey} quests={questStack} loadingReason={loadingReason} />
+    </div>
+  );
+}
+
+async function DiscoverContent() {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const [onboarding, friendCount] = await Promise.all([
+    getOnboardingState(user.id),
+    getFriendCount(user.id),
+  ]);
+
+  if (!onboarding.complete) {
+    return (
+      <GlassCard className="border-accent/40 bg-accent/10 p-6">
+        <h1 className="text-xl font-semibold text-accent">Finish onboarding first</h1>
+        <p className="mt-2 text-sm text-muted">
+          We need your hobbies and location to generate relevant real-world quests.
+        </p>
+        <Link href="/onboarding" className="btn-primary mt-4">
+          Complete onboarding
+        </Link>
+      </GlassCard>
+    );
+  }
+
+  if (friendCount < MIN_FRIENDS_REQUIRED) {
+    return (
+      <GlassCard className="border-accent/40 bg-accent/10 p-6">
+        <h1 className="text-xl font-semibold text-accent">Add a friend first</h1>
+        <p className="mt-2 text-sm text-muted">
+          You need at least {MIN_FRIENDS_REQUIRED} friend before you can discover quests. Friends also verify your
+          completions in the feed.
+        </p>
+        <Link href="/friends?tab=find" className="btn-primary mt-4">
+          Find friends
+        </Link>
+      </GlassCard>
+    );
+  }
+
+  return (
     <div className="space-y-6">
       <PageHeader
         title="Discover a quest"
         description="Swipe right to accept, left to reject. Drag the card or use arrow keys."
-      >
-        {geminiCooldown ? (
-          <p className="rounded-xl border border-accent/40 bg-accent/10 px-3 py-2 text-xs text-accent">
-            Gemini quota is resting (~{cooldownMinutes} min). Quests use the offline builder until API limits reset.
-          </p>
-        ) : null}
-      </PageHeader>
-      <QuestSwipeDeck key={questStackKey} quests={questStack} loadingReason={loadingReason} />
+      />
+      <Suspense fallback={<AiQuestLoading />}>
+        <DiscoveryQuestStack userId={user.id} />
+      </Suspense>
     </div>
   );
 }
