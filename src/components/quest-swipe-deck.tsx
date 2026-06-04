@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Check, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { swipeLeftAction, swipeRightAction } from "@/app/actions/quests";
 import { useToast } from "@/components/ui/toast";
 import { Spinner } from "@/components/ui/spinner";
@@ -30,17 +31,49 @@ type QuestSwipeDeckProps = {
 
 const SWIPE_THRESHOLD = 120;
 
-function isNextRedirect(error: unknown): boolean {
+function QuestPreviewCard({ entry }: { entry: QuestStackEntry }) {
+  const { quest } = entry;
+
   return (
-    typeof error === "object" &&
-    error !== null &&
-    "digest" in error &&
-    String((error as { digest?: string }).digest).startsWith("NEXT_REDIRECT")
+    <article
+      className="absolute inset-x-1.5 top-1.5 h-full overflow-hidden rounded-2xl border border-border bg-surface/95 p-6 shadow-lg shadow-primary/5"
+      aria-hidden="true"
+    >
+      <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
+        <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
+          {quest.category}
+        </span>
+        <span className="rounded-full border border-border px-2 py-1">{quest.difficulty}</span>
+        <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-1 text-accent">
+          {quest.xp_reward} XP
+        </span>
+      </div>
+      <h3 className="line-clamp-2 text-xl font-bold tracking-tight text-foreground">{quest.title}</h3>
+      <p className="mt-3 line-clamp-5 text-sm text-muted">{quest.description}</p>
+    </article>
+  );
+}
+
+function PreparingCard() {
+  return (
+    <div
+      className="absolute inset-x-1.5 top-1.5 flex h-full items-center justify-center rounded-2xl border border-border bg-surface/80 p-6"
+      aria-hidden="true"
+    >
+      <Spinner label="Preparing quests..." />
+    </div>
   );
 }
 
 export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
-  const active = quests[0];
+  const router = useRouter();
+  const [swipedQuestIds, setSwipedQuestIds] = useState<string[]>([]);
+  const deck = useMemo(
+    () => quests.filter((entry) => !swipedQuestIds.includes(entry.userQuestId)),
+    [quests, swipedQuestIds],
+  );
+  const active = deck[0];
+  const next = deck[1];
   const fallbackQuest: QuestData = {
     id: "",
     title: "",
@@ -66,7 +99,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
 
   const commitSwipe = useCallback(
     (direction: "left" | "right") => {
-      if (pending) {
+      if (pending || exitDirection || !userQuestId) {
         return;
       }
       setExitDirection(direction);
@@ -77,17 +110,28 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
           } else {
             await swipeLeftAction(userQuestId);
           }
-        } catch (err) {
-          if (isNextRedirect(err)) {
-            throw err;
+
+          const remainingDeck = deck.filter((entry) => entry.userQuestId !== userQuestId);
+          setSwipedQuestIds((current) =>
+            current.includes(userQuestId) ? current : [...current, userQuestId],
+          );
+          x.set(0);
+          setDragX(0);
+          setExitDirection(null);
+
+          if (remainingDeck.length === 0) {
+            router.refresh();
           }
+        } catch (err) {
           const message = err instanceof Error ? err.message : "Something went wrong.";
           toast(message, "error");
+          x.set(0);
+          setDragX(0);
           setExitDirection(null);
         }
       });
     },
-    [pending, userQuestId, toast],
+    [deck, exitDirection, pending, router, toast, userQuestId, x],
   );
 
   function handleDragEnd(_: unknown, info: PanInfo) {
@@ -114,20 +158,20 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
   }, [commitSwipe, pending, exitDirection]);
 
   if (!active) {
-    return null;
+    return (
+      <div className="relative mx-auto min-h-[28rem] w-full max-w-md">
+        <div className="rounded-2xl border border-border bg-surface p-6 shadow-xl shadow-primary/10">
+          <div className="flex min-h-[22rem] items-center justify-center">
+            <Spinner label="Preparing quests..." />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="relative mx-auto w-full max-w-md">
-      {/* Back card (stack effect) */}
-      <div
-        className="absolute inset-x-3 top-3 h-full rounded-2xl border border-border bg-surface/60"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-x-1.5 top-1.5 h-full rounded-2xl border border-border bg-surface/80"
-        aria-hidden="true"
-      />
+      {next ? <QuestPreviewCard entry={next} /> : <PreparingCard />}
 
       <motion.article
         drag={pending || exitDirection ? false : "x"}
@@ -136,6 +180,11 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
         style={{ x, rotate }}
         onDrag={(_, info) => setDragX(info.offset.x)}
         onDragEnd={handleDragEnd}
+        onAnimationComplete={() => {
+          if (!exitDirection) {
+            x.set(0);
+          }
+        }}
         animate={
           exitDirection === "right"
             ? { x: 500, opacity: 0, transition: { duration: 0.3 } }

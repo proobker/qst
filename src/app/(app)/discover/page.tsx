@@ -120,7 +120,7 @@ async function DiscoverContent() {
           </p>
         ) : null}
       </div>
-      <QuestSwipeDeck key={questStack[0].userQuestId} quests={questStack} />
+      <QuestSwipeDeck quests={questStack} />
     </div>
   );
 }

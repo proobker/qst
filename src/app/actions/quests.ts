@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { abandonQuest, submitQuestCompletion, swipeQuest } from "@/lib/data";
 
@@ -23,8 +22,7 @@ export async function swipeLeftAction(userQuestId: string) {
   }
   console.log("[QuestSwipe] swipeLeftAction", userQuestId);
   await swipeQuest(userId, userQuestId, "left");
-  revalidatePath("/discover", "page");
-  redirect("/discover");
+  revalidatePath("/discover");
 }
 
 export async function swipeRightAction(userQuestId: string) {
@@ -34,9 +32,8 @@ export async function swipeRightAction(userQuestId: string) {
   }
   console.log("[QuestSwipe] swipeRightAction", userQuestId);
   await swipeQuest(userId, userQuestId, "right");
-  revalidatePath("/discover", "page");
-  revalidatePath("/quests", "page");
-  redirect("/discover");
+  revalidatePath("/discover");
+  revalidatePath("/quests");
 }
 
 export async function uploadQuestCompletionAction(formData: FormData) {
