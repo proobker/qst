@@ -27,6 +27,16 @@ export function AppNav({ notifications, unreadCount }: AppNavProps) {
           <Logo href="/discover" size="sm" />
           <div className="flex items-center gap-2">
             <NotificationBell notifications={notifications} unreadCount={unreadCount} />
+            <form action={signOutAction} className="sm:hidden">
+              <button
+                type="submit"
+                aria-label="Sign out"
+                className="inline-flex items-center justify-center rounded-full border border-border p-2 text-muted transition hover:border-primary hover:text-primary"
+              >
+                <LogOut size={18} />
+                <span className="sr-only">Sign out</span>
+              </button>
+            </form>
             <form action={signOutAction} className="hidden sm:block">
               <button
                 type="submit"
