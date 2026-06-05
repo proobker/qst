@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Mail } from "lucide-react";
 import { signInWithEmail, signInWithGitHub, signInWithGoogle } from "@/app/actions/auth";
 import { Logo } from "@/components/logo";
@@ -136,6 +137,13 @@ export default async function Home({ searchParams }: HomeProps) {
             Continue
           </button>
         </form>
+        <p className="text-center text-xs leading-5 text-muted">
+          By continuing, you agree to qst&apos;s{" "}
+          <Link href="/privacy" className="font-semibold text-primary transition hover:text-primary-hover">
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </main>
     </div>
   );
