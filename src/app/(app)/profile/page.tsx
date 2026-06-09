@@ -3,6 +3,7 @@ import Link from "next/link";
 import { updateBioAction } from "@/app/actions/profile";
 import { Avatar } from "@/components/avatar";
 import { BadgePill } from "@/components/badge-pill";
+import { DeleteAccountSection } from "@/components/delete-account-section";
 import { StatCard } from "@/components/stat-card";
 import { XpBar } from "@/components/xp-bar";
 import { titleForLevel } from "@/lib/leveling";
@@ -137,6 +138,8 @@ export default async function ProfilePage() {
           </div>
         )}
       </section>
+
+      <DeleteAccountSection email={profile.email} />
     </div>
   );
 }

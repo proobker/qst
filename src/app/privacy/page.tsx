@@ -42,7 +42,7 @@ const sections = [
     title: "Retention and Deletion",
     body: [
       "We keep information while your account is active or as needed to provide qst, maintain records, resolve disputes, secure the service, and comply with legal obligations.",
-      "You may request deletion of your account or personal information through the support or repository channel where you received access to qst.",
+      "You can delete your account from your Profile page. Account deletion permanently removes app-controlled account, profile, quest, social, reward, and proof upload data.",
     ],
   },
   {
