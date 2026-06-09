@@ -1,14 +1,8 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import {
-  MEDIAN_GOOGLE_AUTH_PATH,
-  MEDIAN_GOOGLE_STATE_COOKIE,
-  MEDIAN_GOOGLE_STATE_MAX_AGE_SECONDS,
-} from "@/lib/median-auth";
 import { getAppUrl } from "@/lib/env";
 import { isFullEmailAddress } from "@/lib/utils";
 
@@ -78,24 +72,6 @@ export async function signInWithEmail(formData: FormData) {
   }
 
   redirect("/?auth=check-email");
-}
-
-export async function createMedianGoogleSignInRequest() {
-  const state = crypto.randomUUID();
-  const cookieStore = await cookies();
-
-  cookieStore.set(MEDIAN_GOOGLE_STATE_COOKIE, state, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: MEDIAN_GOOGLE_AUTH_PATH,
-    maxAge: MEDIAN_GOOGLE_STATE_MAX_AGE_SECONDS,
-  });
-
-  return {
-    redirectUri: getAuthUrl(MEDIAN_GOOGLE_AUTH_PATH),
-    state,
-  };
 }
 
 async function resolveTestPasswordEmail(identifier: string): Promise<string | null> {

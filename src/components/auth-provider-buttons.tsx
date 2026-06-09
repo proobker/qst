@@ -1,31 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import {
-  createMedianGoogleSignInRequest,
-  signInWithGitHub,
-  signInWithGoogle,
-} from "@/app/actions/auth";
-
-type MedianGoogleLoginOptions = {
-  redirectUri: string;
-  state: string;
-};
-
-type MedianBridge = {
-  socialLogin?: {
-    google?: {
-      login: (options: MedianGoogleLoginOptions) => void | Promise<void>;
-    };
-  };
-};
-
-declare global {
-  interface Window {
-    median?: MedianBridge;
-    median_library_ready?: () => void;
-  }
-}
+import { signInWithGitHub, signInWithGoogle } from "@/app/actions/auth";
 
 const providerButtonClass =
   "inline-flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70";
@@ -49,93 +24,21 @@ function GitHubIcon() {
   );
 }
 
-function getMedianGoogleLogin() {
-  return window.median?.socialLogin?.google?.login;
-}
-
 export function AuthProviderButtons() {
-  const [bridgeStatus, setBridgeStatus] = useState<"checking" | "available" | "unavailable">("checking");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    let cancelled = false;
-    const previousReady = window.median_library_ready;
-
-    function markBridgeReady() {
-      if (!cancelled && getMedianGoogleLogin()) {
-        setBridgeStatus("available");
-      }
-    }
-
-    window.median_library_ready = () => {
-      previousReady?.();
-      markBridgeReady();
-    };
-
-    markBridgeReady();
-    const timeoutId = window.setTimeout(() => {
-      if (!cancelled) {
-        setBridgeStatus((status) => (status === "checking" ? "unavailable" : status));
-      }
-    }, 1000);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timeoutId);
-      window.median_library_ready = previousReady;
-    };
-  }, []);
-
-  function handleMedianGoogleSignIn() {
-    setErrorMessage("");
-    startTransition(async () => {
-      const login = getMedianGoogleLogin();
-      if (!login) {
-        setBridgeStatus("unavailable");
-        return;
-      }
-
-      try {
-        const request = await createMedianGoogleSignInRequest();
-        await login(request);
-      } catch {
-        setErrorMessage("We could not start that sign-in flow. Try again in a moment.");
-      }
-    });
-  }
-
   return (
     <div className="space-y-3">
-      {bridgeStatus === "available" ? (
-        <button
-          type="button"
-          className={providerButtonClass}
-          disabled={isPending}
-          onClick={handleMedianGoogleSignIn}
-        >
+      <form action={signInWithGoogle}>
+        <button type="submit" className={providerButtonClass}>
           <GoogleIcon />
-          <span>{isPending ? "Starting Google..." : "Continue with Google"}</span>
+          <span>Continue with Google</span>
         </button>
-      ) : (
-        <form action={signInWithGoogle}>
-          <button type="submit" className={providerButtonClass} disabled={bridgeStatus === "checking"}>
-            <GoogleIcon />
-            <span>{bridgeStatus === "checking" ? "Preparing Google..." : "Continue with Google"}</span>
-          </button>
-        </form>
-      )}
+      </form>
       <form action={signInWithGitHub}>
         <button type="submit" className={providerButtonClass}>
           <GitHubIcon />
           <span>Continue with GitHub</span>
         </button>
       </form>
-      {errorMessage ? (
-        <p className="rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-center text-sm text-accent">
-          {errorMessage}
-        </p>
-      ) : null}
     </div>
   );
 }
