@@ -1,11 +1,17 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import {
+  MEDIAN_GOOGLE_AUTH_PATH,
+  MEDIAN_GOOGLE_STATE_COOKIE,
+  MEDIAN_GOOGLE_STATE_MAX_AGE_SECONDS,
+} from "@/lib/median-auth";
+import { getAppUrl } from "@/lib/env";
 import { isFullEmailAddress } from "@/lib/utils";
 
-const AUTH_CALLBACK_URL = "https://qst-kappa.vercel.app/auth/callback";
 const TEST_PASSWORD_SIGN_IN_ERROR = "We could not sign you in with those credentials.";
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -13,13 +19,17 @@ export type TestPasswordSignInState = {
   message: string;
 };
 
+function getAuthUrl(path: string) {
+  return new URL(path, getAppUrl()).toString();
+}
+
 async function signInWithOAuth(provider: "google" | "github") {
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: AUTH_CALLBACK_URL,
+      redirectTo: getAuthUrl("/auth/callback"),
       ...(provider === "google"
         ? {
             queryParams: {
@@ -59,7 +69,7 @@ export async function signInWithEmail(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email: trimmedEmail,
     options: {
-      emailRedirectTo: AUTH_CALLBACK_URL,
+      emailRedirectTo: getAuthUrl("/auth/callback"),
     },
   });
 
@@ -68,6 +78,24 @@ export async function signInWithEmail(formData: FormData) {
   }
 
   redirect("/?auth=check-email");
+}
+
+export async function createMedianGoogleSignInRequest() {
+  const state = crypto.randomUUID();
+  const cookieStore = await cookies();
+
+  cookieStore.set(MEDIAN_GOOGLE_STATE_COOKIE, state, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: MEDIAN_GOOGLE_AUTH_PATH,
+    maxAge: MEDIAN_GOOGLE_STATE_MAX_AGE_SECONDS,
+  });
+
+  return {
+    redirectUri: getAuthUrl(MEDIAN_GOOGLE_AUTH_PATH),
+    state,
+  };
 }
 
 async function resolveTestPasswordEmail(identifier: string): Promise<string | null> {
