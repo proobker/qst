@@ -1,10 +1,17 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isFullEmailAddress } from "@/lib/utils";
 
 const AUTH_CALLBACK_URL = "https://qst-kappa.vercel.app/auth/callback";
+const TEST_PASSWORD_SIGN_IN_ERROR = "We could not sign you in with those credentials.";
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export type TestPasswordSignInState = {
+  message: string;
+};
 
 async function signInWithOAuth(provider: "google" | "github") {
   const supabase = await createSupabaseServerClient();
@@ -61,6 +68,63 @@ export async function signInWithEmail(formData: FormData) {
   }
 
   redirect("/?auth=check-email");
+}
+
+async function resolveTestPasswordEmail(identifier: string): Promise<string | null> {
+  const trimmedIdentifier = identifier.trim();
+
+  if (isFullEmailAddress(trimmedIdentifier)) {
+    return trimmedIdentifier.toLowerCase();
+  }
+
+  if (!UUID_PATTERN.test(trimmedIdentifier)) {
+    return null;
+  }
+
+  try {
+    const supabaseAdmin = createSupabaseAdminClient();
+    const {
+      data: { user },
+      error,
+    } = await supabaseAdmin.auth.admin.getUserById(trimmedIdentifier);
+
+    if (error || !user?.email) {
+      return null;
+    }
+
+    return user.email.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+export async function signInWithTestPassword(
+  _state: TestPasswordSignInState,
+  formData: FormData,
+): Promise<TestPasswordSignInState> {
+  const identifier = formData.get("identifier");
+  const password = formData.get("password");
+
+  if (typeof identifier !== "string" || typeof password !== "string" || password.length === 0) {
+    return { message: TEST_PASSWORD_SIGN_IN_ERROR };
+  }
+
+  const email = await resolveTestPasswordEmail(identifier);
+  if (!email) {
+    return { message: TEST_PASSWORD_SIGN_IN_ERROR };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    return { message: TEST_PASSWORD_SIGN_IN_ERROR };
+  }
+
+  redirect("/discover");
 }
 
 export async function signOutAction() {
