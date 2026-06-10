@@ -56,6 +56,7 @@ const sections = [
     title: "Children",
     body: [
       "qst is not intended for children under 13. If you believe a child provided personal information, contact the qst team so it can be reviewed and removed where appropriate.",
+      "qst's child safety and CSAE standards are published at /csae-standards.",
     ],
   },
   {
