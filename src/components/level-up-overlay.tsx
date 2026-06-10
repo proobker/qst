@@ -13,15 +13,20 @@ type LevelUpOverlayProps = {
 
 const PLAY_GREEN = "#3ddc84";
 
+function particleValue(index: number, salt: number) {
+  const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+  return value - Math.floor(value);
+}
+
 function ConfettiBurst({ accent }: { accent: string }) {
   const particles = useMemo(
     () =>
       Array.from({ length: 48 }, (_, index) => ({
         id: index,
-        angle: (index / 48) * Math.PI * 2 + Math.random() * 0.4,
-        distance: 90 + Math.random() * 160,
-        size: 4 + Math.random() * 8,
-        delay: Math.random() * 0.15,
+        angle: (index / 48) * Math.PI * 2 + particleValue(index, 1) * 0.4,
+        distance: 90 + particleValue(index, 2) * 160,
+        size: 4 + particleValue(index, 3) * 8,
+        delay: particleValue(index, 4) * 0.15,
         color: index % 3 === 0 ? PLAY_GREEN : index % 3 === 1 ? accent : "#fbbf24",
       })),
     [accent],
@@ -70,7 +75,6 @@ function AnimatedLevelNumber({
 
   useEffect(() => {
     if (from === to) {
-      setDisplay(to);
       return;
     }
     const steps = Math.min(to - from, 12);
@@ -86,16 +90,18 @@ function AnimatedLevelNumber({
     return () => window.clearInterval(timer);
   }, [from, to]);
 
+  const displayValue = from === to ? to : display;
+
   return (
     <motion.span
-      key={display}
+      key={displayValue}
       initial={{ scale: 0.6, opacity: 0.4 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 420, damping: 22 }}
       className="text-7xl font-black tabular-nums tracking-tight text-white drop-shadow-lg sm:text-8xl"
       style={{ textShadow: `0 0 40px ${accent}88` }}
     >
-      {display}
+      {displayValue}
     </motion.span>
   );
 }

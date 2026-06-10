@@ -38,25 +38,62 @@ export function LocationPicker({ defaultLatitude, defaultLongitude }: Props) {
   };
 
   const requestLocation = () => {
-    if (!navigator.geolocation) {
-      setError("Geolocation is not supported in this browser.");
-      return;
-    }
-
     setLoading(true);
     setError(null);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        updateLocation(position.coords.latitude, position.coords.longitude);
-        setLoading(false);
-      },
-      (geoError) => {
-        setError(geoError.message || "Could not access location.");
-        setLoading(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 },
-    );
+
+    void requestLocationAsync();
   };
+
+  const requestLocationAsync = async () => {
+    try {
+      if (await requestNativeLocation()) {
+        return;
+      }
+
+      await requestBrowserLocation();
+    } catch (locationError) {
+      const message = locationError instanceof Error ? locationError.message : "Could not access location.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const requestNativeLocation = async () => {
+    const { Capacitor } = await import("@capacitor/core");
+    if (!Capacitor.isNativePlatform()) {
+      return false;
+    }
+
+    const { Geolocation } = await import("@capacitor/geolocation");
+    await Geolocation.requestPermissions();
+    const position = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+    });
+
+    updateLocation(position.coords.latitude, position.coords.longitude);
+    return true;
+  };
+
+  const requestBrowserLocation = () =>
+    new Promise<void>((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error("Geolocation is not supported in this browser."));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          updateLocation(position.coords.latitude, position.coords.longitude);
+          resolve();
+        },
+        (geoError) => {
+          reject(new Error(geoError.message || "Could not access location."));
+        },
+        { enableHighAccuracy: true, timeout: 10000 },
+      );
+    });
 
   return (
     <div className="space-y-3">

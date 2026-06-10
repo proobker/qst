@@ -1,5 +1,7 @@
 "use client";
 
+import type { FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { signInWithGitHub, signInWithGoogle } from "@/app/actions/auth";
 
 const providerButtonClass =
@@ -24,16 +26,47 @@ function GitHubIcon() {
   );
 }
 
+function mobileAuthPath(provider: "github" | "google") {
+  return `/auth/mobile/${provider}`;
+}
+
+async function openMobileOAuth(provider: "github" | "google") {
+  const { Capacitor } = await import("@capacitor/core");
+  if (!Capacitor.isNativePlatform()) {
+    return false;
+  }
+
+  const { Browser } = await import("@capacitor/browser");
+  await Browser.open({ url: new URL(mobileAuthPath(provider), window.location.origin).toString() });
+  return true;
+}
+
 export function AuthProviderButtons() {
+  const [isNative, setIsNative] = useState(false);
+
+  useEffect(() => {
+    async function detectNativeRuntime() {
+      const { Capacitor } = await import("@capacitor/core");
+      setIsNative(Capacitor.isNativePlatform());
+    }
+
+    void detectNativeRuntime();
+  }, []);
+
+  function handleNativeSubmit(event: FormEvent<HTMLFormElement>, provider: "github" | "google") {
+    event.preventDefault();
+    void openMobileOAuth(provider);
+  }
+
   return (
     <div className="space-y-3">
-      <form action={signInWithGoogle}>
+      <form action={signInWithGoogle} onSubmit={isNative ? (event) => handleNativeSubmit(event, "google") : undefined}>
         <button type="submit" className={providerButtonClass}>
           <GoogleIcon />
           <span>Continue with Google</span>
         </button>
       </form>
-      <form action={signInWithGitHub}>
+      <form action={signInWithGitHub} onSubmit={isNative ? (event) => handleNativeSubmit(event, "github") : undefined}>
         <button type="submit" className={providerButtonClass}>
           <GitHubIcon />
           <span>Continue with GitHub</span>

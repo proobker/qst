@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">qst</string>
+    <string name="title_activity_main">qst</string>
+    <string name="package_name">app.qst.mobile</string>
+    <string name="custom_url_scheme">app.qst.mobile</string>
+</resources>
