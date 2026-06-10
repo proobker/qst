@@ -6,7 +6,7 @@ import { signInWithGitHub, signInWithGoogle } from "@/app/actions/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const providerButtonClass =
-  "inline-flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70";
+  "inline-flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70 sm:h-12";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error && error.message.trim()) {
@@ -118,7 +118,7 @@ export function AuthProviderButtons() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5 sm:space-y-3">
       <form action={signInWithGoogle} onSubmit={isNative ? (event) => handleNativeSubmit(event, "google") : undefined}>
         <button type="submit" className={providerButtonClass} disabled={pendingProvider !== null}>
           <GoogleIcon />

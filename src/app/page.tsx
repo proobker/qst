@@ -50,21 +50,21 @@ export default async function Home({ searchParams }: HomeProps) {
   const authMessage = getAuthMessage(params?.auth);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
-      <main className="w-full max-w-lg space-y-6 rounded-2xl border border-border bg-surface p-6 shadow-xl shadow-primary/10 sm:p-8">
-        <header className="flex flex-col items-center gap-4 text-center">
-          <Logo size="lg" />
-          <p className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
+    <div className="flex min-h-[100svh] items-start justify-center overflow-y-auto bg-background px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] sm:min-h-screen sm:items-center sm:px-4 sm:py-12">
+      <main className="w-full max-w-lg space-y-4 rounded-2xl border border-border bg-surface p-4 shadow-xl shadow-primary/10 sm:space-y-6 sm:p-8">
+        <header className="flex flex-col items-center gap-3 text-center sm:gap-4">
+          <Logo size="md" />
+          <p className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[0.68rem] font-medium uppercase tracking-wide text-primary sm:text-xs">
             real life adventure game
           </p>
         </header>
-        <p className="text-center text-base leading-relaxed text-muted">
+        <p className="text-center text-sm leading-6 text-muted sm:text-base sm:leading-relaxed">
           Turn real life into an RPG. Discover AI-generated side quests based on your hobbies and location, complete
           them, post proof, collect approvals, and level up with badges.
         </p>
         {authMessage ? (
           <p
-            className={`rounded-lg border px-4 py-3 text-center text-sm ${
+            className={`rounded-lg border px-3 py-2 text-center text-sm sm:px-4 sm:py-3 ${
               authMessage.tone === "success"
                 ? "border-success/40 bg-success/10 text-success"
                 : "border-accent/40 bg-accent/10 text-accent"
@@ -74,12 +74,12 @@ export default async function Home({ searchParams }: HomeProps) {
           </p>
         ) : null}
         <AuthProviderButtons />
-        <div className="flex items-center gap-3 text-sm font-semibold text-muted">
+        <div className="flex items-center gap-3 text-xs font-semibold text-muted sm:text-sm">
           <span className="h-px flex-1 bg-border" />
           <span>OR</span>
           <span className="h-px flex-1 bg-border" />
         </div>
-        <form action={signInWithEmail} className="space-y-4">
+        <form action={signInWithEmail} className="space-y-3 sm:space-y-4">
           <label className="relative block">
             <span className="sr-only">Email</span>
             <Mail
@@ -93,12 +93,12 @@ export default async function Home({ searchParams }: HomeProps) {
               placeholder="Email"
               autoComplete="email"
               required
-              className="h-12 w-full rounded-lg border border-border bg-background px-4 pl-12 text-sm font-medium text-foreground outline-none transition placeholder:text-muted hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/30"
+              className="h-11 w-full rounded-lg border border-border bg-background px-4 pl-12 text-sm font-medium text-foreground outline-none transition placeholder:text-muted hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/30 sm:h-12"
             />
           </label>
           <button
             type="submit"
-            className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-white transition hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-white transition hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-12"
           >
             Continue
           </button>
