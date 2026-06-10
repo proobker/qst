@@ -3,6 +3,7 @@
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { signInWithGitHub, signInWithGoogle } from "@/app/actions/auth";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 const providerButtonClass =
   "inline-flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70";
@@ -26,23 +27,45 @@ function GitHubIcon() {
   );
 }
 
-function mobileAuthPath(provider: "github" | "google") {
-  return `/auth/mobile/${provider}`;
-}
-
 async function openMobileOAuth(provider: "github" | "google") {
   const { Capacitor } = await import("@capacitor/core");
   if (!Capacitor.isNativePlatform()) {
     return false;
   }
 
+  const callbackUrl = new URL("/auth/callback", window.location.origin);
+  callbackUrl.searchParams.set("next", "/discover");
+  callbackUrl.searchParams.set("native", "1");
+
+  const supabase = createSupabaseBrowserClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: callbackUrl.toString(),
+      skipBrowserRedirect: true,
+      ...(provider === "google"
+        ? {
+            queryParams: {
+              access_type: "offline",
+              prompt: "consent",
+            },
+          }
+        : {}),
+    },
+  });
+
+  if (error || !data.url) {
+    throw error ?? new Error("Could not start sign-in.");
+  }
+
   const { Browser } = await import("@capacitor/browser");
-  await Browser.open({ url: new URL(mobileAuthPath(provider), window.location.origin).toString() });
+  await Browser.open({ url: data.url });
   return true;
 }
 
 export function AuthProviderButtons() {
   const [isNative, setIsNative] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function detectNativeRuntime() {
@@ -55,7 +78,10 @@ export function AuthProviderButtons() {
 
   function handleNativeSubmit(event: FormEvent<HTMLFormElement>, provider: "github" | "google") {
     event.preventDefault();
-    void openMobileOAuth(provider);
+    setError(null);
+    void openMobileOAuth(provider).catch(() => {
+      setError("We could not start that sign-in flow. Try again in a moment.");
+    });
   }
 
   return (
@@ -72,6 +98,7 @@ export function AuthProviderButtons() {
           <span>Continue with GitHub</span>
         </button>
       </form>
+      {error ? <p className="text-center text-sm text-accent">{error}</p> : null}
     </div>
   );
 }
