@@ -36,10 +36,10 @@ function QuestPreviewCard({ entry }: { entry: QuestStackEntry }) {
 
   return (
     <article
-      className="absolute inset-x-1.5 top-1.5 h-full overflow-hidden rounded-2xl border border-border bg-surface/95 p-6 shadow-lg shadow-primary/5"
+      className="absolute inset-x-1 top-1 h-full overflow-hidden rounded-2xl border border-border bg-surface/95 p-4 shadow-lg shadow-primary/5 sm:inset-x-1.5 sm:top-1.5 sm:p-6"
       aria-hidden="true"
     >
-      <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
+      <div className="mb-3 flex flex-wrap items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted sm:mb-4 sm:gap-2 sm:text-xs">
         <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
           {quest.category}
         </span>
@@ -48,8 +48,8 @@ function QuestPreviewCard({ entry }: { entry: QuestStackEntry }) {
           {quest.xp_reward} XP
         </span>
       </div>
-      <h3 className="line-clamp-2 text-xl font-bold tracking-tight text-foreground">{quest.title}</h3>
-      <p className="mt-3 line-clamp-5 text-sm text-muted">{quest.description}</p>
+      <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-foreground sm:text-xl">{quest.title}</h3>
+      <p className="mt-2 line-clamp-5 text-sm text-muted sm:mt-3">{quest.description}</p>
     </article>
   );
 }
@@ -193,7 +193,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
               : { x: 0, opacity: 1 }
         }
         className={cn(
-          "relative touch-none rounded-2xl border border-border bg-surface p-6 shadow-xl shadow-primary/10",
+          "relative touch-none rounded-2xl border border-border bg-surface p-4 shadow-xl shadow-primary/10 sm:p-6",
           pending && "pointer-events-none opacity-70",
         )}
         role="group"
@@ -219,7 +219,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
           </div>
         </motion.div>
 
-        <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted">
+        <div className="mb-3 flex flex-wrap items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted sm:mb-4 sm:gap-2 sm:text-xs">
           <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
             {quest.category}
           </span>
@@ -230,10 +230,10 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
           <span className="rounded-full border border-border px-2 py-1">{quest.estimated_time}</span>
         </div>
 
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">{quest.title}</h2>
-        <p className="mt-3 whitespace-pre-wrap text-muted">{quest.description}</p>
+        <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{quest.title}</h2>
+        <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted sm:mt-3 sm:text-base">{quest.description}</p>
         {quest.badge_reward ? (
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-2 text-sm text-muted sm:mt-3">
             Badge reward: <span className="font-semibold text-accent">{quest.badge_reward}</span>
           </p>
         ) : null}
@@ -243,11 +243,11 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
             <Spinner label="Processing..." />
           </div>
         ) : (
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-6">
             <button
               type="button"
               onClick={() => commitSwipe("left")}
-              className="rounded-lg border border-border px-4 py-3 text-sm font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
+              className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-muted transition hover:border-red-400 hover:text-red-400 sm:py-3"
               aria-label="Reject quest"
             >
               Reject
@@ -255,7 +255,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
             <button
               type="button"
               onClick={() => commitSwipe("right")}
-              className="rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover"
+              className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover sm:py-3"
               aria-label="Accept quest"
             >
               Accept
@@ -263,9 +263,9 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
           </div>
         )}
 
-        <p className="mt-3 text-center text-xs text-muted">
-          Drag the card or use ← → arrow keys
-          {dragX !== 0 ? ` · ${Math.abs(Math.round(dragX))}px` : ""}
+        <p className="mt-3 hidden text-center text-xs text-muted sm:block">
+          Drag the card or use left/right arrow keys
+          {dragX !== 0 ? ` - ${Math.abs(Math.round(dragX))}px` : ""}
         </p>
       </motion.article>
     </div>

@@ -34,6 +34,16 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
+html {
+  overflow-x: hidden;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 ::selection {
   background: color-mix(in srgb, var(--primary) 40%, transparent);
 }

@@ -108,10 +108,10 @@ async function DiscoverContent() {
   const cooldownMinutes = Math.ceil(getGeminiCooldownRemainingMs() / 60_000);
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-2xl font-bold text-foreground">Discover a quest</h1>
-        <p className="mt-2 text-sm text-muted">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+        <h1 className="text-xl font-bold text-foreground sm:text-2xl">Discover a quest</h1>
+        <p className="mt-1.5 text-sm leading-6 text-muted sm:mt-2">
           Swipe right to accept, left to reject. Drag the card or use arrow keys.
         </p>
         {geminiCooldown ? (

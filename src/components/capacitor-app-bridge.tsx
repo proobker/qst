@@ -61,9 +61,18 @@ export function CapacitorAppBridge() {
         return;
       }
 
-      const [{ App }, { Browser }] = await Promise.all([
+      document.documentElement.classList.add("capacitor-native");
+
+      const [{ App }, { Browser }, { StatusBar, Style }] = await Promise.all([
         import("@capacitor/app"),
         import("@capacitor/browser"),
+        import("@capacitor/status-bar"),
+      ]);
+
+      await Promise.allSettled([
+        StatusBar.setStyle({ style: Style.Dark }),
+        StatusBar.setBackgroundColor({ color: "#0f172a" }),
+        StatusBar.setOverlaysWebView({ overlay: false }),
       ]);
 
       const listener = await App.addListener("appUrlOpen", ({ url }) => {
