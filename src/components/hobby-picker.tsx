@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Search } from "lucide-react";
 import { addHobbyAction } from "@/app/actions/onboarding";
 import { HOBBY_CATEGORIES } from "@/lib/constants";
+import { validateCustomHobbyName } from "@/lib/hobby-validation";
 
 type Hobby = { id: number; name: string };
 
@@ -76,15 +77,15 @@ export function HobbyPicker({ hobbies, defaultSelectedIds }: HobbyPickerProps) {
   };
 
   const addCustomHobby = () => {
-    const trimmed = customName.trim();
-    if (trimmed.length < 2) {
-      setError("Enter at least 2 characters for a hobby.");
+    const validation = validateCustomHobbyName(customName);
+    if (!validation.ok) {
+      setError(validation.message);
       return;
     }
 
     setError(null);
     startTransition(async () => {
-      const result = await addHobbyAction(trimmed);
+      const result = await addHobbyAction(validation.name);
       if (!result.ok) {
         setError(result.message ?? "Could not add hobby.");
         return;

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createHobby, saveOnboarding } from "@/lib/data";
+import { validateCustomHobbyName } from "@/lib/hobby-validation";
 
 export async function addHobbyAction(name: string): Promise<
   | { ok: true; hobby: { id: number; name: string } }
@@ -18,7 +19,12 @@ export async function addHobbyAction(name: string): Promise<
     return { ok: false, message: "You must be signed in to add a hobby." };
   }
 
-  const hobby = await createHobby(name);
+  const validation = validateCustomHobbyName(name);
+  if (!validation.ok) {
+    return { ok: false, message: validation.message };
+  }
+
+  const hobby = await createHobby(validation.name);
   if (!hobby) {
     return { ok: false, message: "Enter a valid hobby name." };
   }

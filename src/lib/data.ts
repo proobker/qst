@@ -17,6 +17,7 @@ import {
   QuestDefinition,
   UserProfile,
 } from "@/lib/types";
+import { validateCustomHobbyName } from "@/lib/hobby-validation";
 import {
   isFullEmailAddress,
   meetsApprovalThreshold,
@@ -110,11 +111,12 @@ export async function getOnboardingState(userId: string) {
 }
 
 export async function createHobby(name: string): Promise<{ id: number; name: string } | null> {
-  const trimmed = name.trim();
-  if (!trimmed) {
+  const validation = validateCustomHobbyName(name);
+  if (!validation.ok) {
     return null;
   }
 
+  const trimmed = validation.name;
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("hobbies").insert({ name: trimmed }).select("id,name").maybeSingle();
 
