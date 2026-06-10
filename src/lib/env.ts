@@ -1,7 +1,12 @@
 const requiredClientEnvs = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"] as const;
 
+const publicClientEnvFallbacks: Record<(typeof requiredClientEnvs)[number], string> = {
+  NEXT_PUBLIC_SUPABASE_URL: "https://zumlzeeqjknhbvouqhse.supabase.co",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "sb_publishable_wpvywY79mu3muaDOoHMCMw_TnZv6EyI",
+};
+
 function readEnv(name: string): string {
-  const value = process.env[name];
+  const value = process.env[name] ?? publicClientEnvFallbacks[name as (typeof requiredClientEnvs)[number]];
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
