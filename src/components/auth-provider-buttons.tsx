@@ -8,6 +8,21 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 const providerButtonClass =
   "inline-flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70";
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  if (typeof error === "object" && error !== null && "message" in error) {
+    const message = String(error.message).trim();
+    if (message) {
+      return message;
+    }
+  }
+
+  return "Unknown sign-in error.";
+}
+
 function GoogleIcon() {
   return (
     <span
@@ -55,17 +70,28 @@ async function openMobileOAuth(provider: "github" | "google") {
   });
 
   if (error || !data.url) {
-    throw error ?? new Error("Could not start sign-in.");
+    throw error ?? new Error("Supabase did not return a provider login URL.");
   }
 
-  const { Browser } = await import("@capacitor/browser");
-  await Browser.open({ url: data.url });
+  try {
+    const { Browser } = await import("@capacitor/browser");
+    await Browser.open({ url: data.url });
+  } catch (browserError) {
+    console.warn("Capacitor Browser.open failed; falling back to window.open.", browserError);
+    const opened = window.open(data.url, "_blank", "noopener,noreferrer");
+
+    if (!opened) {
+      window.location.assign(data.url);
+    }
+  }
+
   return true;
 }
 
 export function AuthProviderButtons() {
   const [isNative, setIsNative] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingProvider, setPendingProvider] = useState<"github" | "google" | null>(null);
 
   useEffect(() => {
     async function detectNativeRuntime() {
@@ -79,23 +105,30 @@ export function AuthProviderButtons() {
   function handleNativeSubmit(event: FormEvent<HTMLFormElement>, provider: "github" | "google") {
     event.preventDefault();
     setError(null);
-    void openMobileOAuth(provider).catch(() => {
-      setError("We could not start that sign-in flow. Try again in a moment.");
-    });
+    setPendingProvider(provider);
+    void openMobileOAuth(provider)
+      .catch((signInError) => {
+        const message = getErrorMessage(signInError);
+        console.error("Native OAuth start failed:", signInError);
+        setError(`Sign-in could not start: ${message}`);
+      })
+      .finally(() => {
+        setPendingProvider(null);
+      });
   }
 
   return (
     <div className="space-y-3">
       <form action={signInWithGoogle} onSubmit={isNative ? (event) => handleNativeSubmit(event, "google") : undefined}>
-        <button type="submit" className={providerButtonClass}>
+        <button type="submit" className={providerButtonClass} disabled={pendingProvider !== null}>
           <GoogleIcon />
-          <span>Continue with Google</span>
+          <span>{pendingProvider === "google" ? "Opening Google..." : "Continue with Google"}</span>
         </button>
       </form>
       <form action={signInWithGitHub} onSubmit={isNative ? (event) => handleNativeSubmit(event, "github") : undefined}>
-        <button type="submit" className={providerButtonClass}>
+        <button type="submit" className={providerButtonClass} disabled={pendingProvider !== null}>
           <GitHubIcon />
-          <span>Continue with GitHub</span>
+          <span>{pendingProvider === "github" ? "Opening GitHub..." : "Continue with GitHub"}</span>
         </button>
       </form>
       {error ? <p className="text-center text-sm text-accent">{error}</p> : null}
