@@ -1,6 +1,9 @@
+import { Filter } from "bad-words";
+
 const MIN_HOBBY_LENGTH = 2;
 const MAX_HOBBY_LENGTH = 40;
 const BLOCKED_HOBBY_MESSAGE = "That hobby cannot be added. Try a different activity.";
+const profanityFilter = new Filter();
 
 const BLOCKED_EXACT_TERMS = new Set([
   "adult",
@@ -35,8 +38,11 @@ const BLOCKED_COMPACT_PATTERNS = [
   "cocksuck",
   "deepfakeporn",
   "escort",
+  "fack",
   "fentanyl",
+  "fck",
   "fuck",
+  "fuk",
   "genital",
   "handjob",
   "hentai",
@@ -46,6 +52,7 @@ const BLOCKED_COMPACT_PATTERNS = [
   "naked",
   "onlyfans",
   "orgasm",
+  "phuck",
   "prostitut",
   "selfharm",
   "sexting",
@@ -59,6 +66,10 @@ const SPAM_PATTERNS = [
   /\b[a-z0-9.-]+\.(com|net|org|io|gg|xyz|app|dev)\b/i,
   /@[a-z0-9_.-]{2,}/i,
 ];
+
+function containsProfanity(value: string) {
+  return profanityFilter.isProfane(value);
+}
 
 function normalizeHobbyForModeration(value: string) {
   const lower = value
@@ -93,6 +104,14 @@ export function validateCustomHobbyName(value: string): { ok: true; name: string
   const normalized = normalizeHobbyForModeration(name);
   if (!/[a-z]/.test(normalized.spaced)) {
     return { ok: false, message: "Enter a valid hobby name." };
+  }
+
+  if (
+    containsProfanity(name) ||
+    containsProfanity(normalized.spaced) ||
+    containsProfanity(normalized.compact)
+  ) {
+    return { ok: false, message: BLOCKED_HOBBY_MESSAGE };
   }
 
   if (normalized.terms.some((term) => BLOCKED_EXACT_TERMS.has(term))) {
