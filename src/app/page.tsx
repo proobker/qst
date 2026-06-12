@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Mail } from "lucide-react";
-import { signInWithEmail } from "@/app/actions/auth";
 import { AuthProviderButtons } from "@/components/auth-provider-buttons";
+import { EmailCodeSignInForm } from "@/components/email-code-sign-in-form";
 import { Logo } from "@/components/logo";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -79,30 +78,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <span>OR</span>
           <span className="h-px flex-1 bg-border" />
         </div>
-        <form action={signInWithEmail} className="space-y-3 sm:space-y-4">
-          <label className="relative block">
-            <span className="sr-only">Email</span>
-            <Mail
-              aria-hidden="true"
-              className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted"
-              strokeWidth={2.2}
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              autoComplete="email"
-              required
-              className="h-11 w-full rounded-lg border border-border bg-background px-4 pl-12 text-sm font-medium text-foreground outline-none transition placeholder:text-muted hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/30 sm:h-12"
-            />
-          </label>
-          <button
-            type="submit"
-            className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-white transition hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-12"
-          >
-            Continue
-          </button>
-        </form>
+        <EmailCodeSignInForm />
         <p className="text-center text-xs leading-5 text-muted">
           By continuing, you agree to qst&apos;s{" "}
           <Link href="/privacy" className="font-semibold text-primary transition hover:text-primary-hover">

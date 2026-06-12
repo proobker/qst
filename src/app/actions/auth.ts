@@ -7,6 +7,8 @@ import { getAppUrl } from "@/lib/env";
 import { isFullEmailAddress } from "@/lib/utils";
 
 const TEST_PASSWORD_SIGN_IN_ERROR = "We could not sign you in with those credentials.";
+const EMAIL_SIGN_IN_ERROR = "We could not send that sign-in email. Try again in a moment.";
+const EMAIL_CODE_ERROR = "That code did not work. Check the code and try again.";
 const DELETE_ACCOUNT_ERROR = "We could not delete your account. Please try again.";
 const QUEST_COMPLETIONS_BUCKET = "quest-completions";
 const STORAGE_PAGE_SIZE = 1000;
@@ -14,6 +16,13 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 
 export type TestPasswordSignInState = {
   message: string;
+};
+
+export type EmailSignInState = {
+  step: "email" | "code";
+  email: string;
+  message: string;
+  tone: "success" | "error" | null;
 };
 
 export type DeleteAccountState = {
@@ -193,6 +202,90 @@ export async function signInWithEmail(formData: FormData) {
   }
 
   redirect("/?auth=check-email");
+}
+
+export async function signInWithEmailCode(
+  _state: EmailSignInState,
+  formData: FormData,
+): Promise<EmailSignInState> {
+  const intentValues = formData.getAll("intent");
+  const intent = intentValues[intentValues.length - 1];
+  const email = formData.get("email");
+
+  if (intent === "back") {
+    return {
+      step: "email",
+      email: typeof email === "string" ? email.trim().toLowerCase() : "",
+      message: "",
+      tone: null,
+    };
+  }
+
+  if (typeof email !== "string" || !isFullEmailAddress(email)) {
+    return {
+      step: "email",
+      email: "",
+      message: "Enter a complete email address to continue.",
+      tone: "error",
+    };
+  }
+
+  const trimmedEmail = email.trim().toLowerCase();
+  const supabase = await createSupabaseServerClient();
+
+  if (intent === "verify") {
+    const code = formData.get("code");
+    const token = typeof code === "string" ? code.replace(/\s+/g, "") : "";
+
+    if (!/^\d{6}$/.test(token)) {
+      return {
+        step: "code",
+        email: trimmedEmail,
+        message: "Enter the 6-digit code from your email.",
+        tone: "error",
+      };
+    }
+
+    const { error } = await supabase.auth.verifyOtp({
+      email: trimmedEmail,
+      token,
+      type: "email",
+    });
+
+    if (error) {
+      return {
+        step: "code",
+        email: trimmedEmail,
+        message: EMAIL_CODE_ERROR,
+        tone: "error",
+      };
+    }
+
+    redirect("/discover");
+  }
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: trimmedEmail,
+    options: {
+      emailRedirectTo: getAuthUrl("/auth/callback"),
+    },
+  });
+
+  if (error) {
+    return {
+      step: "email",
+      email: trimmedEmail,
+      message: EMAIL_SIGN_IN_ERROR,
+      tone: "error",
+    };
+  }
+
+  return {
+    step: "code",
+    email: trimmedEmail,
+    message: "Check your email for a qst sign-in link or 6-digit code.",
+    tone: "success",
+  };
 }
 
 async function resolveTestPasswordEmail(identifier: string): Promise<string | null> {
