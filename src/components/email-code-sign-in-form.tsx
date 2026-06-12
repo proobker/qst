@@ -56,7 +56,7 @@ export function EmailCodeSignInForm() {
               name="code"
               placeholder="6-digit code"
               inputMode="numeric"
-              pattern="[0-9]{6}"
+              maxLength={12}
               autoComplete="one-time-code"
               required
               className="h-11 w-full rounded-lg border border-border bg-background px-4 pl-12 text-sm font-medium text-foreground outline-none transition placeholder:text-muted hover:border-primary/50 focus:border-primary focus:ring-2 focus:ring-primary/30 sm:h-12"
