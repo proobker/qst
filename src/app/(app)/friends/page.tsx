@@ -8,7 +8,7 @@ import {
 } from "@/app/actions/friends";
 import { Avatar } from "@/components/avatar";
 import { FriendButton } from "@/components/friend-button";
-import { getFriendRequests, getFriends, getWeeklyFriendLeaderboard, searchUsers } from "@/lib/data";
+import { getFriendLeaderboard, getFriendRequests, getFriends, searchUsers } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { titleForLevel } from "@/lib/leveling";
 import { isFullEmailAddress } from "@/lib/utils";
@@ -35,7 +35,7 @@ export default async function FriendsPage({
     getFriends(user.id),
     getFriendRequests(user.id),
     searchUsers(user.id, query),
-    getWeeklyFriendLeaderboard(user.id),
+    getFriendLeaderboard(user.id),
   ]);
 
   const tabs = [
@@ -56,11 +56,11 @@ export default async function FriendsPage({
       <section className="rounded-xl border border-border bg-surface p-6">
         <div className="flex items-center gap-2">
           <Trophy size={18} className="text-accent" />
-          <h2 className="text-lg font-semibold text-foreground">Weekly leaderboard</h2>
+          <h2 className="text-lg font-semibold text-foreground">Overall leaderboard</h2>
         </div>
         <div className="mt-4 space-y-3">
           {leaderboard.length === 0 ? (
-            <p className="text-sm text-muted">Add friends to compare weekly quest progress.</p>
+            <p className="text-sm text-muted">Add friends to compare overall quest progress.</p>
           ) : null}
           {leaderboard.map((entry) => (
             <div
@@ -88,7 +88,7 @@ export default async function FriendsPage({
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs text-muted sm:grid-cols-3">
                 <span className="rounded-lg border border-border bg-background px-2 py-1">
-                  {entry.weeklyXp} XP
+                  {entry.xp} XP
                 </span>
                 <span className="rounded-lg border border-border bg-background px-2 py-1">
                   {entry.completedCount} completed

@@ -6,7 +6,6 @@ import {
   isDateKey,
   localDateKey,
   localMonthRange,
-  localWeekRange,
   monthCalendarDateKeys,
   normalizeMonthKey,
   normalizeTimeZone,
@@ -955,52 +954,43 @@ export async function getFriends(userId: string) {
   });
 }
 
-export async function getWeeklyFriendLeaderboard(userId: string): Promise<LeaderboardEntry[]> {
+export async function getFriendLeaderboard(userId: string): Promise<LeaderboardEntry[]> {
   const supabase = await createSupabaseServerClient();
-  const [profile, friendIds] = await Promise.all([getProfile(userId), getFriendIds(userId)]);
+  const friendIds = await getFriendIds(userId);
   const participantIds = [userId, ...friendIds];
   if (participantIds.length === 0) {
     return [];
   }
 
-  const weekRange = localWeekRange(profile?.timezone ?? "UTC");
   const [usersResult, completedResult, approvalsResult] = await Promise.all([
     supabase
       .from("users")
-      .select("id,name,avatar,level")
+      .select("id,name,avatar,level,xp")
       .in("id", participantIds),
     supabase
       .from("user_quests")
-      .select("user_id,completed_at,quests(xp_reward)")
+      .select("user_id")
       .in("user_id", participantIds)
-      .eq("status", "completed")
-      .gte("completed_at", weekRange.startsAt)
-      .lt("completed_at", weekRange.endsAt),
+      .eq("status", "completed"),
     supabase
       .from("approvals")
-      .select("user_id,created_at,vote")
+      .select("user_id")
       .in("user_id", participantIds)
-      .eq("vote", true)
-      .gte("created_at", weekRange.startsAt)
-      .lt("created_at", weekRange.endsAt),
+      .eq("vote", true),
   ]);
 
-  const completedRows =
-    (completedResult.data as Array<{ user_id: string; quests: { xp_reward: number } | null }> | null) ?? [];
-  const approvalsRows = (approvalsResult.data as Array<{ user_id: string; vote: boolean }> | null) ?? [];
-  const completedByUser = new Map<string, { xp: number; count: number }>();
+  const completedRows = (completedResult.data as Array<{ user_id: string }> | null) ?? [];
+  const approvalsRows = (approvalsResult.data as Array<{ user_id: string }> | null) ?? [];
+  const completedByUser = new Map<string, number>();
   const approvalsByUser = new Map<string, number>();
 
   for (const id of participantIds) {
-    completedByUser.set(id, { xp: 0, count: 0 });
+    completedByUser.set(id, 0);
     approvalsByUser.set(id, 0);
   }
 
   for (const row of completedRows) {
-    const current = completedByUser.get(row.user_id) ?? { xp: 0, count: 0 };
-    current.xp += Number(row.quests?.xp_reward ?? 0);
-    current.count += 1;
-    completedByUser.set(row.user_id, current);
+    completedByUser.set(row.user_id, (completedByUser.get(row.user_id) ?? 0) + 1);
   }
 
   for (const row of approvalsRows) {
@@ -1012,22 +1002,22 @@ export async function getWeeklyFriendLeaderboard(userId: string): Promise<Leader
     name: string;
     avatar: string | null;
     level: number;
+    xp: number;
   }> | null) ?? [])
     .map((user) => {
-      const completed = completedByUser.get(user.id) ?? { xp: 0, count: 0 };
       return {
         userId: user.id,
         name: user.name,
         avatar: user.avatar,
         level: Number(user.level ?? 1),
-        weeklyXp: completed.xp,
-        completedCount: completed.count,
+        xp: Number(user.xp ?? 0),
+        completedCount: completedByUser.get(user.id) ?? 0,
         approvalsGiven: approvalsByUser.get(user.id) ?? 0,
         rank: 0,
       } satisfies LeaderboardEntry;
     })
     .sort((a, b) => {
-      if (b.weeklyXp !== a.weeklyXp) return b.weeklyXp - a.weeklyXp;
+      if (b.xp !== a.xp) return b.xp - a.xp;
       if (b.completedCount !== a.completedCount) return b.completedCount - a.completedCount;
       if (b.approvalsGiven !== a.approvalsGiven) return b.approvalsGiven - a.approvalsGiven;
       return a.name.localeCompare(b.name);

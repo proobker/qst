@@ -128,7 +128,7 @@ export type LeaderboardEntry = {
   name: string;
   avatar: string | null;
   level: number;
-  weeklyXp: number;
+  xp: number;
   completedCount: number;
   approvalsGiven: number;
   rank: number;
