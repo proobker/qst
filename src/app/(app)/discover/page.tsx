@@ -110,20 +110,10 @@ async function DiscoverContent() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-foreground sm:text-2xl">Discover a quest</h1>
-            <p className="mt-1.5 text-sm leading-6 text-muted sm:mt-2">
-              Swipe right to accept, left to reject. Drag the card or use arrow keys.
-            </p>
-          </div>
-          <Link
-            href="/daily"
-            className="inline-flex rounded-lg border border-primary/40 bg-primary/10 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary"
-          >
-            Today&apos;s daily
-          </Link>
-        </div>
+        <h1 className="text-xl font-bold text-foreground sm:text-2xl">Discover a quest</h1>
+        <p className="mt-1.5 text-sm leading-6 text-muted sm:mt-2">
+          Swipe right to accept, left to reject. Drag the card or use arrow keys.
+        </p>
         {geminiCooldown ? (
           <p className="mt-3 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-xs text-accent">
             Gemini quota is resting (~{cooldownMinutes} min). Quests use the offline builder until API limits reset.

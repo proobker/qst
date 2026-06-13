@@ -18,8 +18,8 @@ export function AppNav({ notifications, unreadCount }: AppNavProps) {
   const pathname = usePathname();
   const links = [
     { href: "/discover", label: "Discover", icon: Compass },
-    { href: "/daily", label: "Daily", icon: CalendarDays },
-    { href: "/quests", label: "Quests", icon: Flag },
+    { href: "/quests", label: "Quest", icon: Flag },
+    { href: "/streak", label: "Streak", icon: CalendarDays },
     { href: "/feed", label: "Feed", icon: ScrollText },
     { href: "/friends", label: "Friends", icon: Users },
     { href: "/profile", label: "Profile", icon: UserRound },

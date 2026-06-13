@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Flame, Medal, Trophy } from "lucide-react";
+import { Medal, Trophy } from "lucide-react";
 import {
   acceptFriendRequestAction,
   cancelFriendRequestAction,
@@ -86,7 +86,7 @@ export default async function FriendsPage({
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-xs text-muted sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 text-xs text-muted sm:grid-cols-3">
                 <span className="rounded-lg border border-border bg-background px-2 py-1">
                   {entry.weeklyXp} XP
                 </span>
@@ -95,10 +95,6 @@ export default async function FriendsPage({
                 </span>
                 <span className="rounded-lg border border-border bg-background px-2 py-1">
                   {entry.approvalsGiven} approvals
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-2 py-1">
-                  <Flame size={12} />
-                  {entry.currentStreak}
                 </span>
               </div>
               {entry.rank <= 3 ? (

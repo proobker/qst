@@ -1,8 +1,6 @@
-import { NOTIFICATION_TYPES, QUEST_SOURCES, QUEST_STATUSES } from "@/lib/constants";
+import { NOTIFICATION_TYPES, QUEST_STATUSES } from "@/lib/constants";
 
 export type QuestStatus = (typeof QUEST_STATUSES)[number];
-
-export type QuestSource = (typeof QUEST_SOURCES)[number];
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
@@ -17,9 +15,6 @@ export type UserProfile = {
   level: number;
   xp: number;
   timezone: string;
-  current_streak: number;
-  best_streak: number;
-  last_daily_completed_on: string | null;
   location_enabled: boolean;
   latitude: number | null;
   longitude: number | null;
@@ -95,19 +90,37 @@ export type ProfileSummary = {
   friendsCount: number;
 };
 
-export type DailyQuestSummary = {
-  assignmentId: string;
+export type CalendarQuestCompletion = {
+  id: string;
+  userQuestId: string;
   questId: string;
-  status: QuestStatus;
-  sourceDate: string;
-  quest: QuestDefinition & { id: string };
+  title: string;
+  category: string;
+  difficulty: string;
+  xpReward: number;
+  completedAt: string;
 };
 
-export type StreakSummary = {
-  currentStreak: number;
-  bestStreak: number;
-  lastDailyCompletedOn: string | null;
-  streakBadges: Array<{ days: number; badge: string; earned: boolean }>;
+export type CalendarDaySummary = {
+  date: string;
+  day: number;
+  inCurrentMonth: boolean;
+  isToday: boolean;
+  isSelected: boolean;
+  count: number;
+  quests: CalendarQuestCompletion[];
+};
+
+export type MonthlyQuestCalendar = {
+  month: string;
+  monthLabel: string;
+  timeZone: string;
+  today: string;
+  selectedDay: string;
+  previousMonth: string;
+  nextMonth: string;
+  totalCompleted: number;
+  days: CalendarDaySummary[];
 };
 
 export type LeaderboardEntry = {
@@ -118,6 +131,5 @@ export type LeaderboardEntry = {
   weeklyXp: number;
   completedCount: number;
   approvalsGiven: number;
-  currentStreak: number;
   rank: number;
 };
