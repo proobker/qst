@@ -2,7 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let adminClient: SupabaseClient | null = null;
 
-/** Server-only client that bypasses RLS for system actions (quest rewards). */
+/** Server-only client that bypasses RLS for system actions. */
 export function createSupabaseAdminClient(): SupabaseClient {
   if (adminClient) {
     return adminClient;
@@ -13,7 +13,7 @@ export function createSupabaseAdminClient(): SupabaseClient {
 
   if (!url || !serviceRoleKey) {
     throw new Error(
-      "SUPABASE_SERVICE_ROLE_KEY is required to award quest XP. Add it to .env.local from Supabase → Settings → API.",
+      "SUPABASE_SERVICE_ROLE_KEY is required to award quest XP and delete accounts. Add it to .env.local from Supabase -> Settings -> API.",
     );
   }
 

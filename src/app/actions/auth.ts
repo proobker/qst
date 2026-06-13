@@ -10,6 +10,7 @@ const TEST_PASSWORD_SIGN_IN_ERROR = "We could not sign you in with those credent
 const EMAIL_SIGN_IN_ERROR = "We could not send that sign-in email. Try again in a moment.";
 const EMAIL_CODE_ERROR = "That code did not work. Check the code and try again.";
 const DELETE_ACCOUNT_ERROR = "We could not delete your account. Please try again.";
+const DELETE_ACCOUNT_EMAIL_ERROR = "Enter your account email to confirm deletion.";
 const QUEST_COMPLETIONS_BUCKET = "quest-completions";
 const STORAGE_PAGE_SIZE = 1000;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -355,11 +356,6 @@ export async function deleteAccountAction(
   _state: DeleteAccountState,
   formData: FormData,
 ): Promise<DeleteAccountState> {
-  const confirmation = formData.get("confirmation");
-  if (confirmation !== "DELETE") {
-    return { message: "Type DELETE to confirm account deletion." };
-  }
-
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -368,6 +364,18 @@ export async function deleteAccountAction(
 
   if (userError || !user) {
     return { message: "You must be signed in to delete your account." };
+  }
+
+  const confirmationEmail = formData.get("confirmationEmail");
+  const userEmail = user.email?.trim().toLowerCase();
+
+  if (
+    typeof confirmationEmail !== "string" ||
+    !isFullEmailAddress(confirmationEmail) ||
+    !userEmail ||
+    confirmationEmail.trim().toLowerCase() !== userEmail
+  ) {
+    return { message: DELETE_ACCOUNT_EMAIL_ERROR };
   }
 
   try {

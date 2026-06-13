@@ -9,9 +9,10 @@ const initialState: DeleteAccountState = {
 };
 
 export function DeleteAccountSection({ email }: { email: string }) {
-  const [confirmation, setConfirmation] = useState("");
+  const [confirmationEmail, setConfirmationEmail] = useState("");
   const [state, formAction, pending] = useActionState(deleteAccountAction, initialState);
-  const canSubmit = confirmation === "DELETE";
+  const normalizedEmail = email.trim().toLowerCase();
+  const canSubmit = normalizedEmail.length > 0 && confirmationEmail.trim().toLowerCase() === normalizedEmail;
 
   return (
     <section className="rounded-xl border border-red-500/40 bg-red-500/10 p-6">
@@ -27,15 +28,17 @@ export function DeleteAccountSection({ email }: { email: string }) {
           </p>
 
           <form action={formAction} className="mt-4 space-y-3">
-            <label htmlFor="delete-account-confirmation" className="block space-y-2">
-              <span className="text-xs font-medium uppercase tracking-wide text-red-100/80">Type DELETE</span>
+            <label htmlFor="delete-account-confirmation-email" className="block space-y-2">
+              <span className="text-xs font-medium uppercase tracking-wide text-red-100/80">Confirm email</span>
               <input
-                id="delete-account-confirmation"
-                name="confirmation"
-                type="text"
-                value={confirmation}
-                onChange={(event) => setConfirmation(event.target.value)}
-                autoComplete="off"
+                id="delete-account-confirmation-email"
+                name="confirmationEmail"
+                type="email"
+                value={confirmationEmail}
+                onChange={(event) => setConfirmationEmail(event.target.value)}
+                autoComplete="email"
+                placeholder={email}
+                required
                 className="h-11 w-full rounded-lg border border-red-400/40 bg-background px-3 text-sm font-semibold text-foreground outline-none transition placeholder:text-muted focus:border-red-300 focus:ring-2 focus:ring-red-400/30 sm:max-w-xs"
               />
             </label>

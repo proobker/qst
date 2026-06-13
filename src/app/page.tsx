@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type HomeProps = {
   searchParams?: Promise<{
+    account?: string | string[];
     auth?: string | string[];
   }>;
 };
@@ -30,9 +31,21 @@ const authMessages: Record<string, { tone: "success" | "error"; text: string }> 
   },
 };
 
+const accountMessages: Record<string, { tone: "success" | "error"; text: string }> = {
+  deleted: {
+    tone: "success",
+    text: "Your qst account has been deleted.",
+  },
+};
+
 function getAuthMessage(auth: string | string[] | undefined) {
   const value = Array.isArray(auth) ? auth[0] : auth;
   return value ? authMessages[value] : undefined;
+}
+
+function getAccountMessage(account: string | string[] | undefined) {
+  const value = Array.isArray(account) ? account[0] : account;
+  return value ? accountMessages[value] : undefined;
 }
 
 export default async function Home({ searchParams }: HomeProps) {
@@ -47,6 +60,8 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const params = searchParams ? await searchParams : undefined;
   const authMessage = getAuthMessage(params?.auth);
+  const accountMessage = getAccountMessage(params?.account);
+  const statusMessage = accountMessage ?? authMessage;
 
   return (
     <div className="flex min-h-[100svh] items-start justify-center overflow-y-auto bg-background px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] sm:min-h-screen sm:items-center sm:px-4 sm:py-12">
@@ -61,15 +76,15 @@ export default async function Home({ searchParams }: HomeProps) {
           Turn real life into an RPG. Discover AI-generated side quests based on your hobbies and location, complete
           them, post proof, collect approvals, and level up with badges.
         </p>
-        {authMessage ? (
+        {statusMessage ? (
           <p
             className={`rounded-lg border px-3 py-2 text-center text-sm sm:px-4 sm:py-3 ${
-              authMessage.tone === "success"
+              statusMessage.tone === "success"
                 ? "border-success/40 bg-success/10 text-success"
                 : "border-accent/40 bg-accent/10 text-accent"
             }`}
           >
-            {authMessage.text}
+            {statusMessage.text}
           </p>
         ) : null}
         <AuthProviderButtons />

@@ -139,7 +139,7 @@ export default async function ProfilePage() {
         )}
       </section>
 
-      <DeleteAccountSection email={profile.email} />
+      <DeleteAccountSection email={user.email ?? profile.email} />
     </div>
   );
 }
