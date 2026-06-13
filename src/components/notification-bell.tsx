@@ -21,6 +21,8 @@ function notificationLink(notification: Notification): string {
       return "/feed";
     case "level_up":
       return "/profile";
+    case "streak_milestone":
+      return "/daily";
     default:
       return "/feed";
   }

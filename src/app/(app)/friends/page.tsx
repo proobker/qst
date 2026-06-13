@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Flame, Medal, Trophy } from "lucide-react";
 import {
   acceptFriendRequestAction,
   cancelFriendRequestAction,
@@ -7,7 +8,7 @@ import {
 } from "@/app/actions/friends";
 import { Avatar } from "@/components/avatar";
 import { FriendButton } from "@/components/friend-button";
-import { getFriendRequests, getFriends, searchUsers } from "@/lib/data";
+import { getFriendRequests, getFriends, getWeeklyFriendLeaderboard, searchUsers } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { titleForLevel } from "@/lib/leveling";
 import { isFullEmailAddress } from "@/lib/utils";
@@ -30,10 +31,11 @@ export default async function FriendsPage({
   const query = params.q?.trim() ?? "";
   const tab = params.tab ?? "friends";
 
-  const [friends, requests, searchResults] = await Promise.all([
+  const [friends, requests, searchResults, leaderboard] = await Promise.all([
     getFriends(user.id),
     getFriendRequests(user.id),
     searchUsers(user.id, query),
+    getWeeklyFriendLeaderboard(user.id),
   ]);
 
   const tabs = [
@@ -50,6 +52,64 @@ export default async function FriendsPage({
           Send requests, accept invitations, and build your adventuring party.
         </p>
       </div>
+
+      <section className="rounded-xl border border-border bg-surface p-6">
+        <div className="flex items-center gap-2">
+          <Trophy size={18} className="text-accent" />
+          <h2 className="text-lg font-semibold text-foreground">Weekly leaderboard</h2>
+        </div>
+        <div className="mt-4 space-y-3">
+          {leaderboard.length === 0 ? (
+            <p className="text-sm text-muted">Add friends to compare weekly quest progress.</p>
+          ) : null}
+          {leaderboard.map((entry) => (
+            <div
+              key={entry.userId}
+              className={`grid gap-3 rounded-lg border px-4 py-3 sm:grid-cols-[auto_1fr_auto] sm:items-center ${
+                entry.userId === user.id ? "border-primary/50 bg-primary/5" : "border-border"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-sm font-bold text-foreground">
+                  {entry.rank}
+                </span>
+                <Avatar name={entry.name} src={entry.avatar} size="md" />
+                <div>
+                  <Link href={entry.userId === user.id ? "/profile" : `/profile/${entry.userId}`}>
+                    <p className="text-sm font-semibold text-foreground">
+                      {entry.name}
+                      {entry.userId === user.id ? " (you)" : ""}
+                    </p>
+                  </Link>
+                  <p className="text-xs text-muted">
+                    Level {entry.level} - {titleForLevel(entry.level)}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs text-muted sm:grid-cols-4">
+                <span className="rounded-lg border border-border bg-background px-2 py-1">
+                  {entry.weeklyXp} XP
+                </span>
+                <span className="rounded-lg border border-border bg-background px-2 py-1">
+                  {entry.completedCount} completed
+                </span>
+                <span className="rounded-lg border border-border bg-background px-2 py-1">
+                  {entry.approvalsGiven} approvals
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-2 py-1">
+                  <Flame size={12} />
+                  {entry.currentStreak}
+                </span>
+              </div>
+              {entry.rank <= 3 ? (
+                <Medal size={18} className="hidden text-accent sm:block" />
+              ) : (
+                <span className="hidden sm:block" />
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
 
       <div className="flex flex-wrap gap-2">
         {tabs.map((item) => (

@@ -1,6 +1,8 @@
-import { NOTIFICATION_TYPES, QUEST_STATUSES } from "@/lib/constants";
+import { NOTIFICATION_TYPES, QUEST_SOURCES, QUEST_STATUSES } from "@/lib/constants";
 
 export type QuestStatus = (typeof QUEST_STATUSES)[number];
+
+export type QuestSource = (typeof QUEST_SOURCES)[number];
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
@@ -14,6 +16,10 @@ export type UserProfile = {
   bio: string | null;
   level: number;
   xp: number;
+  timezone: string;
+  current_streak: number;
+  best_streak: number;
+  last_daily_completed_on: string | null;
   location_enabled: boolean;
   latitude: number | null;
   longitude: number | null;
@@ -87,4 +93,31 @@ export type ProfileSummary = {
   completedQuests: Array<{ id: string; quests: Record<string, unknown> | null }>;
   posts: Array<Record<string, unknown>>;
   friendsCount: number;
+};
+
+export type DailyQuestSummary = {
+  assignmentId: string;
+  questId: string;
+  status: QuestStatus;
+  sourceDate: string;
+  quest: QuestDefinition & { id: string };
+};
+
+export type StreakSummary = {
+  currentStreak: number;
+  bestStreak: number;
+  lastDailyCompletedOn: string | null;
+  streakBadges: Array<{ days: number; badge: string; earned: boolean }>;
+};
+
+export type LeaderboardEntry = {
+  userId: string;
+  name: string;
+  avatar: string | null;
+  level: number;
+  weeklyXp: number;
+  completedCount: number;
+  approvalsGiven: number;
+  currentStreak: number;
+  rank: number;
 };

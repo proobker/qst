@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { QuestUploadForm } from "@/components/quest-upload-form";
 import { QuestListSkeleton } from "@/components/ui/skeleton";
@@ -36,11 +37,21 @@ async function QuestsContent() {
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-2xl font-bold text-foreground">Active and completed quests</h1>
-        <p className="mt-2 text-sm text-muted">
-          Upload proof with the built-in photo editor so friends can verify your completion. Accepted quests expire
-          after {QUEST_ACCEPT_DEADLINE_HOURS} hours if not finished.
-        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Active and completed quests</h1>
+            <p className="mt-2 text-sm text-muted">
+              Upload proof with the built-in photo editor so friends can verify your completion. Accepted quests expire
+              after {QUEST_ACCEPT_DEADLINE_HOURS} hours if not finished.
+            </p>
+          </div>
+          <Link
+            href="/daily"
+            className="inline-flex rounded-lg border border-primary/40 bg-primary/10 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary"
+          >
+            Daily quest
+          </Link>
+        </div>
         {needsFriends ? (
           <p className="mt-3 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-sm text-accent">
             Add at least {MIN_FRIENDS_REQUIRED} friend before you can submit proof for approval.

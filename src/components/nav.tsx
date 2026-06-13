@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { Compass, Flag, LogOut, ScrollText, ShieldCheck, UserRound, Users } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { CalendarDays, Compass, Flag, LogOut, ScrollText, UserRound, Users } from "lucide-react";
 import { signOutAction } from "@/app/actions/auth";
 import { Logo } from "@/components/logo";
 import { NotificationBell } from "@/components/notification-bell";
@@ -12,13 +15,16 @@ type AppNavProps = {
 };
 
 export function AppNav({ notifications, unreadCount }: AppNavProps) {
+  const pathname = usePathname();
   const links = [
     { href: "/discover", label: "Discover", icon: Compass },
+    { href: "/daily", label: "Daily", icon: CalendarDays },
     { href: "/quests", label: "Quests", icon: Flag },
     { href: "/feed", label: "Feed", icon: ScrollText },
     { href: "/friends", label: "Friends", icon: Users },
     { href: "/profile", label: "Profile", icon: UserRound },
   ];
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <>
@@ -26,14 +32,6 @@ export function AppNav({ notifications, unreadCount }: AppNavProps) {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-3 py-2.5 sm:px-4 sm:py-3">
           <Logo href="/discover" size="sm" />
           <div className="flex items-center gap-2">
-            <Link
-              href="/privacy"
-              aria-label="Privacy Policy"
-              className="inline-flex items-center gap-2 rounded-full border border-border p-2 text-muted transition hover:border-primary hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-3 sm:py-1.5 sm:text-sm sm:font-medium"
-            >
-              <ShieldCheck size={18} className="sm:size-3.5" />
-              <span className="hidden sm:inline">Privacy</span>
-            </Link>
             <NotificationBell notifications={notifications} unreadCount={unreadCount} />
             <form action={signOutAction} className="sm:hidden">
               <button
@@ -61,7 +59,13 @@ export function AppNav({ notifications, unreadCount }: AppNavProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-sm font-medium text-muted transition hover:border-primary hover:text-primary"
+              aria-current={isActive(link.href) ? "page" : undefined}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition hover:border-primary hover:text-primary",
+                isActive(link.href)
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-muted",
+              )}
             >
               <link.icon size={14} />
               {link.label}
@@ -76,8 +80,10 @@ export function AppNav({ notifications, unreadCount }: AppNavProps) {
             <Link
               key={link.href}
               href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
               className={cn(
-                "flex min-w-12 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted transition hover:text-primary",
+                "flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-lg px-1 py-1 text-[10px] font-medium transition hover:text-primary",
+                isActive(link.href) ? "bg-primary/10 text-primary" : "text-muted",
               )}
             >
               <link.icon size={20} />

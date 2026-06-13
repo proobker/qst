@@ -311,6 +311,8 @@ export const QUEST_ACCEPT_DEADLINE_HOURS = 24;
 /** Minimum share of the user's friends who must approve a quest post to award XP (non-voters count as not approved). */
 export const APPROVAL_THRESHOLD_PERCENT = 50;
 
+export const QUEST_SOURCES = ["discover", "daily"] as const;
+
 export const QUEST_STATUSES = [
   "generated",
   "accepted",
@@ -327,4 +329,14 @@ export const NOTIFICATION_TYPES = [
   "like",
   "approval",
   "level_up",
+  "streak_milestone",
 ] as const;
+
+export const STREAK_BADGE_MILESTONES = [
+  { days: 3, badge: "Daily Spark" },
+  { days: 7, badge: "Weeklong Adventurer" },
+  { days: 14, badge: "Two-Week Trailblazer" },
+  { days: 30, badge: "30-Day Legend" },
+] as const;
+
+export const LEADERBOARD_WEEK_START_DAY = "monday";

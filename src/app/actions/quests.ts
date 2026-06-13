@@ -36,6 +36,29 @@ export async function swipeRightAction(userQuestId: string) {
   revalidatePath("/quests");
 }
 
+export async function acceptDailyQuestAction(formData: FormData) {
+  const userId = await currentUserId();
+  const userQuestId = String(formData.get("userQuestId") ?? "");
+  if (!userQuestId) {
+    return;
+  }
+
+  await swipeQuest(userId, userQuestId, "right");
+  revalidatePath("/daily");
+  revalidatePath("/quests");
+}
+
+export async function skipDailyQuestAction(formData: FormData) {
+  const userId = await currentUserId();
+  const userQuestId = String(formData.get("userQuestId") ?? "");
+  if (!userQuestId) {
+    return;
+  }
+
+  await swipeQuest(userId, userQuestId, "left");
+  revalidatePath("/daily");
+}
+
 export async function uploadQuestCompletionAction(formData: FormData) {
   const userId = await currentUserId();
   const userQuestId = String(formData.get("userQuestId") ?? "");
@@ -50,6 +73,7 @@ export async function uploadQuestCompletionAction(formData: FormData) {
   await submitQuestCompletion(userId, userQuestId, caption, file);
   revalidatePath("/quests");
   revalidatePath("/feed");
+  revalidatePath("/daily");
 }
 
 export async function abandonQuestAction(formData: FormData) {

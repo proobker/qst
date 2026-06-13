@@ -1,20 +1,27 @@
-import type { User } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { unstable_noStore as noStore } from "next/cache";
 import {
   DEFAULT_HOBBIES,
   MIN_FRIENDS_REQUIRED,
   QUEST_ACCEPT_DEADLINE_HOURS,
+  STREAK_BADGE_MILESTONES,
 } from "@/lib/constants";
+import { addDaysToDateKey, localDateKey, localWeekRange, normalizeTimeZone } from "@/lib/dates";
 import { levelFromXp, titleForLevel, getLevelDefinition } from "@/lib/leveling";
 import { type LevelUpCelebration, parseLevelFromNotificationMessage } from "@/lib/level-up";
-import { generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
+import { buildOfflineQuest, generateQuest, recommendBadges, type GenerateQuestErrorReason } from "@/lib/ai";
 import {
+  DailyQuestSummary,
   FeedPost,
   FriendRequest,
   FriendStatus,
+  LeaderboardEntry,
   Notification,
   ProfileSummary,
   QuestDefinition,
+  QuestSource,
+  QuestStatus,
+  StreakSummary,
   UserProfile,
 } from "@/lib/types";
 import { validateCustomHobbyName } from "@/lib/hobby-validation";
@@ -185,6 +192,15 @@ type DiscoveryAssignment = {
   quests: QuestDefinition & { id: string };
 };
 
+type UserQuestAssignment = {
+  id: string;
+  quest_id: string;
+  status: QuestStatus;
+  source: QuestSource;
+  source_date: string | null;
+  quests: QuestDefinition & { id: string };
+};
+
 function normalizeEmbeddedQuest(quests: unknown): (QuestDefinition & { id: string }) | null {
   if (!quests) {
     return null;
@@ -200,6 +216,22 @@ function normalizeEmbeddedQuest(quests: unknown): (QuestDefinition & { id: strin
     return quests as QuestDefinition & { id: string };
   }
   return null;
+}
+
+function normalizeUserQuestAssignment(row: Record<string, unknown>): UserQuestAssignment | null {
+  const quest = normalizeEmbeddedQuest(row.quests);
+  if (!quest) {
+    return null;
+  }
+
+  return {
+    id: row.id as string,
+    quest_id: row.quest_id as string,
+    status: row.status as QuestStatus,
+    source: ((row.source as string | null) ?? "discover") as QuestSource,
+    source_date: (row.source_date as string | null) ?? null,
+    quests: quest,
+  };
 }
 
 export type DiscoveryQuestResult = {
@@ -404,6 +436,139 @@ export async function getDiscoveryQuest(userId: string): Promise<DiscoveryQuestR
   return promise;
 }
 
+export async function getDailyQuest(userId: string): Promise<DailyQuestSummary | null> {
+  noStore();
+  await expireStaleAcceptedQuests(userId);
+
+  const supabase = await createSupabaseServerClient();
+  const profile = await getProfile(userId);
+  if (!profile) {
+    return null;
+  }
+
+  const sourceDate = localDateKey(profile.timezone);
+  const { data: existing } = await supabase
+    .from("user_quests")
+    .select("id, quest_id, status, source, source_date, quests(*)")
+    .eq("user_id", userId)
+    .eq("source", "daily")
+    .eq("source_date", sourceDate)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) {
+    const assignment = normalizeUserQuestAssignment(existing as Record<string, unknown>);
+    return assignment
+      ? {
+          assignmentId: assignment.id,
+          questId: assignment.quest_id,
+          status: assignment.status,
+          sourceDate,
+          quest: assignment.quests,
+        }
+      : null;
+  }
+
+  const [onboarding, history] = await Promise.all([
+    getOnboardingState(userId),
+    getUserQuestHistory(userId),
+  ]);
+  const context = {
+    hobbies: onboarding.selectedHobbies,
+    location: { latitude: onboarding.latitude, longitude: onboarding.longitude },
+    level: profile.level,
+    previousQuestTitles: history.previousQuestTitles,
+    completedQuests: history.completedQuests,
+    rejectedQuests: history.rejectedQuests,
+  };
+  const generation = await generateQuest(context);
+  const dailyQuest = generation.ok ? generation.quests[0] : buildOfflineQuest(context);
+
+  if (!dailyQuest) {
+    return null;
+  }
+
+  const { data: insertedQuest, error: insertQuestError } = await supabase
+    .from("quests")
+    .insert({
+      creator_ai: true,
+      title: dailyQuest.title,
+      description: dailyQuest.description,
+      difficulty: dailyQuest.difficulty,
+      xp_reward: dailyQuest.xp_reward,
+      badge_reward: dailyQuest.badge_reward,
+      estimated_time: dailyQuest.estimated_time,
+      category: dailyQuest.category,
+    })
+    .select("*")
+    .single();
+
+  if (insertQuestError || !insertedQuest) {
+    console.error("[DailyQuest] Failed to insert quest:", insertQuestError);
+    return null;
+  }
+
+  const insertedQuestId = (insertedQuest as { id: string }).id;
+  const { data: assignment, error: assignmentError } = await supabase
+    .from("user_quests")
+    .insert({
+      user_id: userId,
+      quest_id: insertedQuestId,
+      status: "generated",
+      source: "daily",
+      source_date: sourceDate,
+    })
+    .select("id, quest_id, status, source, source_date, quests(*)")
+    .maybeSingle();
+
+  if (assignmentError || !assignment) {
+    await supabase.from("quests").delete().eq("id", insertedQuestId);
+
+    const { data: parallelAssignment } = await supabase
+      .from("user_quests")
+      .select("id, quest_id, status, source, source_date, quests(*)")
+      .eq("user_id", userId)
+      .eq("source", "daily")
+      .eq("source_date", sourceDate)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    const normalized = parallelAssignment
+      ? normalizeUserQuestAssignment(parallelAssignment as Record<string, unknown>)
+      : null;
+    return normalized
+      ? {
+          assignmentId: normalized.id,
+          questId: normalized.quest_id,
+          status: normalized.status,
+          sourceDate,
+          quest: normalized.quests,
+        }
+      : null;
+  }
+
+  const normalized = normalizeUserQuestAssignment(assignment as Record<string, unknown>);
+  return normalized
+    ? {
+        assignmentId: normalized.id,
+        questId: normalized.quest_id,
+        status: normalized.status,
+        sourceDate,
+        quest: normalized.quests,
+      }
+    : null;
+}
+
+export async function updateUserTimezone(userId: string, timezone: string) {
+  const supabase = await createSupabaseServerClient();
+  await supabase
+    .from("users")
+    .update({ timezone: normalizeTimeZone(timezone), updated_at: new Date().toISOString() })
+    .eq("id", userId);
+}
+
 export async function swipeQuest(userId: string, userQuestId: string, direction: "left" | "right") {
   noStore();
   const supabase = await createSupabaseServerClient();
@@ -568,6 +733,43 @@ export async function hasMinimumFriends(userId: string): Promise<boolean> {
   return (await getFriendCount(userId)) >= MIN_FRIENDS_REQUIRED;
 }
 
+export async function getStreakSummary(userId: string): Promise<StreakSummary> {
+  const supabase = await createSupabaseServerClient();
+  const [profileResult, badgesResult] = await Promise.all([
+    supabase
+      .from("users")
+      .select("current_streak,best_streak,last_daily_completed_on")
+      .eq("id", userId)
+      .maybeSingle(),
+    supabase
+      .from("user_badges")
+      .select("badges(name)")
+      .eq("user_id", userId),
+  ]);
+
+  const profile = profileResult.data as {
+    current_streak: number | null;
+    best_streak: number | null;
+    last_daily_completed_on: string | null;
+  } | null;
+  const earnedBadges = new Set(
+    ((badgesResult.data as Array<{ badges: { name: string } | null }> | null) ?? [])
+      .map((row) => row.badges?.name)
+      .filter((name): name is string => Boolean(name)),
+  );
+
+  return {
+    currentStreak: Number(profile?.current_streak ?? 0),
+    bestStreak: Number(profile?.best_streak ?? 0),
+    lastDailyCompletedOn: profile?.last_daily_completed_on ?? null,
+    streakBadges: STREAK_BADGE_MILESTONES.map((milestone) => ({
+      days: milestone.days,
+      badge: milestone.badge,
+      earned: earnedBadges.has(milestone.badge),
+    })),
+  };
+}
+
 async function expireStaleAcceptedQuests(userId: string) {
   const supabase = await createSupabaseServerClient();
   const cutoff = new Date(Date.now() - QUEST_ACCEPT_DEADLINE_HOURS * 60 * 60 * 1000).toISOString();
@@ -692,6 +894,84 @@ async function checkAndAwardQuestApproval(
   return true;
 }
 
+async function updateDailyStreak(userId: string, completedOn: string, admin: SupabaseClient) {
+  const { data: profile } = await admin
+    .from("users")
+    .select("current_streak,best_streak,last_daily_completed_on")
+    .eq("id", userId)
+    .maybeSingle();
+
+  const lastCompletedOn = (profile?.last_daily_completed_on as string | null | undefined) ?? null;
+  if (lastCompletedOn && lastCompletedOn >= completedOn) {
+    return;
+  }
+
+  const previousStreak = Number(profile?.current_streak ?? 0);
+  const bestStreak = Number(profile?.best_streak ?? 0);
+  const expectedPreviousDate = addDaysToDateKey(completedOn, -1);
+  const nextStreak = lastCompletedOn === expectedPreviousDate ? previousStreak + 1 : 1;
+  const nextBestStreak = Math.max(bestStreak, nextStreak);
+
+  const { error } = await admin
+    .from("users")
+    .update({
+      current_streak: nextStreak,
+      best_streak: nextBestStreak,
+      last_daily_completed_on: completedOn,
+    })
+    .eq("id", userId);
+
+  if (error) {
+    console.error("[DailyStreak] Failed to update streak:", error);
+    return;
+  }
+
+  const newlyReachedMilestones = STREAK_BADGE_MILESTONES.filter(
+    (milestone) => previousStreak < milestone.days && nextStreak >= milestone.days,
+  );
+  if (newlyReachedMilestones.length === 0) {
+    return;
+  }
+
+  const { data: badgeRows } = await admin
+    .from("badges")
+    .upsert(newlyReachedMilestones.map((milestone) => ({ name: milestone.badge })), { onConflict: "name" })
+    .select("id,name");
+
+  if (!badgeRows || badgeRows.length === 0) {
+    return;
+  }
+
+  const { data: existingBadges } = await admin
+    .from("user_badges")
+    .select("badge_id")
+    .eq("user_id", userId)
+    .in("badge_id", badgeRows.map((badge) => badge.id));
+  const existingBadgeIds = new Set(((existingBadges as Array<{ badge_id: string }> | null) ?? []).map((row) => row.badge_id));
+  const badgesToAward = badgeRows.filter((badge) => !existingBadgeIds.has(badge.id));
+
+  if (badgesToAward.length === 0) {
+    return;
+  }
+
+  await admin.from("user_badges").upsert(
+    badgesToAward.map((badge) => ({
+      user_id: userId,
+      badge_id: badge.id,
+    })),
+  );
+
+  for (const badge of badgesToAward) {
+    await createNotification({
+      userId,
+      type: "streak_milestone",
+      message: `You earned ${badge.name} for a ${nextStreak}-day daily quest streak!`,
+      entityId: userId,
+      entityType: "streak",
+    });
+  }
+}
+
 async function awardQuestRewards(postId: string, admin = createSupabaseAdminClient()) {
   const { data: post } = await admin
     .from("posts")
@@ -705,7 +985,7 @@ async function awardQuestRewards(postId: string, admin = createSupabaseAdminClie
 
   const { data: assignment } = await admin
     .from("user_quests")
-    .select("id,status")
+    .select("id,status,source,source_date")
     .eq("user_id", post.user_id)
     .eq("quest_id", post.quest_id)
     .maybeSingle();
@@ -722,6 +1002,10 @@ async function awardQuestRewards(postId: string, admin = createSupabaseAdminClie
   if (questUpdateError) {
     console.error("[QuestRewards] Failed to mark quest completed:", questUpdateError);
     return;
+  }
+
+  if (assignment.source === "daily" && assignment.source_date) {
+    await updateDailyStreak(post.user_id, assignment.source_date, admin);
   }
 
   const { data: profile } = await admin.from("users").select("xp,level").eq("id", post.user_id).maybeSingle();
@@ -854,6 +1138,90 @@ export async function getFriends(userId: string) {
       friendLevel: friend?.level ?? 1,
     };
   });
+}
+
+export async function getWeeklyFriendLeaderboard(userId: string): Promise<LeaderboardEntry[]> {
+  const supabase = await createSupabaseServerClient();
+  const [profile, friendIds] = await Promise.all([getProfile(userId), getFriendIds(userId)]);
+  const participantIds = [userId, ...friendIds];
+  if (participantIds.length === 0) {
+    return [];
+  }
+
+  const weekRange = localWeekRange(profile?.timezone ?? "UTC");
+  const [usersResult, completedResult, approvalsResult] = await Promise.all([
+    supabase
+      .from("users")
+      .select("id,name,avatar,level,current_streak")
+      .in("id", participantIds),
+    supabase
+      .from("user_quests")
+      .select("user_id,completed_at,quests(xp_reward)")
+      .in("user_id", participantIds)
+      .eq("status", "completed")
+      .gte("completed_at", weekRange.startsAt)
+      .lt("completed_at", weekRange.endsAt),
+    supabase
+      .from("approvals")
+      .select("user_id,created_at,vote")
+      .in("user_id", participantIds)
+      .eq("vote", true)
+      .gte("created_at", weekRange.startsAt)
+      .lt("created_at", weekRange.endsAt),
+  ]);
+
+  const completedRows =
+    (completedResult.data as Array<{ user_id: string; quests: { xp_reward: number } | null }> | null) ?? [];
+  const approvalsRows = (approvalsResult.data as Array<{ user_id: string; vote: boolean }> | null) ?? [];
+  const completedByUser = new Map<string, { xp: number; count: number }>();
+  const approvalsByUser = new Map<string, number>();
+
+  for (const id of participantIds) {
+    completedByUser.set(id, { xp: 0, count: 0 });
+    approvalsByUser.set(id, 0);
+  }
+
+  for (const row of completedRows) {
+    const current = completedByUser.get(row.user_id) ?? { xp: 0, count: 0 };
+    current.xp += Number(row.quests?.xp_reward ?? 0);
+    current.count += 1;
+    completedByUser.set(row.user_id, current);
+  }
+
+  for (const row of approvalsRows) {
+    approvalsByUser.set(row.user_id, (approvalsByUser.get(row.user_id) ?? 0) + 1);
+  }
+
+  const entries = ((usersResult.data as Array<{
+    id: string;
+    name: string;
+    avatar: string | null;
+    level: number;
+    current_streak: number | null;
+  }> | null) ?? [])
+    .map((user) => {
+      const completed = completedByUser.get(user.id) ?? { xp: 0, count: 0 };
+      return {
+        userId: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        level: Number(user.level ?? 1),
+        weeklyXp: completed.xp,
+        completedCount: completed.count,
+        approvalsGiven: approvalsByUser.get(user.id) ?? 0,
+        currentStreak: Number(user.current_streak ?? 0),
+        rank: 0,
+      } satisfies LeaderboardEntry;
+    })
+    .sort((a, b) => {
+      if (b.weeklyXp !== a.weeklyXp) return b.weeklyXp - a.weeklyXp;
+      if (b.completedCount !== a.completedCount) return b.completedCount - a.completedCount;
+      if (b.approvalsGiven !== a.approvalsGiven) return b.approvalsGiven - a.approvalsGiven;
+      if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
+      return a.name.localeCompare(b.name);
+    });
+
+  return entries.map((entry, index) => ({ ...entry, rank: index + 1 }));
 }
 
 export async function getFriendStatus(userId: string, otherId: string): Promise<FriendStatus> {
