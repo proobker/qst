@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { CapacitorAppBridge } from "@/components/capacitor-app-bridge";
+import { OfflineScreen } from "@/components/offline-screen";
+import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -44,6 +46,8 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         <CapacitorAppBridge />
+        <ServiceWorkerRegister />
+        <OfflineScreen />
         {children}
       </body>
     </html>

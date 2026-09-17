@@ -77,3 +77,22 @@ body {
 .animate-in {
   animation: slide-in-from-right 0.2s ease-out;
 }
+
+@keyframes connecting-bar {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(400%);
+  }
+}
+
+.connecting-bar {
+  animation: connecting-bar 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .connecting-bar {
+    animation-duration: 3.2s;
+  }
+}

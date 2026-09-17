@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex" />
+    <title>qst — Connection Lost</title>
+    <style>
+      :root {
+        --background: #0f172a;
+        --surface: #1e293b;
+        --surface-hover: #334155;
+        --primary: #8b5cf6;
+        --primary-hover: #7c3aed;
+        --foreground: #f1f5f9;
+        --muted: #94a3b8;
+        --border: #334155;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: var(--background);
+        color: var(--foreground);
+        font-family:
+          "Geist",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          system-ui,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 384px;
+        text-align: center;
+      }
+
+      .emblem {
+        position: relative;
+        width: 176px;
+        height: 176px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 0 32px;
+      }
+
+      .glow {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+        opacity: 0.3;
+        animation: glow-pulse 2.4s ease-in-out infinite alternate;
+      }
+
+      .ping {
+        position: absolute;
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        border: 2px solid color-mix(in srgb, var(--primary) 30%, transparent);
+        animation: ping 1.8s ease-out infinite;
+      }
+
+      .ping:nth-of-type(2) {
+        animation-delay: 0.9s;
+      }
+
+      .beams {
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: conic-gradient(
+          from 0deg,
+          transparent 0%,
+          var(--primary) 10%,
+          transparent 25%
+        );
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 14px), #000 calc(100% - 12px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 14px), #000 calc(100% - 12px));
+        animation: spin 3s linear infinite;
+        opacity: 0.7;
+      }
+
+      .wifi-badge {
+        position: relative;
+        width: 96px;
+        height: 96px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--surface);
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.4),
+          0 0 40px color-mix(in srgb, var(--primary) 25%, transparent);
+        border: 1px solid var(--border);
+      }
+
+      .wifi-badge svg {
+        width: 40px;
+        height: 40px;
+        color: var(--primary);
+      }
+
+      .signal {
+        position: absolute;
+        bottom: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        padding: 6px 8px 4px;
+        border-radius: 999px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      }
+
+      .signal span {
+        width: 4px;
+        height: 8px;
+        border-radius: 2px;
+        background: var(--primary);
+        animation: bounce 1s ease-in-out infinite;
+      }
+
+      .signal span:nth-child(1) {
+        height: 6px;
+        animation-delay: 0s;
+      }
+      .signal span:nth-child(2) {
+        height: 11px;
+        animation-delay: 0.12s;
+      }
+      .signal span:nth-child(3) {
+        height: 8px;
+        animation-delay: 0.24s;
+      }
+      .signal span:nth-child(4) {
+        height: 13px;
+        animation-delay: 0.36s;
+      }
+      .signal span:nth-child(5) {
+        height: 10px;
+        animation-delay: 0.48s;
+      }
+      .signal span:nth-child(6) {
+        height: 16px;
+        animation-delay: 0.6s;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--primary);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        margin: 8px 0 0;
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .progress {
+        width: 256px;
+        margin: 32px 0 0;
+      }
+
+      .track {
+        height: 6px;
+        width: 100%;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--surface-hover);
+      }
+
+      .bar {
+        height: 100%;
+        width: 33.33%;
+        border-radius: 999px;
+        background: var(--primary);
+        animation: sweep 1.6s ease-in-out infinite;
+      }
+
+      .status {
+        margin: 12px 0 0;
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+
+      button {
+        margin: 24px 0 0;
+        padding: 12px 32px;
+        border: none;
+        border-radius: 999px;
+        background: var(--primary);
+        color: var(--background);
+        font-size: 14px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        box-shadow: 0 10px 30px color-mix(in srgb, var(--primary) 40%, transparent);
+        transition:
+          background 0.2s ease,
+          transform 0.1s ease;
+      }
+
+      button:hover {
+        background: var(--primary-hover);
+      }
+
+      button:active {
+        transform: scale(0.96);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+
+      @keyframes glow-pulse {
+        from {
+          transform: scale(0.8);
+          opacity: 0.15;
+        }
+        to {
+          transform: scale(1.15);
+          opacity: 0.45;
+        }
+      }
+
+      @keyframes ping {
+        0% {
+          transform: scale(0.5);
+          opacity: 0.7;
+        }
+        100% {
+          transform: scale(1.4);
+          opacity: 0;
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.4;
+        }
+        50% {
+          transform: translateY(-8px);
+          opacity: 1;
+        }
+      }
+
+      @keyframes sweep {
+        from {
+          transform: translateX(-100%);
+        }
+        to {
+          transform: translateX(400%);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .bar {
+          animation-duration: 3.2s;
+        }
+        .glow,
+        .ping,
+        .beams,
+        .signal span {
+          animation-iteration-count: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="emblem">
+        <div class="glow"></div>
+        <div class="ping"></div>
+        <div class="ping"></div>
+        <div class="beams"></div>
+        <div class="wifi-badge">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="2" x2="22" y1="2" y2="22" />
+            <path d="M8.5 16.5a5 5 0 0 1 7 0" />
+            <path d="M2 8.82a15 15 0 0 1 4.17-2.65" />
+            <path d="M10.66 5c4.01-.36 8.14.9 11.34 3.76" />
+            <path d="M16.85 11.25a10 10 0 0 1 2.22 1.68" />
+            <path d="M5 13a10 10 0 0 1 5.24-2.76" />
+            <line x1="12" x2="12.01" y1="20" y2="20" />
+          </svg>
+        </div>
+        <div class="signal">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <p class="eyebrow">Quest interrupted</p>
+      <h1>Connection Lost</h1>
+      <p class="subtitle">Your next quest is waiting. Reconnect to continue the adventure.</p>
+
+      <div class="progress">
+        <div class="track">
+          <div class="bar"></div>
+        </div>
+        <p class="status" id="status">Waiting for connection...</p>
+      </div>
+
+      <button id="retry" type="button">Try again</button>
+    </main>
+
+    <script>
+      (function () {
+        var statusEl = document.getElementById("status");
+        var retryEl = document.getElementById("retry");
+        var checking = false;
+
+        function setChecking(value) {
+          checking = value;
+          retryEl.disabled = value;
+          statusEl.textContent = value ? "Checking connection..." : "Waiting for connection...";
+        }
+
+        function checkOnline() {
+          return fetch("/offline-check.json", { method: "HEAD", cache: "no-store" })
+            .then(function (response) {
+              return response.ok;
+            })
+            .catch(function () {
+              return false;
+            });
+        }
+
+        function tryReconnect() {
+          if (checking) {
+            return;
+          }
+          setChecking(true);
+          checkOnline().then(function (online) {
+            setChecking(false);
+            if (online) {
+              window.location.reload();
+            }
+          });
+        }
+
+        retryEl.addEventListener("click", tryReconnect);
+        window.addEventListener("online", function () {
+          window.setTimeout(function () {
+            window.location.reload();
+          }, 500);
+        });
+        window.setInterval(tryReconnect, 5000);
+      })();
+    </script>
+  </body>
+</html>
