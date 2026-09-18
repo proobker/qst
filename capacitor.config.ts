@@ -7,6 +7,7 @@ const config: CapacitorConfig = {
   server: {
     url: "https://qst-kappa.vercel.app",
     cleartext: false,
+    errorPath: "offline.html",
   },
   plugins: {
     SplashScreen: {

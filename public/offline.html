@@ -369,9 +369,15 @@
 
     <script>
       (function () {
+        var SERVER_URL = "https://qst-kappa.vercel.app";
         var statusEl = document.getElementById("status");
         var retryEl = document.getElementById("retry");
         var checking = false;
+        var isNativeFallback =
+          location.protocol === "file:" ||
+          location.hostname === "localhost" ||
+          location.hostname === "host" ||
+          /\.local$/.test(location.hostname);
 
         function setChecking(value) {
           checking = value;
@@ -380,6 +386,18 @@
         }
 
         function checkOnline() {
+          if (isNativeFallback) {
+            return fetch(SERVER_URL + "/offline-check.json?rx=" + Date.now(), {
+              mode: "no-cors",
+              cache: "no-store",
+            })
+              .then(function () {
+                return true;
+              })
+              .catch(function () {
+                return false;
+              });
+          }
           return fetch("/offline-check.json", { method: "HEAD", cache: "no-store" })
             .then(function (response) {
               return response.ok;
@@ -397,16 +415,18 @@
           checkOnline().then(function (online) {
             setChecking(false);
             if (online) {
-              window.location.reload();
+              if (isNativeFallback) {
+                window.location.href = SERVER_URL;
+              } else {
+                window.location.reload();
+              }
             }
           });
         }
 
         retryEl.addEventListener("click", tryReconnect);
         window.addEventListener("online", function () {
-          window.setTimeout(function () {
-            window.location.reload();
-          }, 500);
+          window.setTimeout(tryReconnect, 500);
         });
         window.setInterval(tryReconnect, 5000);
       })();

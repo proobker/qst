@@ -10,13 +10,17 @@ export function ServiceWorkerRegister() {
     if (!("serviceWorker" in navigator)) {
       return;
     }
-    const onLoad = () => {
+    const register = () => {
       void navigator.serviceWorker
         .register("/sw.js", { scope: "/", updateViaCache: "none" })
         .catch(() => undefined);
     };
-    window.addEventListener("load", onLoad);
-    return () => window.removeEventListener("load", onLoad);
+    if (document.readyState === "complete") {
+      register();
+    } else {
+      window.addEventListener("load", register, { once: true });
+      return () => window.removeEventListener("load", register);
+    }
   }, []);
 
   return null;
