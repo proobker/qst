@@ -4,6 +4,8 @@ import { useRef, useState, useTransition } from "react";
 import { ImagePlus } from "lucide-react";
 import { uploadQuestCompletionAction } from "@/app/actions/quests";
 import { ImageEditor } from "@/components/image-editor";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/toast";
 
@@ -60,12 +62,12 @@ export function QuestUploadForm({ userQuestId }: QuestUploadFormProps) {
     <>
       <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-border p-3">
         <label className="block text-xs font-semibold uppercase tracking-wide text-muted">Caption</label>
-        <textarea
+        <Textarea
           required
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           placeholder="Explain what you did to complete this quest."
-          className="min-h-24 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
+          className="min-h-24"
         />
 
         <input
@@ -91,14 +93,10 @@ export function QuestUploadForm({ userQuestId }: QuestUploadFormProps) {
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={pending}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-primary px-3 py-2 text-sm font-semibold text-white disabled:opacity-50"
-        >
+        <Button type="submit" disabled={pending} className="w-full">
           {pending ? <Spinner size="sm" /> : null}
           {pending ? "Uploading..." : "Upload completion"}
-        </button>
+        </Button>
       </form>
 
       <ImageEditor

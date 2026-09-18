@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { QuestSwipeDeck } from "@/components/quest-swipe-deck";
+import { AppRail } from "@/components/app-rail";
 import { DiscoverSkeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/ui/page-header";
+import { buttonVariants } from "@/components/ui/button";
 import { isGeminiInCooldown, getGeminiCooldownRemainingMs } from "@/lib/ai";
 import { getGeminiApiKey } from "@/lib/env";
 import { MIN_FRIENDS_REQUIRED } from "@/lib/constants";
-import { getDiscoveryQuest, getFriendCount, getOnboardingState } from "@/lib/data";
+import { getDiscoveryQuest, getFriendCount, getFriendLeaderboard, getOnboardingState, getProfileSummary } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -28,10 +32,7 @@ async function DiscoverContent() {
         <p className="mt-2 text-sm text-muted">
           We need your hobbies and location to generate relevant real-world quests.
         </p>
-        <Link
-          href="/onboarding"
-          className="mt-4 inline-flex rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
-        >
+        <Link href="/onboarding" className={cn(buttonVariants({ size: "md" }), "mt-4")}>
           Complete onboarding
         </Link>
       </div>
@@ -47,10 +48,7 @@ async function DiscoverContent() {
           You need at least {MIN_FRIENDS_REQUIRED} friend before you can discover quests. Friends also verify your
           completions in the feed.
         </p>
-        <Link
-          href="/friends?tab=find"
-          className="mt-4 inline-flex rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
-        >
+        <Link href="/friends?tab=find" className={cn(buttonVariants({ size: "md" }), "mt-4")}>
           Find friends
         </Link>
       </div>
@@ -58,7 +56,13 @@ async function DiscoverContent() {
   }
 
   const hasGeminiKey = Boolean(getGeminiApiKey());
-  const { assignments, error } = await getDiscoveryQuest(user.id);
+  const [discovery, summary, leaderboard] = await Promise.all([
+    getDiscoveryQuest(user.id),
+    getProfileSummary(user.id),
+    getFriendLeaderboard(user.id),
+  ]);
+  const { assignments, error } = discovery;
+  const profile = summary.profile;
 
   if (assignments.length === 0) {
     console.error("[DiscoverPage] No quest assignment:", error ?? "unknown");
@@ -81,10 +85,7 @@ async function DiscoverContent() {
             <code className="text-primary">[Gemini]</code> logs.
           </p>
         )}
-        <Link
-          href="/discover"
-          className="mt-4 inline-flex rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
-        >
+        <Link href="/discover" className={cn(buttonVariants({ size: "md" }), "mt-4")}>
           Try again
         </Link>
       </div>
@@ -108,19 +109,23 @@ async function DiscoverContent() {
   const cooldownMinutes = Math.ceil(getGeminiCooldownRemainingMs() / 60_000);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">
-        <h1 className="text-xl font-bold text-foreground sm:text-2xl">Discover a quest</h1>
-        <p className="mt-1.5 text-sm leading-6 text-muted sm:mt-2">
-          Swipe right to accept, left to reject. Drag the card or use arrow keys.
-        </p>
-        {geminiCooldown ? (
-          <p className="mt-3 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-xs text-accent">
-            Gemini quota is resting (~{cooldownMinutes} min). Quests use the offline builder until API limits reset.
-          </p>
-        ) : null}
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
+      <div className="space-y-4 sm:space-y-6">
+        <PageHeader
+          title="Discover a quest"
+          subtitle="Swipe right to accept, left to reject. Drag the card or use arrow keys."
+        >
+          {geminiCooldown ? (
+            <p className="mt-3 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-xs text-accent">
+              Gemini quota is resting (~{cooldownMinutes} min). Quests use the offline builder until API limits reset.
+            </p>
+          ) : null}
+        </PageHeader>
+        <QuestSwipeDeck quests={questStack} />
       </div>
-      <QuestSwipeDeck quests={questStack} />
+      {profile ? (
+        <AppRail profile={profile} leaderboard={leaderboard} ctaHref="/quests" ctaLabel="View my quests" />
+      ) : null}
     </div>
   );
 }

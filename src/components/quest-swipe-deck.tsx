@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { swipeLeftAction, swipeRightAction } from "@/app/actions/quests";
 import { useToast } from "@/components/ui/toast";
 import { Spinner } from "@/components/ui/spinner";
+import { Pill } from "@/components/ui/pill";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type QuestData = {
@@ -39,14 +41,10 @@ function QuestPreviewCard({ entry }: { entry: QuestStackEntry }) {
       className="absolute inset-x-1 top-1 h-full overflow-hidden rounded-2xl border border-border bg-surface/95 p-4 shadow-lg shadow-primary/5 sm:inset-x-1.5 sm:top-1.5 sm:p-6"
       aria-hidden="true"
     >
-      <div className="mb-3 flex flex-wrap items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted sm:mb-4 sm:gap-2 sm:text-xs">
-        <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
-          {quest.category}
-        </span>
-        <span className="rounded-full border border-border px-2 py-1">{quest.difficulty}</span>
-        <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-1 text-accent">
-          {quest.xp_reward} XP
-        </span>
+<div className="mb-3 flex flex-wrap items-center gap-1.5 sm:mb-4 sm:gap-2">
+        <Pill variant="primary">{quest.category}</Pill>
+        <Pill variant="neutral">{quest.difficulty}</Pill>
+        <Pill variant="accent">{quest.xp_reward} XP</Pill>
       </div>
       <h3 className="line-clamp-2 text-lg font-bold tracking-tight text-foreground sm:text-xl">{quest.title}</h3>
       <p className="mt-2 line-clamp-5 text-sm text-muted sm:mt-3">{quest.description}</p>
@@ -219,15 +217,11 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
           </div>
         </motion.div>
 
-        <div className="mb-3 flex flex-wrap items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-muted sm:mb-4 sm:gap-2 sm:text-xs">
-          <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-1 text-primary">
-            {quest.category}
-          </span>
-          <span className="rounded-full border border-border px-2 py-1">{quest.difficulty}</span>
-          <span className="rounded-full border border-accent/40 bg-accent/10 px-2 py-1 text-accent">
-            {quest.xp_reward} XP
-          </span>
-          <span className="rounded-full border border-border px-2 py-1">{quest.estimated_time}</span>
+<div className="mb-3 flex flex-wrap items-center gap-1.5 sm:mb-4 sm:gap-2">
+          <Pill variant="primary">{quest.category}</Pill>
+          <Pill variant="neutral">{quest.difficulty}</Pill>
+          <Pill variant="accent">{quest.xp_reward} XP</Pill>
+          <Pill variant="neutral">{quest.estimated_time}</Pill>
         </div>
 
         <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{quest.title}</h2>
@@ -244,22 +238,17 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
           </div>
         ) : (
           <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-6">
-            <button
-              type="button"
+<Button
+              variant="secondaryDanger"
+              size="lg"
               onClick={() => commitSwipe("left")}
-              className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-muted transition hover:border-danger hover:text-danger sm:py-3"
               aria-label="Reject quest"
             >
               Reject
-            </button>
-            <button
-              type="button"
-              onClick={() => commitSwipe("right")}
-              className="rounded-lg bg-gradient-primary px-4 py-2.5 text-sm font-semibold text-white sm:py-3"
-              aria-label="Accept quest"
-            >
+            </Button>
+            <Button size="lg" onClick={() => commitSwipe("right")} aria-label="Accept quest">
               Accept
-            </button>
+            </Button>
           </div>
         )}
 

@@ -3,6 +3,9 @@
 import { AlertTriangle, Trash2 } from "lucide-react";
 import { useActionState, useState } from "react";
 import { deleteAccountAction, type DeleteAccountState } from "@/app/actions/auth";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const initialState: DeleteAccountState = {
   message: "",
@@ -15,7 +18,7 @@ export function DeleteAccountSection({ email }: { email: string }) {
   const canSubmit = normalizedEmail.length > 0 && confirmationEmail.trim().toLowerCase() === normalizedEmail;
 
   return (
-    <section className="rounded-xl border border-danger/40 bg-danger/10 p-6">
+    <Card variant="danger" className="p-6">
       <div className="flex items-start gap-3">
         <div className="rounded-lg border border-danger/40 bg-danger/15 p-2 text-red-200">
           <AlertTriangle aria-hidden="true" className="size-5" />
@@ -30,7 +33,7 @@ export function DeleteAccountSection({ email }: { email: string }) {
           <form action={formAction} className="mt-4 space-y-3">
             <label htmlFor="delete-account-confirmation-email" className="block space-y-2">
               <span className="text-xs font-medium uppercase tracking-wide text-red-100/80">Confirm email</span>
-              <input
+              <Input
                 id="delete-account-confirmation-email"
                 name="confirmationEmail"
                 type="email"
@@ -39,7 +42,7 @@ export function DeleteAccountSection({ email }: { email: string }) {
                 autoComplete="email"
                 placeholder={email}
                 required
-                className="h-11 w-full rounded-lg border border-danger/40 bg-background px-3 text-sm font-semibold text-foreground outline-none transition placeholder:text-muted focus:border-danger focus:ring-2 focus:ring-danger/30 sm:max-w-xs"
+                className="border-danger/40 font-semibold focus:border-danger sm:max-w-xs"
               />
             </label>
 
@@ -52,17 +55,17 @@ export function DeleteAccountSection({ email }: { email: string }) {
               </p>
             ) : null}
 
-            <button
+            <Button
               type="submit"
+              variant="danger"
               disabled={!canSubmit || pending}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-danger px-4 text-sm font-semibold text-white transition hover:bg-danger-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Trash2 aria-hidden="true" className="size-4" />
               <span>{pending ? "Deleting..." : "Delete account"}</span>
-            </button>
+            </Button>
           </form>
         </div>
       </div>
-    </section>
+    </Card>
   );
 }
