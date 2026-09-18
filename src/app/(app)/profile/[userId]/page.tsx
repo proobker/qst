@@ -5,6 +5,7 @@ import { BadgePill } from "@/components/badge-pill";
 import { FriendButton } from "@/components/friend-button";
 import { StatCard } from "@/components/stat-card";
 import { XpBar } from "@/components/xp-bar";
+import { Card } from "@/components/ui/card";
 import { titleForLevel } from "@/lib/leveling";
 import { getFriendRelationship, getProfileSummary } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -61,12 +62,13 @@ export default async function PublicProfilePage({
         <StatCard label="Quests completed" value={summary.completedQuests.length} />
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <div className="grid gap-3 md:grid-cols-2">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground">XP Progress</h2>
         <XpBar xp={profile.xp} level={profile.level} className="mt-4" />
-      </section>
+      </Card>
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground">Badges</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {summary.badges.length === 0 ? (
@@ -75,9 +77,11 @@ export default async function PublicProfilePage({
             summary.badges.map((badge) => <BadgePill key={badge.id} name={badge.name} icon={badge.icon} />)
           )}
         </div>
-      </section>
+      </Card>
+      </div>
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground">Completed quests</h2>
         <div className="mt-4 space-y-2">
           {summary.completedQuests.length === 0 ? (
@@ -96,9 +100,9 @@ export default async function PublicProfilePage({
             })
           )}
         </div>
-      </section>
+      </Card>
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground">Quest posts</h2>
         {summary.posts.length === 0 ? (
           <p className="mt-4 text-sm text-muted">No posts yet.</p>
@@ -122,7 +126,8 @@ export default async function PublicProfilePage({
             ))}
           </div>
         )}
-      </section>
+      </Card>
+      </div>
     </div>
   );
 }

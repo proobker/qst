@@ -8,6 +8,8 @@ import { updatePostImageAction, rollbackPostEditAction } from "@/app/actions/pos
 import { approvePostAction, disapprovePostAction } from "@/app/actions/social";
 import { Avatar } from "@/components/avatar";
 import { ImageEditor } from "@/components/image-editor";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/toast";
 import { FeedPost } from "@/lib/types";
@@ -58,7 +60,7 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
 
   return (
     <>
-      <article className="overflow-hidden rounded-xl border border-border bg-surface transition-shadow hover:shadow-lg hover:shadow-primary/5">
+      <Card className="overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-3">
           <Link href={`/profile/${user?.id ?? post.user_id}`}>
             <Avatar name={user?.name ?? "User"} src={user?.avatar} size="sm" />
@@ -114,25 +116,25 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
 
           {isOwner ? (
             <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => setEditorOpen(true)}
                 disabled={pending}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-primary hover:text-primary"
               >
                 <Pencil size={14} />
                 Edit post
-              </button>
+              </Button>
               {post.edit_count > 0 ? (
-                <button
-                  type="button"
+                <Button
+                  variant="accent"
+                  size="sm"
                   onClick={handleRollback}
                   disabled={pending}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-accent hover:text-accent"
                 >
                   <RotateCcw size={14} />
                   Rollback
-                </button>
+                </Button>
               ) : null}
             </div>
           ) : (
@@ -170,7 +172,7 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
             </div>
           )}
         </div>
-      </article>
+      </Card>
 
       <ImageEditor
         open={editorOpen}

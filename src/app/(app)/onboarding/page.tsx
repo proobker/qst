@@ -3,6 +3,8 @@ import { completeOnboardingAction } from "@/app/actions/onboarding";
 import { HobbyPicker } from "@/components/hobby-picker";
 import { Logo } from "@/components/logo";
 import { LocationPicker } from "@/components/location-picker";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { getOnboardingState, listHobbies } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -21,7 +23,7 @@ export default async function OnboardingPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-6">
+<Card className="p-6">
         <Logo size="md" className="mb-4" />
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
           {isUpdating ? "Update onboarding" : "Onboarding"}
@@ -31,9 +33,9 @@ export default async function OnboardingPage() {
             ? "Update your hobbies and location so qst can tune future quest discovery."
             : "Search and select hobbies, then set your location on the map so qst can generate nearby quests."}
         </p>
-      </div>
+      </Card>
 
-      <form action={completeOnboardingAction} className="space-y-6 rounded-xl border border-border bg-surface p-6">
+      <form action={completeOnboardingAction} className="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-card">
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Step 1 — Choose hobbies</h2>
           <HobbyPicker hobbies={hobbies} defaultSelectedIds={onboarding.selectedHobbyIds} />
@@ -44,12 +46,9 @@ export default async function OnboardingPage() {
           <LocationPicker defaultLatitude={onboarding.latitude} defaultLongitude={onboarding.longitude} />
         </section>
 
-        <button
-          type="submit"
-          className="inline-flex rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
-        >
+<Button type="submit" size="lg">
           {isUpdating ? "Save changes" : "Save onboarding"}
-        </button>
+        </Button>
       </form>
 
       {onboarding.complete ? (

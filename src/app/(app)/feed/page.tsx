@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { getFeed } from "@/lib/data";
+import { ScrollText } from "lucide-react";
+import { getFeed, getFriendLeaderboard, getProfileSummary } from "@/lib/data";
 import { PostCard } from "@/components/post-card";
+import { AppRail } from "@/components/app-rail";
 import { FeedSkeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 async function FeedContent() {
@@ -15,35 +19,47 @@ async function FeedContent() {
     return null;
   }
 
-  const feed = await getFeed(user.id);
+  const [feed, summary, leaderboard] = await Promise.all([
+    getFeed(user.id),
+    getProfileSummary(user.id),
+    getFriendLeaderboard(user.id),
+  ]);
+  const profile = summary.profile;
 
   return (
-    <div className="mx-auto max-w-xl space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-2xl font-bold text-foreground">Feed</h1>
-        <p className="mt-2 text-sm text-muted">
-          Quest completions from you and your friends. Friends approve or disapprove; you can edit your own posts.
-        </p>
-      </div>
-
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,40rem)_18rem] lg:justify-center">
       <div className="space-y-6">
-        {feed.length === 0 ? (
-          <div className="rounded-xl border border-border bg-surface p-8 text-center">
-            <p className="text-sm text-muted">No posts yet.</p>
-            <p className="mt-2 text-sm text-muted">
-              Complete a quest or{" "}
-              <Link href="/friends" className="font-semibold text-primary hover:text-primary-hover">
-                add friends
-              </Link>{" "}
-              to fill your feed.
-            </p>
-          </div>
-        ) : null}
+        <PageHeader
+          title="Feed"
+          subtitle="Quest completions from you and your friends. Friends approve or disapprove; you can edit your own posts."
+        />
 
-        {feed.map((post) => (
-          <PostCard key={post.id} post={post} currentUserId={user.id} />
-        ))}
+        <div className="space-y-6">
+          {feed.length === 0 ? (
+            <EmptyState
+              icon={ScrollText}
+              title="No posts yet"
+              description={
+                <>
+                  Complete a quest or{" "}
+                  <Link href="/friends" className="font-semibold text-primary hover:text-primary-hover">
+                    add friends
+                  </Link>{" "}
+                  to fill your feed.
+                </>
+              }
+            />
+          ) : null}
+
+          {feed.map((post) => (
+            <PostCard key={post.id} post={post} currentUserId={user.id} />
+          ))}
+        </div>
       </div>
+
+      {profile ? (
+        <AppRail profile={profile} leaderboard={leaderboard} ctaHref="/discover" ctaLabel="Discover a quest" />
+      ) : null}
     </div>
   );
 }

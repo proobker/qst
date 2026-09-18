@@ -6,9 +6,13 @@ import { BadgePill } from "@/components/badge-pill";
 import { DeleteAccountSection } from "@/components/delete-account-section";
 import { StatCard } from "@/components/stat-card";
 import { XpBar } from "@/components/xp-bar";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/input";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { titleForLevel } from "@/lib/leveling";
 import { getProfileSummary } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { cn } from "@/lib/utils";
 
 export default async function ProfilePage() {
   const supabase = await createSupabaseServerClient();
@@ -39,11 +43,11 @@ export default async function ProfilePage() {
           <p className="text-sm text-muted">
             Level {profile.level} · {titleForLevel(profile.level)}
           </p>
-          {profile.bio ? <p className="mt-2 text-sm text-foreground">{profile.bio}</p> : null}
+{profile.bio ? <p className="mt-2 text-sm text-foreground">{profile.bio}</p> : null}
 
           <Link
             href="/onboarding"
-            className="mt-4 inline-flex rounded-lg border border-border px-4 py-2 text-sm font-semibold text-muted transition hover:border-primary hover:text-primary"
+            className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "mt-4")}
           >
             Update hobbies & location
           </Link>
@@ -52,19 +56,13 @@ export default async function ProfilePage() {
             <label htmlFor="bio" className="text-xs font-medium uppercase tracking-wide text-muted">
               Edit bio
             </label>
-            <textarea
+            <Textarea
               id="bio"
               name="bio"
               defaultValue={profile.bio ?? ""}
               placeholder="Tell others about your adventures..."
-              className="min-h-20 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
             />
-            <button
-              type="submit"
-              className="rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
-            >
-              Save bio
-            </button>
+            <Button type="submit">Save bio</Button>
           </form>
         </div>
       </section>
@@ -76,12 +74,13 @@ export default async function ProfilePage() {
         <StatCard label="Quests completed" value={summary.completedQuests.length} />
       </div>
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <div className="grid gap-3 md:grid-cols-2">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground">XP Progress</h2>
         <XpBar xp={profile.xp} level={profile.level} className="mt-4" />
-      </section>
+      </Card>
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground">Badges</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {summary.badges.length === 0 ? (
@@ -90,9 +89,11 @@ export default async function ProfilePage() {
             summary.badges.map((badge) => <BadgePill key={badge.id} name={badge.name} icon={badge.icon} />)
           )}
         </div>
-      </section>
+      </Card>
+      </div>
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground">Completed quests</h2>
         <div className="mt-4 space-y-2">
           {summary.completedQuests.length === 0 ? (
@@ -111,9 +112,9 @@ export default async function ProfilePage() {
             })
           )}
         </div>
-      </section>
+      </Card>
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <Card className="p-6">
         <h2 className="text-lg font-semibold text-foreground">Quest posts</h2>
         {summary.posts.length === 0 ? (
           <p className="mt-4 text-sm text-muted">No posts yet.</p>
@@ -137,7 +138,8 @@ export default async function ProfilePage() {
             ))}
           </div>
         )}
-      </section>
+      </Card>
+      </div>
 
       <DeleteAccountSection email={user.email ?? profile.email} />
     </div>

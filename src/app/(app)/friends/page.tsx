@@ -8,6 +8,9 @@ import {
 } from "@/app/actions/friends";
 import { Avatar } from "@/components/avatar";
 import { FriendButton } from "@/components/friend-button";
+import { PageHeader } from "@/components/ui/page-header";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { getFriendLeaderboard, getFriendRequests, getFriends, searchUsers } from "@/lib/data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { titleForLevel } from "@/lib/leveling";
@@ -45,15 +48,13 @@ export default async function FriendsPage({
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-2xl font-bold text-foreground">Friends</h1>
-        <p className="mt-2 text-sm text-muted">
-          Send requests, accept invitations, and build your adventuring party.
-        </p>
-      </div>
+<div className="space-y-6">
+      <PageHeader
+        title="Friends"
+        subtitle="Send requests, accept invitations, and build your adventuring party."
+      />
 
-      <section className="rounded-xl border border-border bg-surface p-6">
+      <Card className="p-6">
         <div className="flex items-center gap-2">
           <Trophy size={18} className="text-accent" />
           <h2 className="text-lg font-semibold text-foreground">Overall leaderboard</h2>
@@ -103,9 +104,9 @@ export default async function FriendsPage({
                 <span className="hidden sm:block" />
               )}
             </div>
-          ))}
+))}
         </div>
-      </section>
+      </Card>
 
       <div className="flex flex-wrap gap-2">
         {tabs.map((item) => (
@@ -244,13 +245,12 @@ export default async function FriendsPage({
           <div className="rounded-xl border border-border bg-surface p-6">
             <form className="flex flex-col gap-3 sm:flex-row">
               <input type="hidden" name="tab" value="find" />
-              <input
+              <Input
                 type="email"
                 name="q"
                 defaultValue={query}
                 placeholder="Enter full email address"
                 autoComplete="off"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none"
               />
               <button
                 type="submit"
