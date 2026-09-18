@@ -136,7 +136,7 @@ export function OfflineScreen() {
               type="button"
               onClick={() => void retry()}
               disabled={isChecking}
-              className="mt-6 rounded-full bg-primary px-8 py-3 text-sm font-bold text-background shadow-lg transition enabled:hover:bg-primary-hover disabled:opacity-60"
+              className="mt-6 rounded-full bg-gradient-primary px-8 py-3 text-sm font-bold text-background shadow-lg disabled:opacity-60"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55 }}

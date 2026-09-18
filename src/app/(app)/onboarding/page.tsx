@@ -46,7 +46,7 @@ export default async function OnboardingPage() {
 
         <button
           type="submit"
-          className="inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+          className="inline-flex rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
         >
           {isUpdating ? "Save changes" : "Save onboarding"}
         </button>

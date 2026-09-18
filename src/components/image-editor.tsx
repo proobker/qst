@@ -270,7 +270,7 @@ export function ImageEditor({
             type="button"
             onClick={() => void handleSave()}
             disabled={saving || !imageSrc}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:opacity-50"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-primary px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
           >
             {saving ? <Spinner size="sm" /> : null}
             {saving ? "Saving..." : "Save image"}

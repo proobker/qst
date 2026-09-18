@@ -36,7 +36,7 @@ export default async function AppLayout({
   return (
     <ToastProvider>
       <LevelUpProvider initialCelebration={pendingLevelUp}>
-        <div className="min-h-[100svh] bg-background pb-[calc(4rem+env(safe-area-inset-bottom))] sm:min-h-screen sm:pb-0">
+          <div className="min-h-[100svh] pb-[calc(4rem+env(safe-area-inset-bottom))] sm:min-h-screen sm:pb-0">
           <AppNav notifications={notifications} unreadCount={unreadCount} />
           <TimezoneCapture currentTimezone={profile.timezone} />
           <main className="mx-auto w-full max-w-6xl px-3 py-4 page-enter sm:px-4 sm:py-6">{children}</main>

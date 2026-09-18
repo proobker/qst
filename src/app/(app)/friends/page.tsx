@@ -149,7 +149,7 @@ export default async function FriendsPage({
                   <input type="hidden" name="friendId" value={friend.friendId} />
                   <button
                     type="submit"
-                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-danger hover:text-danger"
                   >
                     Remove
                   </button>
@@ -254,7 +254,7 @@ export default async function FriendsPage({
               />
               <button
                 type="submit"
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+                className="rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
               >
                 Search
               </button>

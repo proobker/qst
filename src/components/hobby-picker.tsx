@@ -173,7 +173,7 @@ export function HobbyPicker({ hobbies, defaultSelectedIds }: HobbyPickerProps) {
         </div>
       </div>
 
-      {error ? <p className="text-sm text-red-400">{error}</p> : null}
+      {error ? <p className="text-sm text-danger">{error}</p> : null}
     </div>
   );
 }

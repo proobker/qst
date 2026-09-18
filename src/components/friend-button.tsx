@@ -23,7 +23,7 @@ export function FriendButton({ friendId, status, requestId, className }: FriendB
         <button
           type="submit"
           className={cn(
-            "rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-red-400 hover:text-red-400",
+            "rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-danger hover:text-danger",
             className,
           )}
         >
@@ -66,7 +66,7 @@ export function FriendButton({ friendId, status, requestId, className }: FriendB
           <input type="hidden" name="requestId" value={requestId} />
           <button
             type="submit"
-            className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
+            className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-danger hover:text-danger"
           >
             Decline
           </button>
@@ -81,7 +81,7 @@ export function FriendButton({ friendId, status, requestId, className }: FriendB
       <button
         type="submit"
         className={cn(
-          "rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-primary-hover",
+          "rounded-lg bg-gradient-primary px-3 py-1.5 text-xs font-semibold text-white",
           className,
         )}
       >

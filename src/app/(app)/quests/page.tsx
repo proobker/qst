@@ -83,7 +83,7 @@ async function QuestsContent() {
                   </p>
                   <button
                     type="submit"
-                    className="mt-3 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-muted transition hover:border-red-400 hover:text-red-400"
+                    className="mt-3 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-muted transition hover:border-danger hover:text-danger"
                   >
                     Abandon quest
                   </button>
@@ -99,7 +99,7 @@ async function QuestsContent() {
                 Completed. Rewards have been applied.
               </p>
             ) : entry.status === "incomplete" ? (
-              <p className="mt-3 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">
+              <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
                 Incomplete — this quest was not finished within {QUEST_ACCEPT_DEADLINE_HOURS} hours of accepting it.
               </p>
             ) : null}

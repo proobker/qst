@@ -94,7 +94,7 @@ export function QuestUploadForm({ userQuestId }: QuestUploadFormProps) {
         <button
           type="submit"
           disabled={pending}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-primary px-3 py-2 text-sm font-semibold text-white disabled:opacity-50"
         >
           {pending ? <Spinner size="sm" /> : null}
           {pending ? "Uploading..." : "Upload completion"}

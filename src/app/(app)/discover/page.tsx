@@ -30,7 +30,7 @@ async function DiscoverContent() {
         </p>
         <Link
           href="/onboarding"
-          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+          className="mt-4 inline-flex rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
         >
           Complete onboarding
         </Link>
@@ -49,7 +49,7 @@ async function DiscoverContent() {
         </p>
         <Link
           href="/friends?tab=find"
-          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+          className="mt-4 inline-flex rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
         >
           Find friends
         </Link>
@@ -83,7 +83,7 @@ async function DiscoverContent() {
         )}
         <Link
           href="/discover"
-          className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
+          className="mt-4 inline-flex rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white"
         >
           Try again
         </Link>

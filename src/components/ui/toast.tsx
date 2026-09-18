@@ -36,7 +36,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             className={cn(
               "animate-in slide-in-from-right rounded-lg border px-4 py-3 text-sm font-medium shadow-lg transition-all",
               t.type === "success" && "border-success/40 bg-success/10 text-success",
-              t.type === "error" && "border-red-400/40 bg-red-500/10 text-red-400",
+              t.type === "error" && "border-danger/40 bg-danger/10 text-danger",
               t.type === "info" && "border-primary/40 bg-surface text-foreground",
             )}
           >

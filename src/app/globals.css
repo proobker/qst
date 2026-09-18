@@ -11,6 +11,10 @@
   --foreground: #f1f5f9;
   --muted: #94a3b8;
   --border: #334155;
+  --danger: #ef4444;
+  --danger-hover: #f87171;
+  --ring: #8b5cf6;
+  /* Light theme: re-map the --color-* values below under [data-theme="light"] */
 }
 
 @theme inline {
@@ -24,12 +28,25 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --shadow-card: 0 1px 3px rgb(2 6 23 / 0.5), 0 8px 24px -6px rgb(2 6 23 / 0.5);
+  --shadow-card-hover: 0 2px 4px rgb(2 6 23 / 0.5), 0 16px 40px -10px rgb(139 92 246 / 0.2);
+  --shadow-glow: 0 0 20px -4px rgb(139 92 246 / 0.45);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle at 50% -10%, color-mix(in srgb, var(--primary) 14%, transparent), transparent 55%),
+    radial-gradient(circle at 90% 15%, color-mix(in srgb, var(--primary) 6%, transparent), transparent 45%),
+    radial-gradient(circle at 1px 1px, rgb(148 163 184 / 0.08) 1px, transparent 0);
+  background-size: 100% 50rem, 50rem 40rem, 22px 22px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-position: top center, top right, 0 0;
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -46,6 +63,49 @@ body {
 
 ::selection {
   background: color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+@layer base {
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 30%, transparent);
+  }
+}
+
+.bg-gradient-primary {
+  background-image: linear-gradient(135deg, var(--primary), #d946ef, var(--accent), var(--primary));
+  background-size: 200% 200%;
+  transition: box-shadow 200ms ease;
+}
+
+.bg-gradient-primary:hover {
+  box-shadow: var(--shadow-glow);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bg-gradient-primary {
+    animation: gradient-shimmer 6s ease-in-out infinite;
+  }
+}
+
+@keyframes gradient-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes page-enter {

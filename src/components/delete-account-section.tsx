@@ -15,9 +15,9 @@ export function DeleteAccountSection({ email }: { email: string }) {
   const canSubmit = normalizedEmail.length > 0 && confirmationEmail.trim().toLowerCase() === normalizedEmail;
 
   return (
-    <section className="rounded-xl border border-red-500/40 bg-red-500/10 p-6">
+    <section className="rounded-xl border border-danger/40 bg-danger/10 p-6">
       <div className="flex items-start gap-3">
-        <div className="rounded-lg border border-red-400/40 bg-red-500/15 p-2 text-red-200">
+        <div className="rounded-lg border border-danger/40 bg-danger/15 p-2 text-red-200">
           <AlertTriangle aria-hidden="true" className="size-5" />
         </div>
         <div className="min-w-0 flex-1">
@@ -39,13 +39,13 @@ export function DeleteAccountSection({ email }: { email: string }) {
                 autoComplete="email"
                 placeholder={email}
                 required
-                className="h-11 w-full rounded-lg border border-red-400/40 bg-background px-3 text-sm font-semibold text-foreground outline-none transition placeholder:text-muted focus:border-red-300 focus:ring-2 focus:ring-red-400/30 sm:max-w-xs"
+                className="h-11 w-full rounded-lg border border-danger/40 bg-background px-3 text-sm font-semibold text-foreground outline-none transition placeholder:text-muted focus:border-danger focus:ring-2 focus:ring-danger/30 sm:max-w-xs"
               />
             </label>
 
             {state.message ? (
               <p
-                className="rounded-lg border border-red-400/40 bg-red-500/15 px-3 py-2 text-sm text-red-100"
+                className="rounded-lg border border-danger/40 bg-danger/15 px-3 py-2 text-sm text-red-100"
                 aria-live="polite"
               >
                 {state.message}
@@ -55,7 +55,7 @@ export function DeleteAccountSection({ email }: { email: string }) {
             <button
               type="submit"
               disabled={!canSubmit || pending}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-red-500 px-4 text-sm font-semibold text-white transition hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-danger px-4 text-sm font-semibold text-white transition hover:bg-danger-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Trash2 aria-hidden="true" className="size-4" />
               <span>{pending ? "Deleting..." : "Delete account"}</span>

@@ -127,7 +127,7 @@ export function LocationPicker({ defaultLatitude, defaultLongitude }: Props) {
           ? `Selected: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
           : "No location saved yet."}
       </p>
-      {error ? <p className="text-sm text-red-400">{error}</p> : null}
+      {error ? <p className="text-sm text-danger">{error}</p> : null}
     </div>
   );
 }

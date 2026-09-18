@@ -211,9 +211,9 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
 
         <motion.div
           style={{ opacity: rejectOpacity }}
-          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-4 border-red-400 bg-red-500/10"
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-4 border-danger bg-danger/10"
         >
-          <div className="flex items-center gap-2 text-3xl font-bold text-red-400">
+          <div className="flex items-center gap-2 text-3xl font-bold text-danger">
             <X size={40} />
             Reject
           </div>
@@ -247,7 +247,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
             <button
               type="button"
               onClick={() => commitSwipe("left")}
-              className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-muted transition hover:border-red-400 hover:text-red-400 sm:py-3"
+              className="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-muted transition hover:border-danger hover:text-danger sm:py-3"
               aria-label="Reject quest"
             >
               Reject
@@ -255,7 +255,7 @@ export function QuestSwipeDeck({ quests }: QuestSwipeDeckProps) {
             <button
               type="button"
               onClick={() => commitSwipe("right")}
-              className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover sm:py-3"
+              className="rounded-lg bg-gradient-primary px-4 py-2.5 text-sm font-semibold text-white sm:py-3"
               aria-label="Accept quest"
             >
               Accept

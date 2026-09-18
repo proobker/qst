@@ -159,8 +159,8 @@ export function PostCard({ post, currentUserId }: PostCardProps) {
                   className={cn(
                     "flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold transition",
                     post.votedByUser === false
-                      ? "bg-red-500/20 text-red-400"
-                      : "border border-border text-muted hover:border-red-400 hover:text-red-400",
+                      ? "bg-danger/20 text-danger"
+                      : "border border-border text-muted hover:border-danger hover:text-danger",
                   )}
                 >
                   <ThumbsDown size={16} />

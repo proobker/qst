@@ -112,7 +112,7 @@ export function EmailCodeSignInForm() {
         ) : null}
         <button
           type="submit"
-          className="inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-white transition hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70 sm:h-12"
+          className="inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-lg bg-gradient-primary px-4 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70 sm:h-12"
           disabled={pending}
         >
           <SubmitText step={state.step} pending={pending} />
