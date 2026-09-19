@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getAppLinkHost } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
 const ANDROID_PACKAGE_NAME = "app.qst.mobile";
-const APP_LINK_HOST = "qst-kappa.vercel.app";
+const APP_LINK_HOST = getAppLinkHost();
 
 function getSafeNextPath(value: string | null) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : "/discover";

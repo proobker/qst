@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { getAppLinkHost } from "@/lib/env";
 
-const APP_LINK_HOST = "qst-kappa.vercel.app";
+const APP_LINK_HOST = getAppLinkHost();
 
 function isHandledAppLink(url: URL) {
   return url.host === APP_LINK_HOST && url.pathname.startsWith("/auth/callback");

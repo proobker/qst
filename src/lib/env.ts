@@ -1,5 +1,7 @@
 const requiredClientEnvs = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"] as const;
 
+const APP_LINK_HOST_FALLBACK = "qst-kappa.vercel.app";
+
 const publicClientEnvFallbacks: Record<(typeof requiredClientEnvs)[number], string> = {
   NEXT_PUBLIC_SUPABASE_URL: "https://zumlzeeqjknhbvouqhse.supabase.co",
   NEXT_PUBLIC_SUPABASE_ANON_KEY: "sb_publishable_wpvywY79mu3muaDOoHMCMw_TnZv6EyI",
@@ -34,4 +36,12 @@ export function getGeminiModelOverride(): string | undefined {
 
 export function getAppUrl() {
   return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+}
+
+/**
+ * Host (no scheme) the native Capacitor app expects OAuth app-links on.
+ * Must match the Capacitor server.url host (capacitor.config.ts).
+ */
+export function getAppLinkHost() {
+  return process.env.NEXT_PUBLIC_APP_LINK_HOST?.trim() || APP_LINK_HOST_FALLBACK;
 }
